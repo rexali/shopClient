@@ -37,7 +37,6 @@ class AdminAddForm extends Component {
         admin_id: this.context.state.authData?.admin_id // '9' 
     }
 
-
     handleChange = (evt) => {
         console.log(this.context.state.authData?.admin_id);
         const { name, value } = evt.target;
@@ -112,7 +111,7 @@ class AdminAddForm extends Component {
                     }
                 };
                 xmlhttp.responseType = '';
-                xmlhttp.open("POST", "http://localhost:3333/api/v1/file/file", true);
+                xmlhttp.open("POST", "/file/file", true);
                 xmlhttp.send(formData);
             }
 
@@ -125,7 +124,7 @@ class AdminAddForm extends Component {
     handleSubmit = () => {
         const productObj = this.state;
         console.log(productObj)
-        axios.post("http://localhost:3333/products/product/add", productObj).then((response) => {
+        axios.post("/products/product/add", productObj).then((response) => {
             let data = JSON.stringify(response.data);
             let result = JSON.parse(data);
             if (result.affectedRows === 1 && result.warningCount === 0) {

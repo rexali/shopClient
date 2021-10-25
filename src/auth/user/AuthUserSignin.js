@@ -28,7 +28,7 @@ function AuthSignin() {
 
   const getCartData = (uid) => {
     import("axios").then((axios) => {
-      axios.post('http://localhost:3333/cart/read', { user_id: uid }).then(function (response) {
+      axios.post('/cart/read', { user_id: uid }).then(function (response) {
         let result = JSON.parse(JSON.stringify(response.data));
         setCartData([...result]);
       }).catch(function (error) {
@@ -52,7 +52,7 @@ function AuthSignin() {
     submitRef.current.value = "Submiting...";
 
     const loginObj = { email: email, password: password }
-    axios.post("http://localhost:3333/auth/user/login", loginObj).then((res) => {
+    axios.post("/auth/user/login", loginObj).then((res) => {
 
       let decoded = jwt.verify(res.data.token, 'aqwsderfgtyhjuiklop');
 
@@ -61,9 +61,6 @@ function AuthSignin() {
         setResult("Login success");
 
         getCartData(decoded.result[0].user_id);
-
-        // window.sessionStorage.setItem('userId', decoded.result[0].user_id);
-        // window.sessionStorage.setItem('email', decoded.result[0].email);
 
         setAuthData({ user_id: decoded.result[0].user_id, email: decoded.result[0].email, token:res.data.token });
         console.log("user login successful");

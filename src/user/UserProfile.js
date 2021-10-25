@@ -66,7 +66,7 @@ function UserProfile(props) {
 
         console.log(profileObj);
 
-        axios.post("http://localhost:3333/users/user/update", profileObj).then((result) => {
+        axios.post("/users/user/update", profileObj).then((result) => {
             let resObj = JSON.stringify(result.data);
             let rObj = JSON.parse(resObj);
             console.log(rObj.result);
@@ -110,7 +110,7 @@ function UserProfile(props) {
     //         }
     //     };
     //     xmlhttp.responseType = '';
-    //     xmlhttp.open("POST", "http://localhost:3333/file/multiplefiles", true);
+    //     xmlhttp.open("POST", "/file/multiplefiles", true);
     //     xmlhttp.send(formData);
     // }
 
@@ -126,7 +126,7 @@ function UserProfile(props) {
             document.getElementById('user_document').files[0],
             document.getElementById('user_document').files[0].name
         );
-        axios.post("http://localhost:3333/file/multiplefiles", form);
+        axios.post("/file/multiplefiles", form);
     }
 
 
@@ -134,7 +134,7 @@ function UserProfile(props) {
         console.log(userId)
         const getProfileData = (id) => {
             import("axios").then((axios) => {
-                axios.post('http://localhost:3333/users/user', { user_id: id }).then(function (response) {
+                axios.post('/users/user', { user_id: id }).then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
                     console.log(result)
                     setData(result[0]);
@@ -200,7 +200,7 @@ function UserProfile(props) {
                         <div className="form-group">
                             <label htmlFor="psspt">Passport</label>
                             <img
-                                src={`http://localhost:3333/uploads/${data?.picture ? data?.picture : 'logo512.png'}`}
+                                src={`/uploads/${data?.picture ? data?.picture : 'logo512.png'}`}
                                 id="userPicture"
                                 alt=""
                                 className="rounded img-fluid d-block mx-auto"
@@ -287,7 +287,7 @@ function UserProfile(props) {
 
                         <div className="form-group">
                             <img
-                                src={`http://localhost:3333/uploads/${data?.document ? data?.document : 'logo512.png'}`}
+                                src={`/uploads/${data?.document ? data?.document : 'logo512.png'}`}
                                 id="userDocument"
                                 alt={data?.name}
                                 className="rounded img-fluid d-block mx-auto"

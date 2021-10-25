@@ -43,7 +43,7 @@ function AuthAdminSignup() {
       setResult("")
       submitRef.current.value = 'Submitting...';
       const registerObj = { email: username, password: password }
-      axios.post("http://localhost:3333/auth/admin/register", registerObj).then((res) => {
+      axios.post("/auth/admin/register", registerObj).then((res) => {
         console.log(res.data);
         let result = JSON.parse(JSON.stringify(res.data));
         if (result.affectedRows===1 && result.warningCount===0) {

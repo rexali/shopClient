@@ -35,7 +35,7 @@ export default class AuthAdminChangePass extends React.Component {
                 password: this.state.password
             }
 
-            let result = await postData('http://localhost:3333/auth/admin/change/password', postObj);
+            let result = await postData('/auth/admin/change/password', postObj);
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 this.setState({ result: 'Success: you can now log in', password1: '', password2: '' })
                 console.log(result);

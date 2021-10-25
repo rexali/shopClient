@@ -13,11 +13,10 @@ function ShipperProduct(props) {
     
     const removeProduct = (id)=>{
         import("axios").then((axios) => {
-            axios.get('http://localhost:3000/mydata.json',{
+            axios.get('/mydata',{
                 body:{product_id: id}
             }).then(function (response) {
-                let loadData = JSON.stringify(response.data);
-                setData(JSON.parse(loadData).filter((e) => {
+                setData(JSON.parse(JSON.stringify(response.data)).filter((e) => {
                     return Number(e.id) === id;
                 }));
             }).catch(function (error) {
@@ -52,7 +51,7 @@ function ShipperProduct(props) {
     useEffect(() => {
         const fetchMeData = (pid) => {
             import("axios").then((axios) => {
-                axios.get('http://localhost:3000/mydata.json').then(function (response) {
+                axios.get('/mydata').then(function (response) {
                     let loadData = JSON.stringify(response.data);
                     setData(JSON.parse(loadData).filter((e) => {
                         return Number(e.id) === pid;

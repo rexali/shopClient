@@ -6,7 +6,7 @@ const useMail = async (to, subject, format = 'html', html, text) => {
     let [err, setErr] = useState(null);
 
     try {
-        let response = axios.post('http://localhost:3333/send/mail', {
+        let response = axios.post('/send/mail', {
             to: to, subject: subject, [format]: html ? html : text,
         });
         let result = await JSON.parse(JSON.stringify(response.d));

@@ -61,7 +61,7 @@ export function ReviewModal({ productId, vendorId }) {
 
     const postReview = async (revObj) => {
         try {
-            let response = await axios.post("http://localhost:3333/review/add", revObj);
+            let response = await axios.post("/review/add", revObj);
             let result = JSON.parse(JSON.stringify(await response.data));
             console.log(result);
             if (result.affectedRows === 1 && result.warningCount === 0) {
@@ -166,7 +166,7 @@ function UserOrder() {
 
     const fetchMeData = (uid) => {
         import("axios").then((axios) => {
-            axios.post('http://localhost:3333/transaction/read', { user_id: uid }).then(function (response) {
+            axios.post('/transaction/read', { user_id: uid }).then(function (response) {
                 let loadData = JSON.stringify(response.data);
                 let result = JSON.parse(loadData);
                 console.log(result)

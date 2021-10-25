@@ -43,7 +43,7 @@ function AuthVendorSignup() {
       submitRef.current.value = 'Submitting...';
       setResult("");
       const registerObj = { email: username, password: password }
-      axios.post("http://localhost:3333/auth/vendor/register", registerObj).then((res) => {
+      axios.post("/auth/vendor/register", registerObj).then((res) => {
         console.log(res.data);
         let result = JSON.parse(JSON.stringify(res.data));
         if (result.affectedRows===1 && result.warningCount===0) {

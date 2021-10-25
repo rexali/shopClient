@@ -19,7 +19,7 @@ export default class AuthUserForgetPass extends React.Component {
         console.log(this.state)
          evt.preventDefault()
          this.setState({result:'Sending....',err:''})
-        let result = await postData('http://localhost:3333/auth/user/request/password', this.state);
+        let result = await postData('/auth/user/request/password', this.state);
         console.log(result)
         if (result.result) {
             this.setState({ result: 'Success: check your inbox for confirmation email', email: '' })

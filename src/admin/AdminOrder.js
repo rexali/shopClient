@@ -6,7 +6,7 @@ function TableBody() {
 
     const readOrders = async () => {
         try {
-            let response = await axios.post("http://localhost:3333/transaction/read");
+            let response = await axios.post("/transaction/read");
             let result = JSON.parse(JSON.stringify(await response.data));
             console.log(result);
             setData(result);

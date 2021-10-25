@@ -34,7 +34,7 @@ export default class AuthUserChangePass extends React.Component {
             }
             console.log(postObj)
 
-            let result = await postData('http://localhost:3333/auth/user/change/password', postObj);
+            let result = await postData('/auth/user/change/password', postObj);
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 this.setState({ result: 'Success: you can now log in', password1: '', password2: '', err:'' })
                 console.log(result);

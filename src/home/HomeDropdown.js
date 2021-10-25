@@ -9,7 +9,7 @@ export default function HomeDropdown({ setCartData, cartData }) {
    const userId = window.sessionStorage.getItem("userId");
 
    const clearCart = () => {
-      axios.post('http://localhost:3333/cart/delete/all', { user_id: userId })
+      axios.post('/cart/delete/all', { user_id: userId })
          .then(function (response) {
             let result = JSON.parse(JSON.stringify(response.data));
             console.log(result.result)
@@ -24,7 +24,7 @@ export default function HomeDropdown({ setCartData, cartData }) {
 
    const removeCartItem = (pid) => {
 
-      axios.post('http://localhost:3333/cart/delete', { user_id: userId, product_id: pid })
+      axios.post('/cart/delete', { user_id: userId, product_id: pid })
          .then(function (response) {
             let loadData = JSON.stringify(response.data);
             let result = JSON.parse(loadData);

@@ -43,7 +43,7 @@ function AuthAdminSignin() {
     event.preventDefault();
     submitRef.current.value = 'Submitting...';
     const loginObj = { email: email, password: password }
-    axios.post("http://localhost:3333/auth/admin/login", loginObj).then((res) => {
+    axios.post("/auth/admin/login", loginObj).then((res) => {
 
       let decoded = jwt.verify(res.data.token, 'aqwsderfgtyhjuiklop');
 
@@ -51,8 +51,6 @@ function AuthAdminSignin() {
 
         setResult("Login success")
 
-        // window.sessionStorage.setItem('adminId', result[0].admin_id);
-        // window.sessionStorage.setItem('email', result[0].email);
         setAuthData({ admin_id: decoded.result[0].admin_id, email: decoded.result[0].email, token: res.data.token })
         setTimeout(login(), 10000)
         console.log("admin authenticated login now ");

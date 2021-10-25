@@ -37,7 +37,7 @@ function Detail() {
 
     const getCartData = (uid) => {
         import("axios").then((axios) => {
-            axios.post('http://localhost:3333/cart/read', { user_id: uid }).then(function (response) {
+            axios.post('/cart/read', { user_id: uid }).then(function (response) {
                 let result = JSON.parse(JSON.stringify(response.data));
                 console.log(result)
                 setCartData([...result]);
@@ -59,12 +59,12 @@ function Detail() {
 
     const addToCart = async(pid, vid) => {
         if (userId) {
-            let resu = await getProductIds({ url: 'http://localhost:3333/cart/read', method: 'post', data: { user_id: userId } });
+            let resu = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
             if (resu.includes(pid)) {
                 alert("Item already in cart");
             } else {
             axios.post(
-                "http://localhost:3333/cart/add",
+                "/cart/add",
                 {
                     product_id: pid,
                     user_id: userId,
@@ -98,12 +98,12 @@ function Detail() {
 
     const saveProduct = async (evt, pid, vid) => {
         if (userId) {
-            let resu = await getProductIds({ url: 'http://localhost:3333/wish/read', method: 'post', data: { user_id: userId } });
+            let resu = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
             if (resu.includes(pid)) {
                 alert("Item already saved");
             } else {
                 axios.post(
-                    "http://localhost:3333/wish/add",
+                    "/wish/add",
                     {
                         product_id: pid,
                         user_id:userId,
@@ -127,7 +127,7 @@ function Detail() {
 
     const fetchProductDetail = async (pid) => {
         try {
-            let { data } = await axios.get('http://localhost:3333/products/product/read/' + pid);
+            let { data } = await axios.get('/products/product/read/' + pid);
             setData([...data]);
         } catch (error) {
             console.log(error);
@@ -180,13 +180,13 @@ function Detail() {
                                                 <div key={index} className="carousel-item active">
                                                     <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="bg-white position-absolute fa fa-heart m-2" style={styles.beAbove} >{product.product_bestseller ? 'Best Seller' : ''}</i></a>
                                                     <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
-                                                    <img className="img-fluid d-block mx-auto" style={{ height: "auto", width: "200px" }} src={`http://localhost:3333/uploads/${picturefile}`} alt={picturefile ? picturefile : ''} />
+                                                    <img className="img-fluid d-block mx-auto" style={{ height: "auto", width: "200px" }} src={`/uploads/${picturefile}`} alt={picturefile ? picturefile : ''} />
                                                 </div>
                                             ) : (
                                                 <div key={index} className="carousel-item">
                                                     <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="bg-white position-absolute fa fa-heart m-2" style={styles.beAbove} >{product.product_bestseller ? 'Best Seller' : ''}</i></a>
                                                     <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
-                                                    <img className="img-fluid d-block mx-auto" style={{ height: "100px", width: "100px" }} src={`http://localhost:3333/uploads/${picturefile}`} alt={picturefile ? picturefile : ''} />
+                                                    <img className="img-fluid d-block mx-auto" style={{ height: "100px", width: "100px" }} src={`/uploads/${picturefile}`} alt={picturefile ? picturefile : ''} />
                                                 </div>
                                             )
                                         })}

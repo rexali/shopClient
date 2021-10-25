@@ -12,14 +12,14 @@ export default function ShowModal({ title, body, setAbout}) {
     return (
         <div className="mt-2">
             <Modal
-                size='sm'
-                fullscreen={true}
+                size='lg'
+                fullscreen={false}
                 show={show}
                 onHide={handleClose}
                 backdrop="static"
                 keyboard={false}
-                centered
-                dialogClassName='modal-90w'>
+                // centered
+                dialogClassName='modal-10w'>
                 <Modal.Header closeButton>
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>

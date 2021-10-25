@@ -30,7 +30,7 @@ function VendorShip(props) {
       }
     
       function postStateFee(val1, val2) {
-        fetch("/http://l0calhost:3333/users/shipper/", {
+        fetch("/users/shipper/", {
           mode: "cors",
           method: "post",
           body: { state: val1, fee: val2 }

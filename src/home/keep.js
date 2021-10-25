@@ -1,3 +1,5 @@
+// "homepage": "https://rexali.github.io/home",
+//   "proxy":"http://localhost:3333",
 /* eslint-disable no-lone-blocks */
 {/* <Form onSubmit={this.getFormData}>
 

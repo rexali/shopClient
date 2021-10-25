@@ -54,7 +54,7 @@ class AdminEditForm extends Component {
     updateVendorProduct = async (prdtObj) => {
         this.setState({ result: 'Sending data...' });
         try {
-            let response = await axios.post("http://localhost:3333/products/product/update", prdtObj);
+            let response = await axios.post("/products/product/update", prdtObj);
             let result = JSON.parse(JSON.stringify(await response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 this.setState({ result: 'Success' });
@@ -109,7 +109,7 @@ class AdminEditForm extends Component {
                         <div className="col-md-6">
                             <div className="form-group">
                                 <img
-                                    src={`http://localhost:3333/uploads/${data[0].product_picture}`}
+                                    src={`/uploads/${data[0].product_picture}`}
                                     id="productPicture"
                                     alt=""
                                     className="rounded img-fluid d-block mx-auto" />

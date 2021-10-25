@@ -79,7 +79,7 @@ export function Filter({receivedData, handleClose}) {
     }
 
     const fetchData = () => {
-        const url = 'http://localhost:3333/products/product/read';
+        const url = '/products/product/read';
         fetch(
             url,
             {

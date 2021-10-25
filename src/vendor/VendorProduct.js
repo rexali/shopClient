@@ -21,7 +21,7 @@ function VendorProduct(props) {
     const getVendorProducts = async (id) => {
         if (id) {
             try {
-                let response = await axios.post('http://localhost:3333/products/product/shop', { vendor_id: id });
+                let response = await axios.post('/products/product/shop', { vendor_id: id });
                 let result = JSON.parse(JSON.stringify(await response.data));
                 setData(result);
             } catch (error) {
@@ -32,7 +32,7 @@ function VendorProduct(props) {
 
     const removeProduct = (id) => {
         import("axios").then((axios) => {
-            axios.get('http://localhost:3333/products/product/delete', {
+            axios.get('/products/product/delete', {
                 body: { product_id: id }
             }).then(function (response) {
                 let result = JSON.parse(JSON.stringify(response.data));
@@ -78,7 +78,7 @@ function VendorProduct(props) {
     const fetchMeData = async (id) => {
         if (id) {
             try {
-                let response = await axios.post('http://localhost:3333/products/product/shop', { vendor_id: id });
+                let response = await axios.post('/products/product/shop', { vendor_id: id });
                 let result = JSON.parse(JSON.stringify(await response.data));
                 setData(result);
             } catch (error) {
@@ -118,7 +118,7 @@ function VendorProduct(props) {
                                     </p>
                                     <div>
                                         <i className="bg-white position-absolute" style={{ zIndex: "2" }} >{product.bestseller ? 'Best Seller' : ''} </i>
-                                        <img style={{ minWidth: "auto", height: "235px" }} className="cardImg-top img-fluid d-block mx-auto" src={`http://localhost:3333/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0] : getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : 'picture'} />
+                                        <img style={{ minWidth: "auto", height: "235px" }} className="cardImg-top img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0] : getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : 'picture'} />
                                     </div>
                                     <div className="card-body">
                                         <p>{product.product_category ? product.product_category : ''}</p>

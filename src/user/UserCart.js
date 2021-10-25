@@ -30,7 +30,7 @@ function UserCart() {
 
     const getCartData = (uid) => {
         import("axios").then((axios) => {
-            axios.post('http://localhost:3333/cart/read', { user_id: uid }).then(function (response) {
+            axios.post('/cart/read', { user_id: uid }).then(function (response) {
                 let loadData = JSON.stringify(response.data);
                 let result = JSON.parse(loadData);
                 console.log(result)
@@ -43,7 +43,7 @@ function UserCart() {
 
     const removeCartItem = (pid) => {
         if (userId) {
-            axios.post('http://localhost:3333/cart/delete', { user_id: userId, product_id: pid })
+            axios.post('/cart/delete', { user_id: userId, product_id: pid })
                 .then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
                     console.log(result.result)
@@ -60,7 +60,7 @@ function UserCart() {
 
     const fetchMeData = (uid) => {
         import("axios").then((axios) => {
-            axios.post('http://localhost:3333/cart/read', { user_id: uid }).then(function (response) {
+            axios.post('/cart/read', { user_id: uid }).then(function (response) {
                 let loadData = JSON.stringify(response.data);
                 let result = JSON.parse(loadData);
                 console.log(result)

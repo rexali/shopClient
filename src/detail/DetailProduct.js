@@ -107,10 +107,10 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
     }
 
     const postReview = async (revObj) => {
-        let [pids, emails] = await getIdEmail({ url: 'http://localhost:3333/review/read/' + revObj.product_id, method: 'get', data: { product_id: revObj.product_id } });
+        let [pids, emails] = await getIdEmail({ url: '/review/read/' + revObj.product_id, method: 'get', data: { product_id: revObj.product_id } });
         if (pids.includes(revObj.product_id) && emails.includes(revObj.email)) {
             try {
-                let response = await axios.post("http://localhost:3333/review/add", revObj);
+                let response = await axios.post("/review/add", revObj);
                 let result = JSON.parse(JSON.stringify(await response.data));
                 console.log(result);
                 if (result.affectedRows === 1 && result.warningCount === 0) {
@@ -242,7 +242,7 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
 
     const postOrder = async (pid, vid, price, qty, total, checkoutObj, status) => {
         try {
-            let response = await axios.post('http://localhost:3333/transaction/order',
+            let response = await axios.post('/transaction/order',
                 {
                     first_name: checkoutObj.first_name,
                     last_name: checkoutObj.last_name,
@@ -556,7 +556,7 @@ function DetailProduct() {
 
     const fetchMeData = (pid) => {
         import("axios").then((axios) => {
-            axios.get('http://localhost:3333/products/product/read/' + pid).then(function (response) {
+            axios.get('/products/product/read/' + pid).then(function (response) {
                 let result = JSON.parse(JSON.stringify(response.data));
                 setData([...result]);
             }).catch(function (error) {
@@ -567,7 +567,7 @@ function DetailProduct() {
 
     const readProductReviewData = (pid) => {
         import("axios").then((axios) => {
-            axios.get('http://localhost:3333/review/read/' + pid).then(function (response) {
+            axios.get('/review/read/' + pid).then(function (response) {
                 let result = JSON.parse(JSON.stringify(response.data));
                 setReviewData([...result]);
             }).catch(function (error) {
@@ -608,12 +608,12 @@ function DetailProduct() {
                                                 return i === 0 ? (
                                                     <div key={i} className="carousel-item active">
                                                         <a href="#share" className="mt-1 mr-4 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
-                                                        <img style={{ maxWidth: "100px", height: "100px" }} className="img-fluid d-block mx-auto" src={`http://localhost:3333/uploads/${picturefile ? picturefile : ''}`} alt={picturefile ? picturefile : ''} />
+                                                        <img style={{ maxWidth: "100px", height: "100px" }} className="img-fluid d-block mx-auto" src={`/uploads/${picturefile ? picturefile : ''}`} alt={picturefile ? picturefile : ''} />
                                                     </div>
                                                 ) : (
                                                     <div key={i} className="carousel-item">
                                                         <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
-                                                        <img style={{ maxWidth: "100px", height: "100px" }} className="img-fluid d-block mx-auto" src={`http://localhost:3333/uploads/${picturefile ? picturefile : ''}`} alt={picturefile ? picturefile : ''} />
+                                                        <img style={{ maxWidth: "100px", height: "100px" }} className="img-fluid d-block mx-auto" src={`/uploads/${picturefile ? picturefile : ''}`} alt={picturefile ? picturefile : ''} />
                                                     </div>
                                                 )
                                             })}
@@ -707,7 +707,7 @@ function DetailProduct() {
                                 <div className="col-md-6">
                                     <div><span className="font-weight-bold" id="review">Reviews</span><span className="d-block pull-right"><OffcanvasReview productId={product.product_id} vendorId={product.vendor_id} placement="end" scroll={true} backdrop={false} /></span></div>
                                     {getReviews(product.product_review)?.map((filename, i) => {
-                                        return <p key={i}><img src={`http://localhost:3333/uploads/${filename ? filename : ''}`} alt={product.product_name ? product.product_name : ''} className="img-fluid" /></p>
+                                        return <p key={i}><img src={`/uploads/${filename ? filename : ''}`} alt={product.product_name ? product.product_name : ''} className="img-fluid" /></p>
                                     })}
                                     {reviewData.map((review, index) => {
                                         return <div key={index}>{review.message}</div>;

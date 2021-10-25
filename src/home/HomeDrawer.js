@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Offcanvas } from 'react-bootstrap';
+import Spinner from "../common/Spinner";
 // import { AuthButton } from "../App";
 
 function DrawerContent({ sendBackData, handleClose }) {
@@ -46,9 +47,8 @@ function DrawerContent({ sendBackData, handleClose }) {
     useEffect(() => {
         const getData = () => {
             import("axios").then((axios) => {
-                axios.get('http://localhost:3333/products/product/read').then(function (response) {
-                    let loadData = JSON.stringify(response.data);
-                    let result = JSON.parse(loadData);
+                axios.get('/products/product/read').then(function (response) {
+                    let result = JSON.parse(JSON.stringify(response.data));
                     setData(result);
                 }).catch(function (error) {
                     console.log(error);
@@ -65,7 +65,7 @@ function DrawerContent({ sendBackData, handleClose }) {
         <div style={{overflowY: 'auto', maxHeight: "550px" }}>
             <div className='card w-100'><button className='btn btn-link bg-light text-decoration-none' onClick={allSearch}>All</button></div>
             <div id='accordion'>
-                {getUniqueCategories().map((e, i) => {
+                {data.length?getUniqueCategories().map((e, i) => {
                     return (
                         // card start
                         <div className='card' key={i}>
@@ -95,7 +95,7 @@ function DrawerContent({ sendBackData, handleClose }) {
                         </div>
                         // card end
                     );
-                })}
+                }):<Spinner />}
             </div>
         </div>
     );
@@ -104,7 +104,6 @@ function DrawerContent({ sendBackData, handleClose }) {
 
 function HomeDrawer({ sendBackData, ...props }) {
     const [show, setShow] = useState(false);
-
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 

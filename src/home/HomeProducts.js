@@ -44,7 +44,7 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
 
     const getCartData = (uid) => {
         import("axios").then((axios) => {
-            axios.post('http://localhost:3333/cart/read', { user_id: uid }).then(function (response) {
+            axios.post('/cart/read', { user_id: uid }).then(function (response) {
                 let loadData = JSON.stringify(response.data);
                 let result = JSON.parse(loadData);
                 console.log(result)
@@ -82,12 +82,12 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
         } catch (error) { console.error(error); }
         if (userId) {
             console.log(userId);
-            let resu = await getProductIds({ url: 'http://localhost:3333/cart/read', method: 'post', data: { user_id: userId } });
+            let resu = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
             if (resu.includes(pid)) {
                 alert("Item already in cart")
             } else {
                 axios.post(
-                    "http://localhost:3333/cart/add",
+                    "/cart/add",
                     {
                         product_id: pid,
                         user_id: userId,
@@ -126,12 +126,12 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
         event.target.style.color = "green";
         if (userId) {
             console.log(userId);
-            let resu = await getProductIds({ url: 'http://localhost:3333/wish/read', method: 'post', data: { user_id: userId } });
+            let resu = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
             if (resu.includes(pid)) {
                 alert("Item already saved")
             } else {
                 axios.post(
-                    "http://localhost:3333/wish/add",
+                    "/wish/add",
                     {
                         product_id: pid,
                         user_id: userId,
@@ -190,7 +190,7 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
                             pathname: `/detail/${product.product_id}`,
                             state: product
                         }
-                    }><img onMouseEnter={mouseover} onMouseLeave={mouseout} variant="top" style={styles.imageProps} className="img-fluid d-block mx-auto" src={`http://localhost:3333/uploads/${getPictures(product.product_picture).length === 1 ? product.product_picture : getPictures(product.product_picture)[0]}`} alt={product.product_name ? product.product_name : ''} /></Link>
+                    }><img onMouseEnter={mouseover} onMouseLeave={mouseout} variant="top" style={styles.imageProps} className="img-fluid d-block mx-auto" src={`/uploads/${getPictures(product.product_picture).length === 1 ? product.product_picture : getPictures(product.product_picture)[0]}`} alt={product.product_name ? product.product_name : ''} /></Link>
                 </div>
                 
                 <div className="card-body">

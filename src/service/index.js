@@ -1,10 +1,9 @@
 import axios from "axios";
 
-
 const sendMail = async (to, subject, name = 'html', html, text) => {
     let response, result;
     try {
-        response = await axios.post('http://localhost:3333/send/mail', {
+        response = await axios.post('/send/mail', {
             to: to, subject: subject, [name]: html ? html : text,
         });
         result = await JSON.parse(JSON.stringify(response.data));

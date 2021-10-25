@@ -61,7 +61,7 @@ function AdminProfile(props) {
 
         console.log(profileObj);
 
-        axios.post("http://localhost:3333/users/admin/update", profileObj).then((result) => {
+        axios.post("/users/admin/update", profileObj).then((result) => {
             let resObj = JSON.stringify(result.data);
             let rObj = JSON.parse(resObj);
             console.log(rObj.result);
@@ -89,7 +89,7 @@ function AdminProfile(props) {
             document.getElementById('admin_document').files[0],
             document.getElementById('admin_document').files[0].name
         );
-        axios.post("http://localhost:3333/file/multiplefiles", form);
+        axios.post("/file/twofiles", form);
     }
 
     const showPicture = (evt) => {
@@ -128,7 +128,7 @@ function AdminProfile(props) {
     useEffect(() => {
         const getProfileData = (aid) => {
             import("axios").then((axios) => {
-                axios.post('http://localhost:3333/users/admin', { admin_id: aid }).then(function (response) {
+                axios.post('/users/admin', { admin_id: aid }).then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
                     console.log(result)
                     setData(result[0]);
@@ -189,7 +189,7 @@ function AdminProfile(props) {
             <div className="form-group">
                 <label htmlFor="psspt">Passport</label>
                 <img
-                    src={`http://localhost:3333/uploads/${data?.picture ? data?.picture : 'logo512.png'}`}
+                    src={`/uploads/${data?.picture ? data?.picture : 'logo512.png'}`}
                     id="adminPicture"
                     alt=""
                     className="rounded img-fluid d-block mx-auto"
@@ -273,7 +273,7 @@ function AdminProfile(props) {
 
             <div className="form-group">
                             <img
-                                src={`http://localhost:3333/uploads/${data?.document ? data?.document : 'logo512.png'}`}
+                                src={`/uploads/${data?.document ? data?.document : 'logo512.png'}`}
                                 id="adminDocument"
                                 alt={data?.name}
                                 className="rounded img-fluid d-block mx-auto"

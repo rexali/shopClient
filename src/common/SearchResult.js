@@ -3,13 +3,10 @@ import axios from "axios";
 import { Offcanvas } from "react-bootstrap";
 import Header from "./Header";
 import HomeProducts from "../home/HomeProducts";
-// import Spinner from "./Spinner";
 
 export default function SearchResult({setDisplaySearch,...props }) {
     let [data, setData] = useState([])
     const [show, setShow] = useState(true);
-    // const [isSpinning, setIsSpinning] = useState(true);
-    // const handleShow = () => setShow(true);
     const handleClose = () => {
         setShow(false); 
         setDisplaySearch(false)
@@ -18,14 +15,11 @@ export default function SearchResult({setDisplaySearch,...props }) {
     const handleChange = (event) => {
         var inputVal = event.target.value;
         if (inputVal.length) {
-            axios.post("http://localhost:3333/products/product/search", { search: inputVal }).then((response) => {
-                console.log(response.data);
+            axios.post("/products/product/search", { search: inputVal }).then((response) => {
                 let result = JSON.parse(JSON.stringify(response.data));
                 setData(result);
                 document.querySelector('.searchResult ul').style.display = "block";
-            }).catch(error => { console.warn(error); }).finally(()=>{
-                // setIsSpinning(false)
-            });
+            }).catch(error => { console.warn(error); }).finally(()=>{});
         }
     }
 
@@ -59,7 +53,6 @@ export default function SearchResult({setDisplaySearch,...props }) {
                             className="searchPro form-control form-control-sm rounded w-100 mb-2  d-md-nonex"
                         />
                     </div>
-                    {/* {isSpinning&& <Spinner />} */}
                     {data.length?<div className="row"><HomeProducts products = {data} /></div>:<div className="text-center mt-5">No match found</div>}
                 </Offcanvas.Body>
             </Offcanvas>

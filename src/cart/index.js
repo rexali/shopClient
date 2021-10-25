@@ -57,7 +57,7 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
         }
         if (userId) {
             try {
-                let response = await fetch("http://localhost:3333/users/user", fetchOption);
+                let response = await fetch("/users/user", fetchOption);
                 let result = await response.json();
                 if (result) setData(result);
             } catch (error) {
@@ -94,7 +94,7 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
 
     const postOrder = async (pid, vid, price, qty, total, checkoutObj, status) => {
         try {
-            let response = await axios.post('http://localhost:3333/transaction/add',
+            let response = await axios.post('/transaction/add',
                 {
                     first_name: checkoutObj.first_name,
                     last_name: checkoutObj.last_name,
@@ -126,7 +126,7 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
 
     const updateUserProfile = async (cartObj) => {
         try {
-            let response = await axios.post("http://localhost:3333/users/user/update", cartObj);
+            let response = await axios.post("/users/user/update", cartObj);
             let result = JSON.parse(JSON.stringify(await response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 console.log("update user success");
@@ -469,12 +469,12 @@ function Cart() {
         event.target.style.color = "green";
         if (userId) {
             console.log(userId);
-            let resu = await getProductIds({ url: 'http://localhost:3333/wish/read', method: 'post', data: { user_id: userId } });
+            let resu = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
             if (resu.includes(pid)) {
                 alert("Item already in cart")
             } else {
             axios.post(
-                "http://localhost:3333/wish/add",
+                "/wish/add",
                 {
                     product_id: pid,
                     user_id: userId,
@@ -498,7 +498,7 @@ function Cart() {
     const removeProduct = (evt, pid) => {
         evt.target.style.color = "green";
         if (userId) {
-            axios.post('http://localhost:3333/cart/delete', { user_id: userId, product_id: pid })
+            axios.post('/cart/delete', { user_id: userId, product_id: pid })
                 .then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
                     console.log(result.result)
@@ -519,7 +519,7 @@ function Cart() {
 
     const clearCart = () => {
         if (userId) {
-            axios.post('http://localhost:3333/cart/delete/all', { user_id: userId })
+            axios.post('/cart/delete/all', { user_id: userId })
                 .then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
                     console.log(result.result)
@@ -615,7 +615,7 @@ function Cart() {
 
         if (uid) {
             try {
-                let { data } = await axios.post('http://localhost:3333/cart/read', { user_id: uid });
+                let { data } = await axios.post('/cart/read', { user_id: uid });
                 setCartData(data);
                 setData(data)
             } catch (error) {
@@ -642,7 +642,7 @@ function Cart() {
     const fetchCartData = async (uid) => {
         if (uid) {
             try {
-                let { data } = await axios.post('http://localhost:3333/cart/read', { user_id: uid });
+                let { data } = await axios.post('/cart/read', { user_id: uid });
                 setData(data);
             } catch (error) {
                 console.log(error);
@@ -686,7 +686,7 @@ function Cart() {
                         <ul className="list-group card mb-2 mt-2" key={i}>
                             <li className="list-group-ite d-flex justify-content-around">
                                 <Link to={{ pathname: '/detail/' + item.product_id }}>
-                                    <img src={`http://localhost:3333/uploads/${item.product_picture ? item.product_picture : 'logo512.png'}`} alt={item.product_name ? item.product_name : ''} style={styles.imageSize} className="img-fluid img-thumbnail" />
+                                    <img src={`/uploads/${item.product_picture ? item.product_picture : 'logo512.png'}`} alt={item.product_name ? item.product_name : ''} style={styles.imageSize} className="img-fluid img-thumbnail" />
                                 </Link>
                                 <span className="align-self-center text-break" style={styles.productNameSize}>{item.product_name}</span>
                                 <span>

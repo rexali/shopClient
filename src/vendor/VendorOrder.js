@@ -9,7 +9,7 @@ function TableBody() {
 
     const readOrders = async (vid) => {
         try {
-            let response = await axios.post("http://localhost:3333/transaction/read/fv", { vendor_id: vid });
+            let response = await axios.post("/transaction/read/fv", { vendor_id: vid });
             let result = JSON.parse(JSON.stringify(await response.data));
             console.log(result);
             setData(result);

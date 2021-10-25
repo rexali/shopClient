@@ -68,7 +68,7 @@ function VendorProfile(props) {
 
         console.log(profileObj);
 
-        axios.post("http://localhost:3333/users/vendor/update", profileObj).then((result) => {
+        axios.post("/users/vendor/update", profileObj).then((result) => {
             let resObj = JSON.stringify(result.data);
             let rObj = JSON.parse(resObj);
             console.log(rObj.result);
@@ -122,13 +122,13 @@ function VendorProfile(props) {
             document.getElementById('vendor_document').files[0],
             document.getElementById('vendor_document').files[0].name
         );
-        axios.post("http://localhost:3333/file/multiplefiles", form);
+        axios.post("/file/multiplefiles", form);
     }
 
     const getProfileData = (id) => {
          console.log(id)
         import("axios").then((axios) => {
-            axios.post('http://localhost:3333/users/vendor', { vendor_id: id }).then(function (response) {
+            axios.post('/users/vendor', { vendor_id: id }).then(function (response) {
                 let loadData = JSON.stringify(response.data);
                 let result = JSON.parse(loadData);
                 console.log(result)
@@ -196,7 +196,7 @@ function VendorProfile(props) {
                         <div className="form-group">
                             <label htmlFor="psspt">Passport</label>
                             <img
-                                src={`http://localhost:3333/uploads/${data?.picture ? data?.picture : 'logo512.png'}`}
+                                src={`/uploads/${data?.picture ? data?.picture : 'logo512.png'}`}
                                 id="vendorPicture"
                                 alt=""
                                 className="rounded img-fluid d-block mx-auto"
@@ -282,7 +282,7 @@ function VendorProfile(props) {
 
                         <div className="form-group">
                             <img
-                                src={`http://localhost:3333/uploads/${data?.document ? data?.document : 'logo512.png'}`}
+                                src={`/uploads/${data?.document ? data?.document : 'logo512.png'}`}
                                 id="vendorDocument"
                                 alt={data?.name}
                                 className="rounded img-fluid d-block mx-auto"

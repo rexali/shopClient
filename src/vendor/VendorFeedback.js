@@ -6,7 +6,7 @@ export default class VendorFeedback extends React.Component {
 
     async getNotifications() {
         try {
-            let response = await axios.get("http://localhost:3333/notification/read");
+            let response = await axios.get("/notification/read");
             let result = JSON.parse(JSON.stringify(await response.data));
             console.log(result);
             this.setState({data:result});

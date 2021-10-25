@@ -38,13 +38,10 @@ function AuthVendorSignin() {
     event.preventDefault();
     submitRef.current.value = "Submiting...";
     const loginObj = { email: email, password: password }
-    axios.post("http://localhost:3333/auth/vendor/login", loginObj).then((res) => {
+    axios.post("/auth/vendor/login", loginObj).then((res) => {
       let decoded = jwt.verify(res.data.token, 'aqwsderfgtyhjuiklop');
-    console.log(decoded.result[0].vendor_id);
       if (decoded.result[0].vendor_id && decoded.result[0].email === email) {
         setResult("Login success");
-        // window.sessionStorage.setItem('vendorId', result[0].vendor_id);
-        // window.sessionStorage.setItem('email', result[0].email);
         setAuthData({ vendor_id: decoded.result[0].vendor_id, email: decoded.result[0].email, token:res.data.token })
         console.log("vendor authenticated, log in now ");
         setEmail('');

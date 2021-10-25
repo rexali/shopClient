@@ -96,7 +96,7 @@ function ShipperProfile(props) {
     useEffect(() => {
         const getProfileData = (id) => {
             import("axios").then((axios) => {
-                axios.get('http://localhost:3000/mydata.json', {
+                axios.get('/mydata', {
                     body: { product_id: id }
                 }).then(function (response) {
                     let loadData = JSON.stringify(response.data);

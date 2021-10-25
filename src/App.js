@@ -1,7 +1,7 @@
 import React, { 
   createContext, 
   useContext, 
-  // useEffect, 
+  useEffect, 
   useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -23,7 +23,7 @@ import Register from './auth/Register';
 import Shipper from './shipper';
 import Admin from './admin';
 import User from './user';
-import Support from './support';
+import Support from './contact';
 import DetailProduct from './detail/DetailProduct';
 import AuthUser from './auth/user';
 import AuthVendor from './auth/vendor';
@@ -35,16 +35,18 @@ import AuthVendorChangePass from './auth/vendor/AuthVendorChangePass';
 import AuthUserChangePass from './auth/user/AuthUserChangePass';
 import AuthAdminChangePass from './auth/admin/AuthAdminChangePass';
 import { appContext } from './AppProvider';
-// import axios from 'axios';
+import axios from 'axios';
+import About from './about';
+import Contact from './contact';
 
 export default function App() {
-  // useEffect(() => {
-  //   const getCsrfToken = async () => {
-  //     const { data } = axios.get('/csrf-token');
-  //     axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken;
-  //   }
-  //   getCsrfToken();
-  // }, [])
+  useEffect(() => {
+    const getCsrfToken = async () => {
+      const { data } = await axios.get('/csrf-token');
+      axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken;
+    }
+    getCsrfToken();
+  }, [])
 
   return (
     <ProvideAuth>
@@ -59,6 +61,14 @@ export default function App() {
 
             <Route path="/login">
               <Login />
+            </Route>
+
+            <Route path="/about">
+              <About />
+            </Route>
+
+            <Route path="/contact">
+              <Contact />
             </Route>
 
             <Route path="/auth/user">

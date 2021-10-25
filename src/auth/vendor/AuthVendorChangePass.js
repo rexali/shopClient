@@ -13,19 +13,13 @@ export default class AuthVendorChangePass extends React.Component {
             result: '',
             err: ''
         }
-
     }
-
-
 
     handleChange = (evt) => {
         const { name, value } = evt.target;
         this.setState({
             [name]: value
         })
-
-        // test
-        console.log(this.props.location.params);
     }
 
     handleSubmit = async () => {
@@ -37,7 +31,7 @@ export default class AuthVendorChangePass extends React.Component {
                 password: this.state.password
             }
 
-            let result = await postData('http://localhost:3333/auth/vendor/change/password', postObj);
+            let result = await postData('/auth/vendor/change/password', postObj);
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 this.setState({ result: 'Success: you can now log in', password1: '', password2: '' })
                 console.log(result);

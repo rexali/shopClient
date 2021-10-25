@@ -46,7 +46,7 @@ function HomeMenu({ sendBackData }) {
     useEffect(() => { 
         const fetchMeData = () => {
             import("axios").then((axios) => {
-                axios.get('http://localhost:3333/products/product/read').then(function (response) {
+                axios.get('/products/product/read').then(function (response) {
                     let loadData = JSON.stringify(response.data);
                     let result = JSON.parse(loadData);
                     setData([...result]);

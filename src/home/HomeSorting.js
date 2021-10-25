@@ -79,7 +79,7 @@ function HomeSorting({ receivedData }) {
     }
 
     const getData = async () => {
-        let { data } = await axios.get('http://localhost:3333/products/product/read');
+        let { data } = await axios.get('/products/product/read');
         setData([...data]);
     }
 

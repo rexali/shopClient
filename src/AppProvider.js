@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 export const appContext = React.createContext();
 
@@ -7,7 +8,8 @@ export default class AppProvider extends React.Component {
     state = {
         data: [],
         cartData: [],
-        authData: {}
+        authData: {},
+        token:''
     }
 
     setData = (x) => {
@@ -27,8 +29,11 @@ export default class AppProvider extends React.Component {
     }
 
     getData = async () => {
+        let {data} = await axios.get("/jwt");
+        this.setState({token:data.token});
+        console.log(data.token);
         try {
-            let response = await fetch("http://localhost:3333/products/product/read", {
+            let response = await fetch("/products/product/read", {
                 mode: 'cors',
                 method: 'get'
             });
@@ -40,9 +45,7 @@ export default class AppProvider extends React.Component {
     }
 
     componentDidMount() {
-
         this.getData();
-
     }
 
     render() {

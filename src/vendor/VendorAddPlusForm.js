@@ -17,7 +17,6 @@ export class FormOne extends Component {
         product_price: '',
     };
 
-
     state = {
         product_name: '',
         product_picture: '',
@@ -31,9 +30,6 @@ export class FormOne extends Component {
         err: '',
         id: 1
     }
-
-
-
 
     handleChange = (evt) => {
         const { name, value } = evt.target;
@@ -59,8 +55,6 @@ export class FormOne extends Component {
 
             } else { alert("Large file, your file must be less than 50KB") }
         } catch (error) { console.log(error) }
-
-
     }
 
     handleImages = () => {
@@ -111,7 +105,7 @@ export class FormOne extends Component {
                 }
             };
             xmlhttp.responseType = '';
-            xmlhttp.open("POST", "http://localhost:3333/api/v1/file/file", true);
+            xmlhttp.open("POST", "/file/file", true);
             xmlhttp.send(formData);
         } catch (error) {
             console.log(error);
@@ -124,7 +118,7 @@ export class FormOne extends Component {
         const { openTab } = this.props;
         try {
             const productObj = this.state;
-            let response = await axios.post("http://localhost:3333/api/v1/products/product/add/1", productObj);
+            let response = await axios.post("/products/product/add/1", productObj);
             let result = JSON.parse(JSON.stringify(await response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 this.setState(this.initState);
@@ -344,7 +338,7 @@ export class FormTwo extends Component {
                 }
             };
             xmlhttp.responseType = '';
-            xmlhttp.open("POST", "http://localhost:3333/api/v1/file/file", true);
+            xmlhttp.open("POST", "/file/file", true);
             xmlhttp.send(formData);
         } catch (error) {
             console.log(error);
@@ -360,7 +354,7 @@ export class FormTwo extends Component {
         try {
 
             const productObj = this.state;
-            let response = await axios.post("http://localhost:3333/api/v1/products/product/add/2", productObj);
+            let response = await axios.post("/products/product/add/2", productObj);
             let result = JSON.parse(JSON.stringify(await response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 this.setState(this.initState);
@@ -603,7 +597,7 @@ export class FormThree extends Component {
                 }
             };
             xmlhttp.responseType = '';
-            xmlhttp.open("POST", "http://localhost:3333/api/v1/file/file", true);
+            xmlhttp.open("POST", "/file/file", true);
             xmlhttp.send(formData);
         } catch (error) {
             console.log(error);
@@ -617,7 +611,7 @@ export class FormThree extends Component {
         const { openTab } = this.props;
         try {
             const productObj = this.state;
-            let response = await axios.post("http://localhost:3333/api/v1/products/product/add/3", productObj);
+            let response = await axios.post("/products/product/add/3", productObj);
             let result = JSON.parse(JSON.stringify(await response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 this.setState(this.initState);

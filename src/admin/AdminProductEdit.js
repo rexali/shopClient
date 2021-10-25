@@ -54,7 +54,7 @@ export function EditFormOne({ data, updateAfterPost }) {
     let updateVendorProduct = async (prdtObj) => {
         setResult({ result: 'Sending data...' });
         try {
-            let response = await axios.post("http://localhost:3333/products/product/update", prdtObj);
+            let response = await axios.post("/products/product/update", prdtObj);
             let result = JSON.parse(JSON.stringify(await response.data[0]));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 setResult({ result: 'Success' });
@@ -110,7 +110,7 @@ export function EditFormOne({ data, updateAfterPost }) {
                         <div className="col-md-6">
                             <div className="form-group">
                                 <img
-                                    src={`http://localhost:3333/uploads/${data[0].product_picture}`}
+                                    src={`/uploads/${data[0].product_picture}`}
                                     id="productPicture"
                                     alt=""
                                     ref={product_picture}
@@ -321,7 +321,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
     let updateVendorProduct = async (prdtObj) => {
         setResult({ result: 'Sending data...' });
         try {
-            let response = await axios.post("http://localhost:3333/products/product/update", prdtObj);
+            let response = await axios.post("/products/product/update", prdtObj);
             let result = JSON.parse(JSON.stringify(await response.data[0]));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 setResult({ result: 'Success' });
@@ -486,7 +486,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                         <div className="col-md-6">
                             <div className="form-group">
                                 <img
-                                    src={`http://localhost:3333/uploads/${data[0].product_review}`}
+                                    src={`/uploads/${data[0].product_review}`}
                                     id="productReview"
                                     alt={data[0].product_name}
                                     ref={product_review}
@@ -584,7 +584,7 @@ export function EditFormThree({ data, updateAfterPost }) {
     let updateVendorProduct = async (prdtObj) => {
         setResult({ result: 'Sending data...' });
         try {
-            let response = await axios.post("http://localhost:3333/products/product/update", prdtObj);
+            let response = await axios.post("/products/product/update", prdtObj);
             let result = JSON.parse(JSON.stringify(await response.data[0]));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 setResult({ result: 'Success' });
@@ -639,7 +639,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                     <div className="col-md-6">
                         <div className="form-group">
                             <img
-                                src={`http://localhost:3333/uploads/${data[0].product_picture}`}
+                                src={`/uploads/${data[0].product_picture}`}
                                 id="productPicture"
                                 alt=""
                                 ref={product_picture}
@@ -852,7 +852,7 @@ export function EditFormFour({ data, updateAfterPost }) {
     let updateVendorProduct = async (prdtObj) => {
         setResult({ result: 'Sending data...' });
         try {
-            let response = await axios.post("http://localhost:3333/products/product/update", prdtObj);
+            let response = await axios.post("/products/product/update", prdtObj);
             let result = JSON.parse(JSON.stringify(await response.data[0]));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 setResult({ result: 'Success' });
@@ -907,7 +907,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                     <div className="col-md-6">
                         <div className="form-group">
                             <img
-                                src={`http://localhost:3333/uploads/${data[0].product_picture}`}
+                                src={`/uploads/${data[0].product_picture}`}
                                 id="productPicture"
                                 alt=""
                                 ref={product_picture}

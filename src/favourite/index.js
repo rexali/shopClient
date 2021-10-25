@@ -51,7 +51,7 @@ function Favourite() {
 
         if (uid) {
             try {
-                let { data } = await axios.post('http://localhost:3333/cart/read', { user_id: uid });
+                let { data } = await axios.post('/cart/read', { user_id: uid });
                 setCartData(data);
                 // setData(data)
             } catch (error) {
@@ -70,12 +70,12 @@ function Favourite() {
             document.getElementById("dropdown-autoclose-false2").click();
         } catch (error) { console.error(error); }
         if (userId) {
-            let resu = await getProductIds({ url: 'http://localhost:3333/cart/read', method: 'post', data: { user_id: userId } });
+            let resu = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
             if (resu.includes(pid)) {
                 alert("Item already in cart")
             } else {
             axios.post(
-                "http://localhost:3333/cart/add",
+                "/cart/add",
                 {
                     product_id: pid,
                     user_id: userId,
@@ -97,7 +97,7 @@ function Favourite() {
 
     const deleteFavouriteProduct = (pid) => {
         if (userId) {
-            axios.post('http://localhost:3333/wish/delete', { user_id: userId, product_id: pid })
+            axios.post('/wish/delete', { user_id: userId, product_id: pid })
                 .then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
                     console.log(result.result)
@@ -123,7 +123,7 @@ function Favourite() {
 
     const readFavouriteProducts = (uid) => {
         import("axios").then((axios) => {
-            axios.post('http://localhost:3333/wish/read', { user_id: uid }).then(function (response) {
+            axios.post('/wish/read', { user_id: uid }).then(function (response) {
                 let result = JSON.parse(JSON.stringify(response.data));
                 console.log(result)
                 setData([...result]);
@@ -154,7 +154,7 @@ function Favourite() {
                     return (<div className="col-md-4 card my-3 shadow-none" key={i} >
                         <div>
                             <a href="#share" className="btn btn-sm btn-outline-success m-2 position-absolute" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
-                            <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`http://localhost:3333/uploads/${product.product_picture ? product.product_picture : 'logo512.png'}`} alt={product.product_name ? product.product_name : ''} />
+                            <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`/uploads/${product.product_picture ? product.product_picture : 'logo512.png'}`} alt={product.product_name ? product.product_name : ''} />
                         </div>
                         <div className="card-body">
                             <p>{product.product_category ? product.product_category : ' '}</p>

@@ -11,16 +11,8 @@ import ShowModal from '../common/ShowModal';
 
 const HomeHeader = ({ sendBackData, cartData }) => {
   const { setCartData } = React.useContext(appContext);
-  const [about,setAbout]= useState(false)
-  const [contact,setContact]= useState(false)
   const [blog,setBlog]= useState(false)
 
-  const showAbout = (x)=>{
-    setAbout(x)
-  }
-  const showContact = (x)=>{
-    setContact(x)
-  }
   const showBlog = (x)=>{
     setBlog(x)
   }
@@ -36,10 +28,10 @@ const HomeHeader = ({ sendBackData, cartData }) => {
 
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">
-            <Link className="nav-link text-reset" to={"#about"} onClick={()=>showAbout(true)}>About</Link>
+            <Link className="nav-link text-reset" to={"/about"}>About</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link text-reset" to={"#contact"} onClick={()=>showContact(true)}>Contact</Link>
+            <Link className="nav-link text-reset" to={"/contact"} >Contact</Link>
           </li>
           <li className="nav-item">
             <Link className="nav-link text-reset" to={"#blog"} onClick={()=>showBlog(true)}>Blog</Link>
@@ -61,9 +53,7 @@ const HomeHeader = ({ sendBackData, cartData }) => {
           </li>
         </ul>
       </div>
-      {about&&<ShowModal title='About' body='I am the about' setAbout={setAbout} />}
-      {contact&&<ShowModal title='Contact' body='I am the contact' setAbout={setContact} />}
-      {blog&&<ShowModal title='Blog' body='I am the blog' setAbout={setBlog} />}
+      {blog&&<ShowModal title='Blog' body='I am the blog. When the blog link is ready let me know' setAbout={setBlog} />}
 
     </nav>
   );

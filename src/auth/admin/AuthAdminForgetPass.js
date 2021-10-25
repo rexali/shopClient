@@ -17,7 +17,7 @@ export default class AuthAdminForgetPass extends React.Component {
 
     handleSubmit = async () => {
 
-        let result = await getData('http://localhost:3333/auth/admin/request/password', this.state);
+        let result = await getData('/auth/admin/request/password', this.state);
 
         if (result.affectedRows === 1 && result.warningCount === 0) {
             this.setState({ result: 'Success: check your inbox for confirmation email', email: '' })
