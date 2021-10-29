@@ -38,6 +38,7 @@ import { appContext } from './AppProvider';
 import axios from 'axios';
 import About from './about';
 import Contact from './contact';
+import Blog from './blog';
 
 export default function App() {
   useEffect(() => {
@@ -69,6 +70,10 @@ export default function App() {
 
             <Route path="/contact">
               <Contact />
+            </Route>
+
+            <Route path="/blog">
+              <Blog />
             </Route>
 
             <Route path="/auth/user">

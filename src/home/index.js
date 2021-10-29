@@ -13,6 +13,7 @@ import HomeSearch from "./HomeSearch";
 import HomeMenu from "./HomeMenu";
 import { AuthButton } from "../App";
 import { appContext } from "../AppProvider";
+import axios from "axios";
 
 class Home extends Component {
 
@@ -23,12 +24,14 @@ class Home extends Component {
          data: [],
          totalItemCounts: 0,
          activePage: 1,
-         isLoading: true,
+         isLoading: true
       };
 
       this.receivedData = this.receivedData.bind(this);
       this.handlePageChange = this.handlePageChange.bind(this);
    }
+
+   static contextType=appContext;
 
    filterPrev = (index) => {
       let newData = this.state.initData.filter((_, i) => {
@@ -53,7 +56,10 @@ class Home extends Component {
       this.setState({ data: x })
    }
 
-   fetchData = () => {
+   fetchData = async() => {
+      let {data} = await axios.get("/jwt");
+      this.context.setAuthData({token:data.token});
+
       const url = '/products/product/read';
       fetch(
          url,
