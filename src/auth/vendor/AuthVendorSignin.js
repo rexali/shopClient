@@ -96,7 +96,7 @@ function AuthVendorSignin() {
               id="submit"
               ref={submitRef}
               className="btn btn-sm btn-outline-success pull-right" /><br/>
-            {/* <p className="text-muted">Don't have an account?{" "}<Link to="/register">Sign up</Link></p> */}
+            <p className="text-muted">Don't have an account?{" "}Sign up</p>
             <p>You must log in to view the page at {from.pathname === "/" ? '/home' : from.pathname}</p>
           </div>
         </form>

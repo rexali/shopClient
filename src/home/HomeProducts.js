@@ -1,8 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link, Redirect } from 'react-router-dom';
+import { 
+    Link, 
+    Redirect 
+} from 'react-router-dom';
 import axios from 'axios';
 import React, { useState } from 'react';
-import { appContext } from '../AppProvider';
+import {appContext} from '../AppProvider';
 import ShowToast from '../common/ShowToast';
 
 export default function HomeProducts({ products }) {
@@ -37,10 +40,13 @@ export default function HomeProducts({ products }) {
     </>
 };
 
-export function Product({ product, setCartData, showToast, resetToast, showToastFav, resetToastFav }) {
-    let [isLoggedin, setIsLoggedin] = useState(false);
-    const {state } = React.useContext(appContext);
-    const userId = state.authData?.user_id
+export function Product({ product, setCartData, showToast, resetToast, showToastFav, resetToastFav}) {
+    let [showLogin, setShowLogin] = useState(false);
+    const {state} = React.useContext(appContext);
+    const userId=state.authData?.user_id;
+
+
+    
 
     const getCartData = (uid) => {
         import("axios").then((axios) => {
@@ -81,7 +87,6 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
             document.getElementById("dropdown-autoclose-false2").click();
         } catch (error) { console.error(error); }
         if (userId) {
-            console.log(userId);
             let resu = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
             if (resu.includes(pid)) {
                 alert("Item already in cart")
@@ -105,8 +110,8 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
                 }).catch((error) => { console.log(error); });
             }
         } else {
-            // alert("Please log in")
-            setIsLoggedin(true)
+            alert("Please log in")
+            setShowLogin(true)
         }
     }
 
@@ -120,10 +125,7 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
         }
     }
 
-
-
     const saveProduct = async (event, pid, vid) => {
-        event.target.style.color = "green";
         if (userId) {
             console.log(userId);
             let resu = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
@@ -143,11 +145,12 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
                     setTimeout(() => {
                         resetToastFav();
                     }, 3000);
+                    event.target.style.color = "green";
                 }).catch((error) => { console.log(error); });
             }
         } else {
             // alert("Please log in")
-            setIsLoggedin(true)
+            setShowLogin(true)
 
         }
     }
@@ -173,8 +176,8 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
         return productPictures.filter((item) => { return item !== "" });
     }
 
-    if (isLoggedin) {
-        return <Redirect to="/auth/user" />
+    if (showLogin) {
+        return <Redirect to="/auth/user/login" />
     }
 
     return (
@@ -190,7 +193,7 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
                             pathname: `/detail/${product.product_id}`,
                             state: product
                         }
-                    }><img onMouseEnter={mouseover} onMouseLeave={mouseout} variant="top" style={styles.imageProps} className="img-fluid d-block mx-auto" src={`/uploads/${getPictures(product.product_picture).length === 1 ? product.product_picture : getPictures(product.product_picture)[0]}`} alt={product.product_name ? product.product_name : ''} /></Link>
+                    }><img onMouseEnter={mouseover} onMouseLeave={mouseout} variant="top" style={styles.imageProps} className="img-fluid d-block mx-auto" src={`/uploads/${getPictures(product.product_picture).length === 1 ? getPictures(product.product_picture)[0]: getPictures(product.product_picture)[0]}`} alt={product.product_name ? product.product_name : ''} /></Link>
                 </div>
                 
                 <div className="card-body">

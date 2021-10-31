@@ -32,13 +32,12 @@ function VendorProduct(props) {
 
     const removeProduct = (id) => {
         import("axios").then((axios) => {
-            axios.get('/products/product/delete', {
-                body: { product_id: id }
-            }).then(function (response) {
+            axios.get('/products/product/delete/'+id)
+            .then(function (response) {
                 let result = JSON.parse(JSON.stringify(response.data));
-                if (result.affectedRows === 1 && result.warningCount === 0) {
+                if (result) {
                     setDisplayToast(true)
-                    getVendorProducts(id)
+                    getVendorProducts(vendorId)
                 }
             }).catch(function (error) {
                 console.log(error);

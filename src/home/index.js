@@ -13,7 +13,6 @@ import HomeSearch from "./HomeSearch";
 import HomeMenu from "./HomeMenu";
 import { AuthButton } from "../App";
 import { appContext } from "../AppProvider";
-import axios from "axios";
 
 class Home extends Component {
 
@@ -57,8 +56,6 @@ class Home extends Component {
    }
 
    fetchData = async() => {
-      let {data} = await axios.get("/jwt");
-      this.context.setAuthData({token:data.token});
 
       const url = '/products/product/read';
       fetch(

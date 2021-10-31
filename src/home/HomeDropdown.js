@@ -2,11 +2,13 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Dropdown, Badge, Button, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { appContext } from '../AppProvider';
 
 
 export default function HomeDropdown({ setCartData, cartData }) {
    let [cartCount, setCartCount] = useState([]);
-   const userId = window.sessionStorage.getItem("userId");
+   const {state}= React.useContext(appContext);
+   const userId = state.authData?.user_id
 
    const clearCart = () => {
       axios.post('/cart/delete/all', { user_id: userId })
@@ -61,10 +63,16 @@ export default function HomeDropdown({ setCartData, cartData }) {
 }
 
 export function HomeDropdownItem({ cartData, removeCartItem }) {
+   const getPictures = (pictures) => {
+      let productPictures = [];
+      productPictures = pictures?.split(';');
+      return productPictures.filter((item) => { return item !== "" });
+  }
+
    return cartData.map((item, i) => {
       return (
          <Dropdown.Item key={i}>
-               <div className="d-flex justify-content-between"><span className="text-break w-50">{item.product_name}<span><br />{item.product_price}</span></span><img className="img-fluid w-25 h-25 align-self-center" src={`http://localhost:3333/uploads/${item.product_picture ? item.product_picture : ''}`} alt={item.product_name ? item.product_name : ''} /><button className="btn ml-3" onClick={() => removeCartItem(item.product_id)}>X</button></div>        
+               <div className="d-flex justify-content-between"><span className="text-break w-50">{item.product_name}<span><br />{item.product_price}</span></span><img className="img-fluid w-25 h-25 align-self-center" src={`/uploads/${getPictures(item.product_picture)[0] ? getPictures(item.product_picture)[0] : ''}`} alt={item.product_name ? item.product_name : ''} /><button className="btn ml-3" onClick={() => removeCartItem(item.product_id)}>X</button></div>        
          </Dropdown.Item>
       );
    })

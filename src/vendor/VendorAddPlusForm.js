@@ -147,11 +147,11 @@ export class FormOne extends Component {
                 <form onSubmit={this.handleSubmit}>
                     <div className="row">
 
-                        <div className="col-md-6">
+                        <div className="col-md-12">
                             <div className="form-group">
                             <span>Tap the camera icon to add product pictures</span>
                                 <div className="input-group d-flex justify-content-between mb-2">
-                                    <div id="displayImages"></div><span className="fa fa-camera align-self-center btn-link text-decoration-none mt-3"> Add+</span>
+                                    <div id="displayImages"></div><span className="fa fa-camera align-self-center btn-link text-decoration-none mt-3"></span>
                                 </div>
                             </div>
                         </div>
@@ -454,6 +454,7 @@ export class FormTwo extends Component {
                                 <textarea
                                     name="product_description"
                                     cols="30"
+                                    rows="4"
                                     maxLength="50000"
                                     placeholder="copy and paste product features and benefits especially"
                                     className="form-control rounded"
@@ -557,7 +558,6 @@ export class FormThree extends Component {
             input.onchange = (evt) => this.showPostPicture(evt);
             input.click();
         });
-
     };
 
     displayImages = (file) => {
@@ -822,36 +822,12 @@ export class FormThree extends Component {
 
                         <div className="col-md-12">
                             <div className="form-group">
-                                <span>Tap the camera icon to add product pictures</span>
+                                <span>Tap the camera icon to add product review screenshots if you have any</span>
                                 <div className="input-group d-flex justify-content-between mb-2">
                                     <div id="displayImages"></div><span className="fa fa-camera btn-link text-decoration-none"></span>
                                 </div>
                             </div>
                         </div>
-
-
-                        {/* <div className="col-md-6">
-                            <div className="form-group">
-                                <span id="productReview" className="d-block"></span>
-                                <label htmlFor="picture">Select all your products'reviews screenshots
-                                    <span
-                                        className="fa fa-question-circle pull-right"
-                                        title="Screenshot your customers reviews after using your service or product and upload here">
-                                    </span>
-                                </label>
-                                <input
-                                    type="file"
-                                    name="product_review"
-                                    id="product_review"
-                                    accept="images/*"
-                                    className="form-control rounded"
-                                    required
-                                    defaultValue={product_review}
-                                    multiple
-                                    onChange={this.handleChange} />
-                                <span id="productReviewResult"></span>
-                            </div>
-                        </div> */}
 
                         <div className="col-12 col-md-12 text-center">
                             <div className="form-group">
@@ -884,7 +860,7 @@ export default class VendorAddPlusForm extends Component {
     render() {
         return (
             <div className="container" >
-                <ul className="nav nav-tabs nav-justified">
+                <ul className="nav nav-tabs nav-justified mt-3">
                     <li className="nav-item">
                         <Link className="nav-link active" data-toggle="tab" onClick={() => this.openTab('formone')} to="#">Form One</Link>
                     </li>

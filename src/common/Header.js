@@ -11,9 +11,9 @@ function Header(props) {
             <li className="nav-item active">
                 <Link to={`/${props.title}`} className="nav-link text-black">{props.title}</Link>
             </li>
-            {/* <li className="nav-item">
-                {props.HomeDropdown}
-            </li> */}
+            <li className="nav-item">
+                <Link to="/vendor" className="nav-link" style={{fontSize:"xx-small"}}>Want to sell your item? <i className="fa fa-send-o" aria-hidden="true" ></i></Link>
+            </li>
         </ul>
     )
 }

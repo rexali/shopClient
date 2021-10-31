@@ -58,9 +58,6 @@ function DrawerContent({ sendBackData, handleClose }) {
         getData();
     }, []);
 
-
-
-
     return (
         <div style={{overflowY: 'auto', maxHeight: "550px" }}>
             <div className='card w-100'><button className='btn btn-link bg-light text-decoration-none' onClick={allSearch}>All</button></div>

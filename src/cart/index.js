@@ -48,18 +48,11 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
     };
 
     const getUserDetail = async (userId) => {
-        let data = { user_id: userId }
-        let fetchOption = {
-            mode: 'cors',
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }
+        let dataOption = { user_id: userId }
         if (userId) {
             try {
-                let response = await fetch("/users/user", fetchOption);
-                let result = await response.json();
-                if (result) setData(result);
+                let {data} = await axios.post("/users/user", dataOption);;
+                if (data) setData(data);
             } catch (error) {
                 console.log(error);
             }
@@ -145,28 +138,33 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
         switch (Number(method)) {
 
             case 1:
-                const POD = "Order successfully submitted and pay N" + getTotal + " on delivery";
+                const POD = `
+                Order successfully submitted. \n\n
+                And pay N ${getTotal} on delivery`;
                 for (let i = 0; i < pids.length; i++) {
                     postOrder(pids[i], vids[i], prices[i], quantities[i], total, cartObj, 'pending');
 
                 }
-                // postOrder(pids, vids, prices, quantities, total, cartObj, 'pending');
-                // alert(POD)
+            
                 updateUserProfile(cartObj);
                 setTransxMessage(POD)
                 setTransxStatus(true);
+                clearCart();
                 break;
             case 2:
-                const BT = "Pay to the account detail below: \n\r Account name: Siniotech Information and Communication Technology Co. Ltd \n\r Account number: 0020345409 \n\r Bank: Guarranty Trust Bank (GTB)";
+                const BT = `
+                Pay to the account detail below: \n\n
+                Account name: Siniotech Information and Communication Technology Co. Ltd.\n\n 
+                Account number: 0020345409 \n\n 
+                Bank: Guarranty Trust Bank (GTB)`;
                 for (let i = 0; i < pids.length; i++) {
                     postOrder(pids[i], vids[i], prices[i], quantities[i], total, cartObj, 'pending');
 
                 }
-                // postOrder(pids, vids, prices, quantities, total, cartObj, "pending");
-                // alert(BT)
                 updateUserProfile(cartObj);
                 setTransxMessage(BT)
                 setTransxStatus(true);
+                clearCart();
                 break;
             case 3:
                 payWithPaystack(pids, vids, prices, quantities, total, cartObj, clearCart)
@@ -175,13 +173,9 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                 payWithFlutterwave(pids, vids, prices, quantities, total, cartObj, clearCart)
                 break;
             default:
-                const PO = "Order successfully submitted and pay N" + getTotal + " on delivery";
-                for (let i = 0; i < pids.length; i++) {
-                    postOrder(pids[i], vids[i], prices[i], quantities[i], total, cartObj, 'pending');
-                }
-                // postOrder(pids, vids, prices, quantities, total, cartObj, PO);
-                setTransxMessage(PO)
+                setTransxMessage("Wrong payment method selected")
                 setTransxStatus(true);
+                new Error("Wrong payment method selected")
                 break;
         }
     }
@@ -495,6 +489,7 @@ function Cart() {
         }
     }
 
+  
     const removeProduct = (evt, pid) => {
         evt.target.style.color = "green";
         if (userId) {
@@ -665,6 +660,12 @@ function Cart() {
         return quantities;
     }
 
+    const getPictures = (pictures) => {
+        let productPictures = [];
+        productPictures = pictures?.split(';');
+        return productPictures.filter((item) => { return item !== "" });
+    }
+
     useEffect(() => {
         fetchCartData(userId);
     }, [userId]);
@@ -686,7 +687,7 @@ function Cart() {
                         <ul className="list-group card mb-2 mt-2" key={i}>
                             <li className="list-group-ite d-flex justify-content-around">
                                 <Link to={{ pathname: '/detail/' + item.product_id }}>
-                                    <img src={`/uploads/${item.product_picture ? item.product_picture : 'logo512.png'}`} alt={item.product_name ? item.product_name : ''} style={styles.imageSize} className="img-fluid img-thumbnail" />
+                                    <img src={`/uploads/${getPictures(item.product_picture)[0] ? getPictures(item.product_picture)[0] : 'logo512.png'}`} alt={item.product_name ? item.product_name : ''} style={styles.imageSize} className="img-fluid img-thumbnail" />
                                 </Link>
                                 <span className="align-self-center text-break" style={styles.productNameSize}>{item.product_name}</span>
                                 <span>

@@ -28,7 +28,7 @@ export default function OverflowMenu({...props }) {
             <button className='btn btn-sm text-reset' onClick={handleShow}><i className="fa fa-user" aria-hidden="true"></i></button>
             <Offcanvas show={show} onHide={handleClose} {...props} >
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>Menu</Offcanvas.Title>
+                    {/* <Offcanvas.Title>Menu</Offcanvas.Title> */}
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <ul className="list-group-flush">

@@ -48,7 +48,7 @@ const HomeHeader = ({ sendBackData, cartData }) => {
             <Link className="nav-link text-reset" to={'/favourite'}><i className="fa fa-heart mr-1" aria-hidden="true"> Wish</i></Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link text-reset" to={'/auth/user'}><i className="fa fa-sign-in mr-1" aria-hidden="false"> Log in</i></Link>
+            <Link className="nav-link text-reset" to={'/auth/user/login'}><i className="fa fa-sign-in mr-1" aria-hidden="false"> Log in</i></Link>
           </li>
         </ul>
       </div>

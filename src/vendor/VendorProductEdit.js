@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import ErrorBoundary from "../common/ErrorBoundary";
+import { getPicture } from "../service";
 
 export function EditFormOne({ data, updateAfterPost }) {
 
@@ -74,7 +75,7 @@ export function EditFormOne({ data, updateAfterPost }) {
                             type="text"
                             name="product_id"
                             id="product_id"
-                            defaultValue={data[0].product_id}
+                            defaultValue={data[0]?.product_id}
                             ref={product_id}
                             hidden
                             required
@@ -83,7 +84,7 @@ export function EditFormOne({ data, updateAfterPost }) {
                             type="text"
                             name="vendor_id"
                             id="vendor_id"
-                            defaultValue={data[0].vendor_id}
+                            defaultValue={data[0]?.vendor_id}
                             ref={vendor_id}
                             hidden
                             required
@@ -100,7 +101,7 @@ export function EditFormOne({ data, updateAfterPost }) {
                                     placeholder="product name"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_name}
+                                    defaultValue={data[0]?.product_name}
                                     ref={product_name}
 
                                 />
@@ -109,8 +110,23 @@ export function EditFormOne({ data, updateAfterPost }) {
 
                         <div className="col-md-6">
                             <div className="form-group">
+                                <input
+                                    type="text"
+                                    name="product_code"
+                                    id="product_code"
+                                    className="form-control rounded"
+                                    required
+                                    readOnly
+                                    value={data[0]?.product_code}
+                                    ref={product_code}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="col-md-12">
+                            <div className="form-group">
                                 <img
-                                    src={`/uploads/${data[0].product_picture}`}
+                                    src={`/uploads/${getPicture(data[0]?.product_picture)[0]}`}
                                     id="productPicture"
                                     alt=""
                                     ref={product_picture}
@@ -154,7 +170,7 @@ export function EditFormOne({ data, updateAfterPost }) {
                                     placeholder="product sub-category"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_sub_category}
+                                    defaultValue={data[0]?.product_sub_category}
                                     ref={product_sub_category}
 
                                 />
@@ -171,7 +187,7 @@ export function EditFormOne({ data, updateAfterPost }) {
                                     maxLength="100"
                                     placeholder="detail or description of product"
                                     className="form-control rounded"
-                                    defaultValue={data[0].product_description}
+                                    defaultValue={data[0]?.product_description}
                                     ref={product_description}
 
                                     required />
@@ -187,7 +203,7 @@ export function EditFormOne({ data, updateAfterPost }) {
                                     placeholder="product quantity"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_quantity}
+                                    defaultValue={data[0]?.product_quantity}
                                     ref={product_quantity}
 
                                 />
@@ -203,7 +219,7 @@ export function EditFormOne({ data, updateAfterPost }) {
                                     placeholder="product price"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_price}
+                                    defaultValue={data[0]?.product_price}
                                     ref={product_price}
 
                                 />
@@ -219,7 +235,7 @@ export function EditFormOne({ data, updateAfterPost }) {
                                     placeholder="product weight of a unit"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_weight}
+                                    defaultValue={data[0]?.product_weight}
                                     ref={product_weight}
 
                                 />
@@ -236,25 +252,13 @@ export function EditFormOne({ data, updateAfterPost }) {
                                     placeholder="product's size"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_size}
+                                    defaultValue={data[0]?.product_size}
                                     ref={product_size}
                                 />
                             </div>
                         </div>
 
-                        <div className="col-md-6">
-                            <div className="form-group">
-                                <input
-                                    type="text"
-                                    name="product_code"
-                                    id="product_code"
-                                    className="form-control rounded"
-                                    required
-                                    defaultValue={data[0].product_code}
-                                    ref={product_code}
-                                />
-                            </div>
-                        </div>
+                       
 
                         <div className="col-12 col-md-12 text-center">
                             <div className="form-group">
@@ -272,7 +276,6 @@ export function EditFormOne({ data, updateAfterPost }) {
 }
 
 export function EditFormTwo({ data, updateAfterPost }) {
-
     let [error, setError] = useState('');
     let [result, setResult] = useState('');
     let product_id = useRef();
@@ -321,7 +324,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
     let updateVendorProduct = async (prdtObj) => {
         setResult({ result: 'Sending data...' });
         try {
-            let response = await axios.post("/products/product/update", prdtObj);
+            let response = await axios.post("/products/product/update/more", prdtObj);
             let result = JSON.parse(JSON.stringify(await response.data[0]));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 setResult({ result: 'Success' });
@@ -340,7 +343,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                         type="text"
                         name="product_id"
                         id="product_id"
-                        defaultValue={data[0].product_id}
+                        defaultValue={data[0]?.product_id}
                         ref={product_id}
                         hidden
                         required
@@ -349,7 +352,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                         type="text"
                         name="vendor_id"
                         id="vendor_id"
-                        defaultValue={data[0].vendor_id}
+                        defaultValue={data[0]?.vendor_id}
                         ref={vendor_id}
                         hidden
                         required
@@ -365,7 +368,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     placeholder="What is in the box or package?"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_package}
+                                    defaultValue={data[0]?.product_package}
                                     ref={product_package} />
                             </div>
                         </div>
@@ -379,7 +382,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     placeholder="product colour"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_color}
+                                    defaultValue={data[0]?.product_color}
                                     ref={product_colour} />
                             </div>
                         </div>
@@ -408,7 +411,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     placeholder="shipping fee you are charging"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_shipping}
+                                    defaultValue={data[0]?.product_shipping}
                                     ref={product_shipping} />
                             </div>
                         </div>
@@ -422,12 +425,26 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     placeholder="product's warranty here"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_warranty}
+                                    defaultValue={data[0]?.product_warranty}
                                     ref={product_warranty} />
                             </div>
                         </div>
 
                         <div className="col-md-6">
+                            <div className="form-group">
+                                <label htmlFor="size">Email</label>
+                                <input
+                                    type="text"
+                                    name="product_email"
+                                    placeholder="email address"
+                                    className="form-control rounded"
+                                    required
+                                    defaultValue={data[0]?.product_email}
+                                    ref={product_email} />
+                            </div>
+                        </div>
+
+                        <div className="col-md-12">
                             <div className="form-group">
                                 <label htmlFor="size">Delivery and Return policy</label>
                                 <textarea
@@ -435,7 +452,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     placeholder="product's delivery and return policy"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_return}
+                                    defaultValue={data[0]?.product_return}
                                     ref={product_return} />
                             </div>
                         </div>
@@ -449,7 +466,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     placeholder="product's seller"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_seller}
+                                    defaultValue={data[0]?.product_seller}
                                     ref={product_seller} />
                             </div>
                         </div>
@@ -463,34 +480,19 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     placeholder="phone number"
                                     className="form-control rounded"
                                     required
-                                    defaultValue={data[0].product_phone}
+                                    defaultValue={data[0]?.product_phone}
                                     ref={product_phone} />
                             </div>
                         </div>
 
-                        <div className="col-md-6">
-                            <div className="form-group">
-                                <label htmlFor="size">Email</label>
-                                <input
-                                    type="text"
-                                    name="product_email"
-                                    placeholder="email address"
-                                    className="form-control rounded"
-                                    required
-                                    defaultValue={data[0].product_email}
-                                    ref={product_email} />
-                            </div>
-                        </div>
-
-
-                        <div className="col-md-6">
+                        <div className="col-md-12">
                             <div className="form-group">
                                 <img
-                                    src={`/uploads/${data[0].product_review}`}
+                                    src={`/uploads/${getPicture(data[0]?.product_review) ? getPicture(data[0]?.product_review)[0] : 'logo512.png'}`}
                                     id="productReview"
-                                    alt={data[0].product_name}
+                                    alt={data[0]?.product_name}
                                     ref={product_review}
-                                    className="rounded img-fluid d-block mx-auto"
+                                    className="rounded img-fluid w-50 d-block mx-auto"
                                 />
                                 <label htmlFor="picture">Select all your products'reviews screenshots
                                     <span
@@ -505,7 +507,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     accept="images/*"
                                     className="form-control rounded"
                                     required
-                                    // defaultValue={data[0].product_review}
+                                    // defaultValue={data[0]?.product_review}
                                     multiple
                                     ref={product_file} />
                                 <span id="productReviewResult"></span>
@@ -603,7 +605,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                         type="text"
                         name="product_id"
                         id="product_id"
-                        defaultValue={data[0].product_id}
+                        defaultValue={data[0]?.product_id}
                         ref={product_id}
                         hidden
                         required
@@ -612,7 +614,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                         type="text"
                         name="vendor_id"
                         id="vendor_id"
-                        defaultValue={data[0].vendor_id}
+                        defaultValue={data[0]?.vendor_id}
                         ref={vendor_id}
                         hidden
                         required
@@ -629,7 +631,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                                 placeholder="product name"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_name}
+                                defaultValue={data[0]?.product_name}
                                 ref={product_name}
 
                             />
@@ -639,7 +641,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                     <div className="col-md-6">
                         <div className="form-group">
                             <img
-                                src={`/uploads/${data[0].product_picture}`}
+                                src={`/uploads/${data[0]?.product_picture}`}
                                 id="productPicture"
                                 alt=""
                                 ref={product_picture}
@@ -683,7 +685,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                                 placeholder="product sub-category"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_sub_category}
+                                defaultValue={data[0]?.product_sub_category}
                                 ref={product_sub_category}
 
                             />
@@ -700,7 +702,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                                 maxLength="100"
                                 placeholder="detail or description of product"
                                 className="form-control rounded"
-                                defaultValue={data[0].product_description}
+                                defaultValue={data[0]?.product_description}
                                 ref={product_description}
 
                                 required />
@@ -716,7 +718,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                                 placeholder="product quantity"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_quantity}
+                                defaultValue={data[0]?.product_quantity}
                                 ref={product_quantity}
 
                             />
@@ -732,7 +734,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                                 placeholder="product price"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_price}
+                                defaultValue={data[0]?.product_price}
                                 ref={product_price}
 
                             />
@@ -748,7 +750,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                                 placeholder="product weight of a unit"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_weight}
+                                defaultValue={data[0]?.product_weight}
                                 ref={product_weight}
 
                             />
@@ -765,7 +767,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                                 placeholder="product's size"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_size}
+                                defaultValue={data[0]?.product_size}
                                 ref={product_size}
                             />
                         </div>
@@ -779,7 +781,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                                 id="product_code"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_code}
+                                defaultValue={data[0]?.product_code}
                                 ref={product_code}
                             />
                         </div>
@@ -871,7 +873,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                         type="text"
                         name="product_id"
                         id="product_id"
-                        defaultValue={data[0].product_id}
+                        defaultValue={data[0]?.product_id}
                         ref={product_id}
                         hidden
                         required
@@ -880,7 +882,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                         type="text"
                         name="vendor_id"
                         id="vendor_id"
-                        defaultValue={data[0].vendor_id}
+                        defaultValue={data[0]?.vendor_id}
                         ref={vendor_id}
                         hidden
                         required
@@ -897,7 +899,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                                 placeholder="product name"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_name}
+                                defaultValue={data[0]?.product_name}
                                 ref={product_name}
 
                             />
@@ -907,7 +909,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                     <div className="col-md-6">
                         <div className="form-group">
                             <img
-                                src={`/uploads/${data[0].product_picture}`}
+                                src={`/uploads/${data[0]?.product_picture}`}
                                 id="productPicture"
                                 alt=""
                                 ref={product_picture}
@@ -951,7 +953,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                                 placeholder="product sub-category"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_sub_category}
+                                defaultValue={data[0]?.product_sub_category}
                                 ref={product_sub_category}
 
                             />
@@ -968,7 +970,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                                 maxLength="100"
                                 placeholder="detail or description of product"
                                 className="form-control rounded"
-                                defaultValue={data[0].product_description}
+                                defaultValue={data[0]?.product_description}
                                 ref={product_description}
 
                                 required />
@@ -984,7 +986,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                                 placeholder="product quantity"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_quantity}
+                                defaultValue={data[0]?.product_quantity}
                                 ref={product_quantity}
 
                             />
@@ -1000,7 +1002,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                                 placeholder="product price"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_price}
+                                defaultValue={data[0]?.product_price}
                                 ref={product_price}
 
                             />
@@ -1016,7 +1018,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                                 placeholder="product weight of a unit"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_weight}
+                                defaultValue={data[0]?.product_weight}
                                 ref={product_weight}
 
                             />
@@ -1033,7 +1035,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                                 placeholder="product's size"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_size}
+                                defaultValue={data[0]?.product_size}
                                 ref={product_size}
                             />
                         </div>
@@ -1047,7 +1049,7 @@ export function EditFormFour({ data, updateAfterPost }) {
                                 id="product_code"
                                 className="form-control rounded"
                                 required
-                                defaultValue={data[0].product_code}
+                                defaultValue={data[0]?.product_code}
                                 ref={product_code}
                             />
                         </div>

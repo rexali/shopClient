@@ -129,9 +129,7 @@ function VendorProfile(props) {
          console.log(id)
         import("axios").then((axios) => {
             axios.post('/users/vendor', { vendor_id: id }).then(function (response) {
-                let loadData = JSON.stringify(response.data);
-                let result = JSON.parse(loadData);
-                console.log(result)
+                let result = JSON.parse(JSON.stringify(response.data));
                 setData(result[0]);
             }).catch(function (error) {
                 console.log(error);

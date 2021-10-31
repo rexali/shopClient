@@ -23,7 +23,7 @@ class VendorAddForm extends Component {
     }
 
     state = {
-        product_name: ' ',
+        product_name: '',
         product_picture: '',
         product_category: '',
         product_sub_category: '',
@@ -32,10 +32,13 @@ class VendorAddForm extends Component {
         product_price: '',
         product_weight: '',
         product_size: '',
+        files: [],
+        filenames: '',
+        result:'',
+        err:'',
         product_code: Math.floor(Math.random() * 10000000),
         vendor_id: this.context.state.authData?.vendor_id //'9' //window.sessionStorage.getItem("userId")
     }
-
 
     handleChange = (evt) => {
         const { name, value } = evt.target;
@@ -43,80 +46,70 @@ class VendorAddForm extends Component {
         this.setState({
             [name]: value
         });
+    }
 
-        if (name === 'product_picture') {
-            let fsize;
-            try {
-                fsize = document.getElementById('product_picture').files[0].size;
-            } catch (error) { console.log(error); }
-            if (!(fsize > 0.05 * 1024 * 1024)) {
-                // this.showPicture(evt);
-                this.showProductPictures(evt)
-                this.setState({ product_picture: this.productPictures(evt) })
-            } else { alert("Large file, your file must be less than 50KB") }
+    handleFiles = () => {
+        let files = this.state.files.map((file, i) => {
+            return file.file;
+        });
+
+        for (let i = 0; i < files.length; i++) {
+            this.handleFileUpload(files[i]);
         }
     }
 
-    showPicture = (evt) => {
-        let objUrl;
+
+    handleFileUpload = (file) => {
+        let formData = new FormData();
         try {
-            objUrl = URL.createObjectURL(evt.target.files[0]);
+            formData.append('picture', file ? file : '');
+            axios.post("/file/file",formData);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    handleImages = () => {
+        document.querySelector(".fa.fa-camera").addEventListener("click", (event) => {
+            let input = document.createElement("input");
+            input.type = 'file';
+            input.name = `file`
+            input.onchange = (evt) => this.showProductPictures(evt);
+            input.click();
+        });
+    };
+
+    displayImages = (file) => {
+        if (file) {
+            let image = document.createElement("img");
+            image.setAttribute("src", file);
+            image.setAttribute("id", "myImage");
+            image.setAttribute("width", "50px");
+            image.setAttribute("height", "50px");
+            image.style.display = "inline-block";
+            image.style.margin = "auto";
+            image.style.margin = "1px";
+            document.getElementById("displayImages").append(image);
+        }
+    }
+
+    showProductPictures = async(evt) => {
+        var imagefile, objUrl;;
+        try {
+            imagefile = await evt.target.files[0];
+
+            if (!(imagefile.size > 0.05 * 1024 * 1024)) {
+                this.setState({
+                    filenames: this.state.filenames.concat(';' + imagefile.name),
+                    files: [...this.state.files, { [evt.target.name]: await evt.target.files[0] }]
+                });
+                objUrl = URL.createObjectURL(imagefile);
+                this.displayImages(objUrl);
+
+            } else { alert("Large file, your file must be less than 50 KB") }
         } catch (error) { console.log(error) }
-        console.log(objUrl);
-        document.getElementById("productPictureAdd").setAttribute("src", objUrl);
-        document.getElementById("productPictureAdd").setAttribute("width", "100px");
-        document.getElementById("productPictureAdd").setAttribute("height", "100px");
-        document.getElementById("productPictureAdd").style.display = "block";
-        document.getElementById("productPictureAdd").style.margin = "auto";
-    }
 
-    productPictures = (evt) => {
-        let pictureNames = '', product_picture;
-        try {
-            product_picture = evt.target.files
-            if (product_picture.length > 0) {
-                for (let i = 0; i < product_picture.length; i++) {
-                    var fileName = product_picture[i].name;
-                    pictureNames += ';' + fileName;
-                }
-            }
-        } catch (error) {
-            console.log(error);
-        }
-
-        return pictureNames;
-    }
-
-    showProductPictures = (evt) => {
-        var lg = evt.target.files.length, images = "";
-        if (lg > 0) {
-            for (let i = 0; i < lg; i++) {
-                images += "<img src='" + URL.createObjectURL(evt.target.files[i]) + "' width='50px' height='50px' style='display:blockd; margin:autod;' class='mr-1'>";
-            }
-            document.getElementById("productPictureAdd").innerHTML = images;
-        }
-    }
-
-    uploadPicture = () => {
-        try {
-            let files = document.getElementById('product_picture').files;
-            for (let i = 0; i < files.length; i++) {
-                let formData = new FormData();
-                formData.append('productpicture', files[i]);
-                let xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function () {
-                    if (this.readyState === 4 && this.status === 200) {
-                        console.log(this.responseText);
-                    }
-                };
-                xmlhttp.responseType = '';
-                xmlhttp.open("POST", "/file/file", true);
-                xmlhttp.send(formData);
-            }
-
-        } catch (error) {
-            console.log(error);
-        }
+        console.log(this.state.files)
     }
 
 
@@ -124,35 +117,43 @@ class VendorAddForm extends Component {
         const productObj = this.state;
         console.log(productObj)
         axios.post("/products/product/add", productObj).then((response) => {
-            let data = JSON.stringify(response.data);
-            let result = JSON.parse(data);
+            let result = JSON.parse(JSON.stringify(response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
+                this.setState({result:'Product added'})
                 this.setState(this.initialState);
-                this.uploadPicture();
+                this.handleFiles() ;
+                this.setState({result:'Product and file added'})
             }
+
             console.log(result);
         }).catch((error) => {
             console.log(error);
         })
     }
 
+    componentDidMount(){
+        this.handleImages();
+    }
+
     render() {
 
         const {
             product_name,
-            product_picture,
+            // product_picture,
             product_category,
             product_sub_category,
             product_description,
             product_quantity,
             product_price,
             product_weight,
-            product_size
+            product_size,
+            result,
+            err
         } = this.state;
         return (
             <ErrorBoundary>
                 <form name="vendorAddForm" id="vendorAddForm">
-                    <div className="row">
+                    <div className="row mt-3">
                         <div className="col-md-6">
                             <div className="form-group">
                                 <input
@@ -167,23 +168,12 @@ class VendorAddForm extends Component {
                                 />
                             </div>
                         </div>
-
                         <div className="col-md-6">
                             <div className="form-group">
-                                <span id="productPictureAdd"></span>
-                                <label htmlFor="picture">Choose or take picture</label>
-                                <input
-                                    type="file"
-                                    name="product_picture"
-                                    id="product_picture"
-                                    accept="images/*,videos/*"
-                                    className="form-control rounded"
-                                    required
-                                    multiple
-                                    onChange={this.handleChange}
-                                    value={product_picture}
-                                />
-                                <span id="productPictureResult"></span>
+                                <span>Tap the camera icon to add product pictures</span>
+                                <div className="input-group d-flex justify-content-between mb-2">
+                                    <div id="displayImages"></div><span className="fa fa-camera btn-link text-decoration-none"></span>
+                                </div>
                             </div>
                         </div>
 
@@ -295,9 +285,9 @@ class VendorAddForm extends Component {
 
                         <div className="col-12 col-md-12 text-center">
                             <div className="form-group">
-                                <span id="addProductResultS" className="bg-success text-white">{this.state.result}</span>
-                                <span id="addProductResultF" className="bg-danger text-white"></span>
-                                <input type="button" onClick={this.handleSubmit} value="Add" className="btn btn-outline-success btn-block" />
+                                <span id="addProductResultS" className="bg-success text-white d-block">{result}</span>
+                                <span id="addProductResultF" className="bg-danger text-white d-block">{err}</span>
+                                <input type="button" onClick={this.handleSubmit} value="Add" className="btn btn-outline-success btn-lg" />
                             </div>
                         </div>
                     </div>

@@ -55,14 +55,20 @@ function AuthSignin() {
     axios.post("/auth/user/login", loginObj).then((res) => {
 
       let decoded = jwt.verify(res.data.token, 'aqwsderfgtyhjuiklop');
-
+      console.log(decoded);
       if (decoded.result[0].user_id && decoded.result[0].email === email) {
 
         setResult("Login success");
 
         getCartData(decoded.result[0].user_id);
+        
+        let authData = {
+          user_id: decoded.result[0].user_id,
+          email: decoded.result[0].email
+        }
+       
+        setAuthData(authData);
 
-        setAuthData({ user_id: decoded.result[0].user_id, email: decoded.result[0].email, token:res.data.token });
         console.log("user login successful");
         setEmail('');
         setPassword('');
@@ -116,8 +122,8 @@ function AuthSignin() {
               value="Log in"
               id="submit"
               ref={submitRef}
-              className="btn btn-sm btn-outline-success pull-right" /><br/>
-            {/* <p className="text-muted">Don't have an account?{" "}<Link to="/register">Sign up</Link></p> */}
+              className="btn btn-sm btn-outline-success pull-right" /><br />
+            <p className="text-muted">Don't have an account?{" "}Sign up</p>
             <p>You must log in to view the page at {from.pathname === "/" ? '/home' : from.pathname}</p>
           </div>
         </form>

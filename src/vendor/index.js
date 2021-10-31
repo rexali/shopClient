@@ -1,6 +1,6 @@
 import React from "react";
-import VendorHeader from "./VendorHeader";
-import VendorFooter from "./VendorFooter";
+import Header from "../common/Header";
+import Footer from "../common/Footer";
 import VendorTabs from "./VendorTabs";
 function Vendor(props) {
     const styles = {
@@ -8,12 +8,12 @@ function Vendor(props) {
     }
     return (
         <div>
-            <VendorHeader />
+            <Header title={"Vendor"} />
             {props.authButton}
             <main style={styles.mainHeight}>
                 <VendorTabs />
             </main>
-            <VendorFooter />
+            <Footer />
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import React, { 
   createContext, 
   useContext, 
-  useEffect, 
+  // useEffect, 
   useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -18,8 +18,6 @@ import './App';
 import Vendor from './vendor';
 import Favourite from './favourite';
 import Cart from './cart';
-import Login from './auth/Login';
-import Register from './auth/Register';
 import Shipper from './shipper';
 import Admin from './admin';
 import User from './user';
@@ -35,33 +33,24 @@ import AuthVendorChangePass from './auth/vendor/AuthVendorChangePass';
 import AuthUserChangePass from './auth/user/AuthUserChangePass';
 import AuthAdminChangePass from './auth/admin/AuthAdminChangePass';
 import { appContext } from './AppProvider';
-import axios from 'axios';
+// import axios from 'axios';
 import About from './about';
 import Contact from './contact';
 import Blog from './blog';
 
 export default function App() {
-  useEffect(() => {
-    const getCsrfToken = async () => {
-      const { data } = await axios.get('/csrf-token');
-      axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken;
-    }
-    getCsrfToken();
-  }, [])
 
   return (
     <ProvideAuth>
       <Router>
         <div >
           <Switch>
-            <Route path="/home" component={Home} ></Route>
+          <Route exact path="/" component={Home} />
 
-            <PrivateRoute path="/favourite">
-              <Favourite />
-            </PrivateRoute>
+            <Route path="/home" component={Home}/>
 
-            <Route path="/login">
-              <Login />
+            <Route path="/home">
+              <Redirect to="/" />
             </Route>
 
             <Route path="/about">
@@ -76,15 +65,19 @@ export default function App() {
               <Blog />
             </Route>
 
-            <Route path="/auth/user">
+            <PrivateRoute path="/favourite">
+              <Favourite />
+            </PrivateRoute>
+
+            <Route path="/auth/user/login">
               <AuthUser />
             </Route>
 
-            <Route path="/auth/vendor">
+            <Route path="/auth/vendor/login">
               <AuthVendor />
             </Route>
 
-            <Route path="/auth/admin">
+            <Route path="/auth/admin/login">
               <AuthAdmin />
             </Route>
 
@@ -110,10 +103,6 @@ export default function App() {
 
             <Route path="/admin/change">
               <AuthAdminChangePass />
-            </Route>
-
-            <Route path="/register">
-              <Register />
             </Route>
 
             <Route path="/cart">
@@ -146,10 +135,6 @@ export default function App() {
 
             <Route path="/product/:id">
               <DetailProduct />
-            </Route>
-
-            <Route exact path="/">
-              <Redirect to="/home" />
             </Route>
 
           </Switch>
