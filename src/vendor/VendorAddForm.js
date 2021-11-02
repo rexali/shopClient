@@ -34,10 +34,10 @@ class VendorAddForm extends Component {
         product_size: '',
         files: [],
         filenames: '',
-        result:'',
-        err:'',
+        result: '',
+        err: '',
         product_code: Math.floor(Math.random() * 10000000),
-        vendor_id: this.context.state.authData?.vendor_id //'9' //window.sessionStorage.getItem("userId")
+        vendor_id: this.context.state.authData?.vendor_id
     }
 
     handleChange = (evt) => {
@@ -52,7 +52,6 @@ class VendorAddForm extends Component {
         let files = this.state.files.map((file, i) => {
             return file.file;
         });
-
         for (let i = 0; i < files.length; i++) {
             this.handleFileUpload(files[i]);
         }
@@ -60,24 +59,24 @@ class VendorAddForm extends Component {
 
 
     handleFileUpload = (file) => {
+        console.log(file.name);
         let formData = new FormData();
+        formData.append(
+            'picture',
+            file ? file : '',
+            file.name
+        );
         try {
-            formData.append('picture', file ? file : '');
-            axios.post("/file/file",formData);
+            axios.post("/file/file", formData, {
+                headers: {
+                    'Content-Type':'multipart/form-data',
+                    // 'Authorization':'Bearer ....'
+                }
+            });
         } catch (error) {
             console.log(error);
         }
     }
-
-    handleImages = () => {
-        document.querySelector(".fa.fa-camera").addEventListener("click", (event) => {
-            let input = document.createElement("input");
-            input.type = 'file';
-            input.name = `file`
-            input.onchange = (evt) => this.showProductPictures(evt);
-            input.click();
-        });
-    };
 
     displayImages = (file) => {
         if (file) {
@@ -93,7 +92,7 @@ class VendorAddForm extends Component {
         }
     }
 
-    showProductPictures = async(evt) => {
+    showProductPictures = async (evt) => {
         var imagefile, objUrl;;
         try {
             imagefile = await evt.target.files[0];
@@ -105,33 +104,40 @@ class VendorAddForm extends Component {
                 });
                 objUrl = URL.createObjectURL(imagefile);
                 this.displayImages(objUrl);
-
             } else { alert("Large file, your file must be less than 50 KB") }
         } catch (error) { console.log(error) }
 
         console.log(this.state.files)
     }
 
+    handleImages = () => {
+        document.querySelector(".fa.fa-camera").addEventListener("click", (event) => {
+            let input = document.createElement("input");
+            input.type = 'file';
+            input.name = `file`
+            input.onchange = (evt) => this.showProductPictures(evt);
+            input.click();
+        });
+    };
 
     handleSubmit = () => {
+        this.setState({ result: 'Sending data...' })
         const productObj = this.state;
         console.log(productObj)
         axios.post("/products/product/add", productObj).then((response) => {
             let result = JSON.parse(JSON.stringify(response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
-                this.setState({result:'Product added'})
+                this.setState({ result: 'Product added' })
                 this.setState(this.initialState);
-                this.handleFiles() ;
-                this.setState({result:'Product and file added'})
+                this.handleFiles();
+                this.setState({ result: 'Product and file added' })
             }
-
-            console.log(result);
         }).catch((error) => {
             console.log(error);
         })
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.handleImages();
     }
 
@@ -160,7 +166,7 @@ class VendorAddForm extends Component {
                                     type="text"
                                     name="product_name"
                                     id="product_name"
-                                    placeholder="product name"
+                                    placeholder="product name here"
                                     className="form-control rounded"
                                     required
                                     onChange={this.handleChange}
@@ -285,9 +291,9 @@ class VendorAddForm extends Component {
 
                         <div className="col-12 col-md-12 text-center">
                             <div className="form-group">
-                                <span id="addProductResultS" className="bg-success text-white d-block">{result}</span>
-                                <span id="addProductResultF" className="bg-danger text-white d-block">{err}</span>
-                                <input type="button" onClick={this.handleSubmit} value="Add" className="btn btn-outline-success btn-lg" />
+                                <span className="bg-success text-white d-block m-2 rounded">{result}</span>
+                                <span className="bg-danger text-white d-block m-2 rounded">{err}</span>
+                                <input type="button" onClick={this.handleSubmit} value="Submit" className="btn btn-outline-success btn-block" />
                             </div>
                         </div>
                     </div>

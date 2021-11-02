@@ -32,7 +32,7 @@ export default function OverflowMenu({...props }) {
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <ul className="list-group-flush">
-                        <li className="list-group-item list-group-item-action"><Link to={'/auth/user'}><i className="fa fa-sign-in" aria-hidden="true">  Log in</i></Link></li>
+                        <li className="list-group-item list-group-item-action"><Link to={'/auth/user/login'}><i className="fa fa-sign-in" aria-hidden="true">  Log in</i></Link></li>
                         <li className="list-group-item list-group-item-action"><Link to={'/user'}><i className="fa fa-user" aria-hidden="true">  Account</i></Link></li>
                         <li className="list-group-item list-group-item-action"><Link to={'/cart'}><i className="fa fa-shopping-cart" aria-hidden="true"> Cart</i></Link></li>
                         <li className="list-group-item list-group-item-action"><Link to={'/favourite'}><i className="fa fa-heart" aria-hidden="true"> Wish</i></Link></li>

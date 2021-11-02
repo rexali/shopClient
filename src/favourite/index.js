@@ -16,7 +16,7 @@ function Favourite() {
     let [toastState, setToastState] = useState(false)
 
     const { setCartData, state } = React.useContext(appContext);
-    const userId = state.authData.user_id;
+    const userId = state.authData?.user_id;
 
     const showToast = ()=>{
     setToastState(true);
@@ -48,7 +48,6 @@ function Favourite() {
     }
 
     const getCartData = async (uid) => {
-
         if (uid) {
             try {
                 let { data } = await axios.post('/cart/read', { user_id: uid });
@@ -122,16 +121,20 @@ function Favourite() {
     }
 
     const readFavouriteProducts = (uid) => {
-        import("axios").then((axios) => {
-            axios.post('/wish/read', { user_id: uid }).then(function (response) {
-                let result = JSON.parse(JSON.stringify(response.data));
-                console.log(result)
-                setData([...result]);
-                setIsLoading(false)
-            }).catch(function (error) {
-                console.log(error);
+        if(uid){
+            import("axios").then((axios) => {
+                axios.post('/wish/read', { user_id: uid }).then(function (response) {
+                    let result = JSON.parse(JSON.stringify(response.data));
+                    console.log(result)
+                    setData([...result]);
+                    setIsLoading(false)
+                }).catch(function (error) {
+                    console.log(error);
+                });
             });
-        });
+        }else{
+            setIsLoggedin(true);
+        }
     }
 
     useEffect(() => {
@@ -140,7 +143,7 @@ function Favourite() {
     }, [userId]);
 
     if (isLoggedin) {
-        return <Redirect to="/auth/user" />
+        return <Redirect to="/auth/user/login" />
     }
 
     if (isLoading) return <Spinner />

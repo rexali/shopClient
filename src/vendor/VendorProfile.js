@@ -69,8 +69,7 @@ function VendorProfile(props) {
         console.log(profileObj);
 
         axios.post("/users/vendor/update", profileObj).then((result) => {
-            let resObj = JSON.stringify(result.data);
-            let rObj = JSON.parse(resObj);
+            let rObj = JSON.parse(JSON.stringify(result.data));
             console.log(rObj.result);
             if (rObj.result) {
                 handlePicture();
@@ -126,15 +125,16 @@ function VendorProfile(props) {
     }
 
     const getProfileData = (id) => {
-         console.log(id)
-        import("axios").then((axios) => {
-            axios.post('/users/vendor', { vendor_id: id }).then(function (response) {
-                let result = JSON.parse(JSON.stringify(response.data));
-                setData(result[0]);
-            }).catch(function (error) {
-                console.log(error);
-            });
-        });
+        if (id) {
+            import("axios").then((axios) => {
+                axios.post('/users/vendor', { vendor_id: id }).then(function (response) {
+                    let result = JSON.parse(JSON.stringify(response.data));
+                    setData(result[0]);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            });  
+        }
     }
 
     useEffect(() => {

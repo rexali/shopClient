@@ -7,6 +7,7 @@ import { appContext } from "../AppProvider";
 // import VendorEditForm from "./VendorEditForm";
 import VendorProductEdit from "./VendorProductEdit";
 import ShowToast from "../common/ShowToast";
+import { getPicture } from "../service";
 
 function VendorProduct(props) {
     let [data, setData] = useState([]);
@@ -21,9 +22,8 @@ function VendorProduct(props) {
     const getVendorProducts = async (id) => {
         if (id) {
             try {
-                let response = await axios.post('/products/product/shop', { vendor_id: id });
-                let result = JSON.parse(JSON.stringify(await response.data));
-                setData(result);
+                let {data} = await axios.post('/products/product/shop', { vendor_id: id });
+                setData(data);
             } catch (error) {
                 console.log(error);
             }
@@ -67,11 +67,6 @@ function VendorProduct(props) {
                 console.log(error);
             }
         }
-    }
-
-    const getPicture = (pic) => {
-        let pictures = pic.split(";");
-        return pictures.filter(((item, _) => item !== ""));
     }
 
     const fetchMeData = async (id) => {

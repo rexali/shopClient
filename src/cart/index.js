@@ -671,7 +671,7 @@ function Cart() {
     }, [userId]);
 
     if (isLoggedin) {
-        return <Redirect to="/auth/user" />
+        return <Redirect to="/auth/user/login" />
     }
 
     if (isLoading) return <Spinner />

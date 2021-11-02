@@ -1,8 +1,8 @@
 import React, { 
   createContext, 
   useContext, 
-  // useEffect, 
-  useState } from 'react';
+  useState 
+} from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -33,7 +33,6 @@ import AuthVendorChangePass from './auth/vendor/AuthVendorChangePass';
 import AuthUserChangePass from './auth/user/AuthUserChangePass';
 import AuthAdminChangePass from './auth/admin/AuthAdminChangePass';
 import { appContext } from './AppProvider';
-// import axios from 'axios';
 import About from './about';
 import Contact from './contact';
 import Blog from './blog';
@@ -65,9 +64,17 @@ export default function App() {
               <Blog />
             </Route>
 
-            <PrivateRoute path="/favourite">
+            <Route path="/cart">
+              <Cart />
+            </Route>
+
+            <Route path="/support">
+              <Support />
+            </Route>
+
+            <Route path="/favourite">
               <Favourite />
-            </PrivateRoute>
+            </Route>
 
             <Route path="/auth/user/login">
               <AuthUser />
@@ -103,14 +110,6 @@ export default function App() {
 
             <Route path="/admin/change">
               <AuthAdminChangePass />
-            </Route>
-
-            <Route path="/cart">
-              <Cart />
-            </Route>
-
-            <Route path="/support">
-              <Support />
             </Route>
 
             <PrivateRoute path="/vendor" pathname={'/auth/vendor/login'}>

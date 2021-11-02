@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { appContext } from "../AppProvider";
 import ErrorBoundary from "../common/ErrorBoundary";
 import HomeDropdown from "../home/HomeDropdown";
+import { getPicture } from "../service";
 
 
 
@@ -110,11 +111,6 @@ function VendorProduct() {
                 console.log(error);
             }
         }
-    }
-
-    const getPicture = (pic) => {
-        let pictures = pic.split(";");
-        return pictures.filter(((item,_)=>item!==""));
     }
 
     const fetchMeData = async (id) => {

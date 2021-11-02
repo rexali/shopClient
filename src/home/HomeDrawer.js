@@ -59,14 +59,14 @@ function DrawerContent({ sendBackData, handleClose }) {
     }, []);
 
     return (
-        <div style={{overflowY: 'auto', maxHeight: "550px" }}>
-            <div className='card w-100'><button className='btn btn-link bg-light text-decoration-none' onClick={allSearch}>All</button></div>
+        <div style={{overflowY: 'auto', maxHeight: "600px" }}>
+            <div className='card w-100'><button className='btn btn-link bg-lights text-decoration-none' onClick={allSearch}>All</button></div>
             <div id='accordion'>
                 {data.length?getUniqueCategories().map((e, i) => {
                     return (
                         // card start
-                        <div className='card' key={i}>
-                            <div className='card-header' id={`heading${i}`}>
+                        <div className='cards' key={i}>
+                            <div className='cards-header' id={`heading${i}`}>
                                 <h5 className='mb-0'>
                                     {i === 0 ?
                                         <button className='btn btn-link text-decoration-none w-100 text-capitalize' data-toggle='collapse' data-target={`#collapse${i}`} aria-expanded='true' aria-controls={`collapse${i}`} >{e}</button>
@@ -78,13 +78,13 @@ function DrawerContent({ sendBackData, handleClose }) {
                             {i === 0 ?
                                 <div id={`collapse${i}`} className='collapse' aria-labelledby={`heading${i}`} data-parent='#accordion'>
                                     {getUniqueSubCategories(i).map((e, x) => {
-                                        return <span key={x} className='card-body w-100' id={`bodyHtml${i}`}><a href="#none" className='btn btn-link text-info' onClick={() => categorySearch(e)}>{e}</a><br /></span>
+                                        return <span key={x} className='cards-body w-100' id={`bodyHtml${i}`}><a href="#none" className='btn btn-link text-info' onClick={() => categorySearch(e)}>{e}</a><br /></span>
                                     })}
                                 </div>
                                 :
                                 <div id={`collapse${i}`} className='collapse' aria-labelledby={`heading${i}`} data-parent='#accordion'>
                                     {getUniqueSubCategories(i).map((e, x) => {
-                                        return <span key={x} className='card-body w-100' id={`bodyHtml${i}`}><a href="#none" className='btn btn-link text-info' onClick={() => categorySearch(e)}>{e}</a><br /></span>
+                                        return <span key={x} className='cards-body w-100' id={`bodyHtml${i}`}><a href="#none" className='btn btn-link text-info' onClick={() => categorySearch(e)}>{e}</a><br /></span>
                                     })}
                                 </div>
                             }

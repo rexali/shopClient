@@ -9,7 +9,7 @@ export default class AppProvider extends React.Component {
         data: [],
         cartData: [],
         authData: {},
-        jwt:''
+        jwt: ''
     }
 
     setData = (x) => {
@@ -25,34 +25,31 @@ export default class AppProvider extends React.Component {
     }
 
     logOut = () => {
-       this.setAuthData({authData:{}})
+        this.setAuthData({ authData: {} })
     }
+
     getData = async () => {
         try {
-            let response = await fetch("/products/product/read", {
-                mode: 'cors',
-                method: 'get'
-            });
-            this.setState({ data: [...await response.json()]});
+            let response = await fetch("/products/product/read", { mode: 'cors', method: 'get' });
+            this.setState({ data: [...await response.json()] });
         } catch (error) {
             console.warn(error);
         }
     }
 
+    getJwt = async () => {
+        let { data } = await axios.get("/jwt");
+        this.setState({ jwt: data.jwtoken });
+    }
+
+    getCsrfToken = async () => {
+        const { data } = await axios.get('/csrf-token');
+        axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken;
+    }
+
     async componentDidMount() {
-        
-        const getJwt=async()=>{
-            let {data} = await axios.get("/jwt");
-            this.setState({jwt:data.jwtoken});
-        }
-        
-        const getCsrfToken = async () => {
-            const { data } = await axios.get('/csrf-token');
-            axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken;
-          }
-        
-        getJwt();
-        getCsrfToken();
+        this.getJwt();
+        this.getCsrfToken();
         this.getData();
     }
 

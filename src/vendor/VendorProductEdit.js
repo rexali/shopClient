@@ -45,7 +45,7 @@ export function EditFormOne({ data, updateAfterPost }) {
 
         console.log(obj);
         updateVendorProduct(obj)
-        setTimeout(postStatus('Submit'), 2000)
+        setTimeout(()=>postStatus('Submit'), 2000)
     }
 
     let postStatus = (val) => {
@@ -59,7 +59,7 @@ export function EditFormOne({ data, updateAfterPost }) {
             let result = JSON.parse(JSON.stringify(await response.data[0]));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 setResult({ result: 'Success' });
-                setTimeout(updateAfterPost(), 2000)
+                setTimeout(()=>{updateAfterPost()}, 4000)
             } else {
                 setResult({ result: 'Oop! Please try again' });
             }
@@ -314,7 +314,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
 
         console.log(obj);
         updateVendorProduct(obj)
-        setTimeout(postStatus('Submit'), 2000)
+        setTimeout(()=>{postStatus('Submit')}, 2000)
     }
 
     let postStatus = (val) => {
@@ -328,7 +328,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
             let result = JSON.parse(JSON.stringify(await response.data[0]));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 setResult({ result: 'Success' });
-                setTimeout(updateAfterPost(), 2000)
+                setTimeout(()=>{updateAfterPost()}, 4000)
             } else {
                 setResult({ result: 'Oop! Please try again' });
             }
@@ -397,7 +397,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     className="form-control rounded"
                                     required
                                     defaultValue={product_model}
-                                    ref={product_review} />
+                                    ref={product_model} />
                             </div>
                         </div>
 
@@ -576,7 +576,7 @@ export function EditFormThree({ data, updateAfterPost }) {
 
         console.log(obj);
         updateVendorProduct(obj)
-        setTimeout(postStatus('Submit'), 2000)
+        setTimeout(()=>postStatus('Submit'), 2000)
     }
 
     let postStatus = (val) => {
@@ -590,7 +590,7 @@ export function EditFormThree({ data, updateAfterPost }) {
             let result = JSON.parse(JSON.stringify(await response.data[0]));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 setResult({ result: 'Success' });
-                setTimeout(updateAfterPost(), 2000)
+                setTimeout(()=>{updateAfterPost()}, 4000)
             } else {
                 setResult({ result: 'Oop! Please try again' });
             }
@@ -844,7 +844,7 @@ export function EditFormFour({ data, updateAfterPost }) {
 
         console.log(obj);
         updateVendorProduct(obj)
-        setTimeout(postStatus('Submit'), 2000)
+        setTimeout(()=>postStatus('Submit'), 2000)
     }
 
     let postStatus = (val) => {
@@ -858,7 +858,7 @@ export function EditFormFour({ data, updateAfterPost }) {
             let result = JSON.parse(JSON.stringify(await response.data[0]));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 setResult({ result: 'Success' });
-                setTimeout(updateAfterPost(), 2000)
+                setTimeout(()=>{updateAfterPost()}, 4000)
             } else {
                 setResult({ result: 'Oop! Please try again' });
             }
@@ -1078,7 +1078,6 @@ export default function VendorProductEdit({ productId, data, updateAfterPost }) 
         setWhichForm(fm);
     }
     const formData = data.filter((product) => product.product_id === productId);
-    // console.log(formData);
     if (whichForm === 1) {
         return <EditFormOne data={formData} updateAfterPost={updateAfterPost} />;
     } else if (whichForm === 2) {
@@ -1087,6 +1086,8 @@ export default function VendorProductEdit({ productId, data, updateAfterPost }) 
         return <EditFormThree data={formData} updateAfterPost={updateAfterPost} />;
     } else if (whichForm === 4) {
         return <EditFormFour data={formData} updateAfterPost={updateAfterPost} />;
+    } else{
+        alert('Error!')
     }
 
     return (
