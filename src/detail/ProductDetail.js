@@ -4,6 +4,7 @@ import { Offcanvas } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import DetailFooter from "./DetailFooter";
 import DetailHeader from "./DetailHeader";
+import { getPicture } from "../service";
 
 
 export function DetailProductNav({ phone }) {
@@ -511,7 +512,7 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
     );
 }
 
-function DetailProduct() {
+function ProductDetail() {
 
     const { id } = useParams();
 
@@ -546,12 +547,6 @@ function DetailProduct() {
         let productReviews = [];
         productReviews = reviews?.split(';');
         return productReviews?.filter((item, i) => item !== "");
-    }
-
-    const getPictures = (pictures) => {
-        let productPictures = [];
-        productPictures = pictures?.split(';');
-        return productPictures?.filter((item, i) => item !== "");
     }
 
     const fetchMeData = (pid) => {
@@ -594,7 +589,7 @@ function DetailProduct() {
                                     <div id="carouselExampleCaptions" className="carousel slide" data-bs-ride="carousel">
 
                                         <div className="carousel-indicators">
-                                            {getPictures(product.product_picture).map((_, index) => {
+                                            {getPicture(product.product_picture).map((_, index) => {
                                                 return index === 0 ?
                                                     <button key={index} type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to={index} className="active" aria-current="true" aria-label="Slide 0"></button>
                                                     :
@@ -604,7 +599,7 @@ function DetailProduct() {
                                         </div>
 
                                         <div className="carousel-inner">
-                                            {getPictures(product.product_picture)?.map((picturefile, i) => {
+                                            {getPicture(product.product_picture)?.map((picturefile, i) => {
                                                 return i === 0 ? (
                                                     <div key={i} className="carousel-item active">
                                                         <a href="#share" className="mt-1 mr-4 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
@@ -736,4 +731,4 @@ function DetailProduct() {
 
 }
 
-export default DetailProduct;
+export default ProductDetail;

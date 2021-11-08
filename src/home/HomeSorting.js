@@ -1,9 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
-import axios from "axios";
-function HomeSorting({ receivedData }) {
-    const [data, setData] = useState([])
+import React from 'react';
+import { appContext } from "../AppProvider";
 
+function HomeSorting({ receivedData }) {
+    let {state} =React.useContext(appContext);
+    let data = state.data; 
 
     const ascendingPrice = (params) => {
         let fromLowest = params.sort((a, b) => {
@@ -77,15 +78,6 @@ function HomeSorting({ receivedData }) {
         }
 
     }
-
-    const getData = async () => {
-        let { data } = await axios.get('/products/product/read');
-        setData([...data]);
-    }
-
-    useEffect(() => {
-        getData()
-    }, []);
 
     return (
         <div className="d-flex justify-content-between d-none d-lg-block">

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {useState} from "react";
 import { Offcanvas } from 'react-bootstrap';
 import Spinner from "../common/Spinner";
-// import { AuthButton } from "../App";
+import { appContext } from "../AppProvider";
 
 function DrawerContent({ sendBackData, handleClose }) {
-    let [data, setData] = useState([]);
+    let {state} =React.useContext(appContext);
+    let data = state.data; 
 
     const getUniqueCategories = () => {
         let result = []
@@ -15,7 +16,6 @@ function DrawerContent({ sendBackData, handleClose }) {
         finalResult = Array.of(...new Set(result));
         return finalResult
     }
-
 
     const getUniqueSubCategories = (x) => {
         let result = [];
@@ -42,21 +42,6 @@ function DrawerContent({ sendBackData, handleClose }) {
         sendBackData(result);
 
     }
-
-
-    useEffect(() => {
-        const getData = () => {
-            import("axios").then((axios) => {
-                axios.get('/products/product/read').then(function (response) {
-                    let result = JSON.parse(JSON.stringify(response.data));
-                    setData(result);
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            });
-        }
-        getData();
-    }, []);
 
     return (
         <div style={{overflowY: 'auto', maxHeight: "600px" }}>
@@ -112,7 +97,6 @@ function HomeDrawer({ sendBackData, ...props }) {
                     <Offcanvas.Title>Categories</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    {/* <AuthButton /> */}
                     <DrawerContent sendBackData={sendBackData} handleClose={handleClose} />
                 </Offcanvas.Body>
             </Offcanvas>

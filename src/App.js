@@ -22,16 +22,18 @@ import Shipper from './shipper';
 import Admin from './admin';
 import User from './user';
 import Support from './contact';
-import DetailProduct from './detail/DetailProduct';
+import ProductDetail from './detail/ProductDetail';
 import AuthUser from './auth/user';
 import AuthVendor from './auth/vendor';
 import AuthAdmin from './auth/admin';
+import AuthShipper from './auth/shipper';
 import AuthAdminForgetPass from './auth/admin/AuthAdminForgetPass';
 import AuthUserForgetPass from './auth/user/AuthUserForgetPass';
 import AuthVendorForgetPass from './auth/vendor/AuthVendorForgetPass';
 import AuthVendorChangePass from './auth/vendor/AuthVendorChangePass';
 import AuthUserChangePass from './auth/user/AuthUserChangePass';
 import AuthAdminChangePass from './auth/admin/AuthAdminChangePass';
+import AuthShipperChangePass from './auth/shipper/AuthShipperChangePass';
 import { appContext } from './AppProvider';
 import About from './about';
 import Contact from './contact';
@@ -45,8 +47,6 @@ export default function App() {
         <div >
           <Switch>
           <Route exact path="/" component={Home} />
-
-            <Route path="/home" component={Home}/>
 
             <Route path="/home">
               <Redirect to="/" />
@@ -88,6 +88,10 @@ export default function App() {
               <AuthAdmin />
             </Route>
 
+            <Route path="/auth/shipper/login">
+              <AuthShipper />
+            </Route>
+
             <Route path="/admin/forget">
               <AuthAdminForgetPass />
             </Route>
@@ -112,6 +116,10 @@ export default function App() {
               <AuthAdminChangePass />
             </Route>
 
+            <Route path="/shipper/change">
+              <AuthShipperChangePass />
+            </Route>
+
             <PrivateRoute path="/vendor" pathname={'/auth/vendor/login'}>
               <Vendor authButton={<AuthButton />} />
             </PrivateRoute>
@@ -120,9 +128,9 @@ export default function App() {
               <Shipper authButton={<AuthButton />} />
             </PrivateRoute>
 
-            <PrivateRoute path="/admin" pathname={'/auth/admin/login'}>
+            <Route path="/admin" pathname={'/auth/admin/login'}>
               <Admin authButton={<AuthButton />} />
-            </PrivateRoute>
+            </Route>
 
             <PrivateRoute path="/user" pathname={'/auth/user/login'}>
               <User authButton={<AuthButton />} />
@@ -133,7 +141,7 @@ export default function App() {
             </Route>
 
             <Route path="/product/:id">
-              <DetailProduct />
+              <ProductDetail />
             </Route>
 
           </Switch>

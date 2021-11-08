@@ -1,16 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
 
-const useMail = async (to, subject, format = 'html', html, text) => {
+const useMail = async (to, subject, format = 'html', html, text,name) => {
     let [result, setResult] = useState(null);
     let [err, setErr] = useState(null);
 
     try {
-        let response = axios.post('/send/mail', {
-            to: to, subject: subject, [format]: html ? html : text,
+        let {data} = await axios.post('/support/send/mail', {
+            to: to, subject: subject, [format]: html ? html : text,name:name
         });
-        let result = await JSON.parse(JSON.stringify(response.d));
-        setResult(result);
+        setResult(data);
     } catch (error) {
         console.error(error);
         setErr('Error');

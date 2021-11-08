@@ -14,8 +14,12 @@ function AuthSignup() {
   let [password, setPassword] = useState('');
   let [confirmPassword, setConfirmPassword] = useState('');
   
-  let [result, setResult] = useState('');
-  let [err, setErr] = useState('');
+  let [result, setResult] = useState(null);
+  let [err, setErr] = useState(null);
+
+  const success = <div className="alert alert-success">Success</div>;
+  const status = <div className="alert alert-info">Sending...</div>;
+  const failure = <div className="alert alert-danger">Error!</div>;
 
   let { from } = location.state || { from: { pathname: "/auth/user/login" } };
 
@@ -39,6 +43,7 @@ function AuthSignup() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (password === confirmPassword) {
+      setResult(status)
       submitRef.current.value = 'Submitting...';
       const registerObj = { email: username, password: password }
       axios.post("/auth/user/register", registerObj).then((res) => {
@@ -46,7 +51,8 @@ function AuthSignup() {
         let result = JSON.parse(JSON.stringify(res.data));
         if (result.affectedRows===1 && result.warningCount===0) {
           console.log("user");
-          setResult("Registration success")
+          setResult(success)
+          setTimeout(()=>{setErr(null)}, 3000)
           setUsername('');
           setPassword('');
           submitRef.current.value = 'Sign up';
@@ -54,7 +60,8 @@ function AuthSignup() {
         }
       }).catch((err) => {
         console.log(err);
-        setErr("Error!");
+        setErr(failure);
+        setTimeout(()=>{setErr(null)}, 3000)
         submitRef.current.value = 'Sign up';
       })
     } else {
@@ -108,8 +115,7 @@ function AuthSignup() {
               onChange={handleChange} />
           </div>
           <div className="form-group text-center">
-            <span className="bg-success text-white d-block mb-1">{result}</span>
-            <span className="bg-danger text-white d-block mb-1">{err}</span>
+           {result}{err}
             <input
               type="submit"
               value="Sign up"

@@ -1,12 +1,22 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-function ShipperProfile(props) {
+function ShipperProfile() {
     let [data, setData] = useState([]);
+    let [result, setResult] = useState();
+    let [err, setErr] = useState();
+
+    
+    const success=<div className="alert alert-success">Success</div>;
+    const status=<div className="alert alert-info">Sending...</div>;
+    const failure=<div className="alert alert-danger">Error!</div>;
     
     const handleSubmit = (event) => {
         event.preventDefault();
+        setResult(status)
+
         let form = document.getElementById("shipperProfileForm");
-        let firstName = form.elements['firstName'].value;
-        let lastName = form.elements['lastName'].value;
+        let firstName = form.elements['first_name'].value;
+        let lastName = form.elements['last_name'].value;
         let phone = form.elements['phone'].value;
         let email = form.elements['email'].value;
 
@@ -22,9 +32,9 @@ function ShipperProfile(props) {
         }
 
         let nin = form.elements['nin'].value;
-        let dob = form.elements['dob'].value;
+        let dob = form.elements['date_of_birth'].value;
         let address = form.elements['address'].value;
-        let localGovt = form.elements['localGovt'].value;
+        let localGovt = form.elements['loc_govt'].value;
         let state = form.elements['state'].value;
         let country = form.elements['country'].value;
 
@@ -39,25 +49,34 @@ function ShipperProfile(props) {
             }
         }
 
-
         const profileObj = {
-            firstName: firstName,
-            lastName: lastName,
+            first_name: firstName,
+            last_name: lastName,
             phone: phone,
             email: email,
             picture: shipper_picture,
             nin: nin,
             dob: dob,
             address: address,
-            localGovt: localGovt,
+            loc_govt: localGovt,
             state: state,
             country: country,
             document: shipper_document
         };
 
         console.log(profileObj);
-        
-        uploadPicture();
+        axios.post("/users/shipper/update", profileObj).then((response) => {
+            let result = JSON.parse(JSON.stringify(response.data));
+            if (result.affectedRows===1 && result.warningCount===0) {
+                handlePicture()
+                setResult(success)
+                setTimeout(()=>{setResult(null)},4000)
+            }
+        }).catch((error) => {
+            console.log(error);
+            setErr(failure)
+            setTimeout(()=>{setErr(null)},5000)
+        })
     }
 
     const showPicture = (evt) => {
@@ -73,36 +92,59 @@ function ShipperProfile(props) {
         document.getElementById("shipperPicture").style.margin = "auto";
     }
 
+    const showDocument = (evt) => {
+        let objUrl;
+        try {
+            objUrl = URL.createObjectURL(evt.target.files[0]);
+        } catch (error) { console.log(error) }
+        console.log(objUrl);
+        document.getElementById("shipperDocument").setAttribute("src", objUrl);
+        document.getElementById("shipperDocument").setAttribute("width", "100px");
+        document.getElementById("shipperDocument").setAttribute("height", "100px");
+        document.getElementById("shipperDocument").style.display = "block";
+        document.getElementById("shipperDocument").style.margin = "auto";
+    }
 
-    const uploadPicture = () => {
-        let shipper_picture = document.getElementById('shipper_picture')[0].files[0];
-        let picObj;
-        let formData = new FormData();
-        formData.append('shipper_picture', shipper_picture?shipper_picture:'');
-        document.getElementById("#pictureResult").innerHTML = "Checking data...";
-        let xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                picObj = JSON.parse(this.responseText);
-                document.getElementById("pictureResult").html(picObj.result);
-            }
-        };
-        xmlhttp.responseType = '';
-        xmlhttp.open("POST", "/filetoupload", true);
-        xmlhttp.send(formData);
+
+    const handlePicture = () => {
+        const form = new FormData();
+        try {
+            let pictureFile = document.getElementById('shipper_picture').files[0];
+            let documentFile = document.getElementById('shipper_document').files[0];
+
+            let pictureName =  pictureFile.name;
+            let documentName =  documentFile.name;
+
+            form.append(
+                "shipperpicture",
+                pictureFile?pictureFile:'',
+                pictureName?pictureName:''
+            );  
+            
+            form.append(
+                "shipperdocument",
+                documentFile?documentFile:'',
+                documentName?documentName:''
+            );  
+        } catch (error) {
+          console.error(error);  
+        }
+        
+        try {
+        axios.post("/file/multiplefiles", form);  
+        } catch (error) {
+            console.error(error);
+        }
     }
 
 
     useEffect(() => {
         const getProfileData = (id) => {
             import("axios").then((axios) => {
-                axios.get('/mydata', {
+                axios.get('/users/shipper', {
                     body: { product_id: id }
                 }).then(function (response) {
-                    let loadData = JSON.stringify(response.data);
-                    setData(JSON.parse(loadData).filter((e) => {
-                        return Number(e.id) === id;
-                    }));
+                    setData(JSON.parse(JSON.stringify(response.data)));
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -120,7 +162,7 @@ function ShipperProfile(props) {
                     name="first_name"
                     className="form-control"
                     required
-                    defaultValue={data[0].firstName}
+                    defaultValue={data[0]?.first_name}
                 />
             </div>
 
@@ -131,7 +173,7 @@ function ShipperProfile(props) {
                     name="last_name"
                     className="form-control"
                     required
-                    defaultValue={data[0].lastName}
+                    defaultValue={data[0]?.last_name}
                 />
             </div>
 
@@ -142,7 +184,7 @@ function ShipperProfile(props) {
                     name="phone"
                     className="form-control"
                     required
-                    defaultValue={data[0].phone}
+                    defaultValue={data[0]?.phone}
                 />
             </div>
 
@@ -152,7 +194,7 @@ function ShipperProfile(props) {
                     type="email"
                     name="email"
                     className="form-control"
-                    defaultValue={data[0].email}
+                    defaultValue={data[0]?.email}
                     readOnly
                 />
             </div>
@@ -160,7 +202,7 @@ function ShipperProfile(props) {
             <div className="form-group">
                 <label htmlFor="psspt">Passport</label>
                 <img
-                    src={`${data[0].image.src}`}
+                    src={`${data[0]?.picture}`}
                     id="shipperPicture"
                     alt=""
                     className="rounded img-fluid d-block mx-auto"
@@ -172,7 +214,7 @@ function ShipperProfile(props) {
                     className="form-control"
                     required
                     onChange={showPicture}
-                    defaultValue={data[0].image.src}
+                    // defaultValue={data[0]?.picture}
                 />
                 <p id="shipperPictureResult" className="bg-success text-white text-center"></p>
             </div>
@@ -184,7 +226,7 @@ function ShipperProfile(props) {
                     name="nin"
                     className="form-control"
                     required
-                    defaultValue={data[0].nin} />
+                    defaultValue={data[0]?.nin} />
             </div>
 
             <div className="form-group">
@@ -194,7 +236,7 @@ function ShipperProfile(props) {
                     name="date_of_birth"
                     className="form-control"
                     required
-                    defaultValue={data[0].dob}
+                    defaultValue={data[0]?.date_of_birth}
                 />
             </div>
 
@@ -205,7 +247,7 @@ function ShipperProfile(props) {
                     name="address"
                     className="form-control"
                     required
-                    defaultValue={data[0].address}
+                    defaultValue={data[0]?.address}
                 />
             </div>
 
@@ -213,10 +255,10 @@ function ShipperProfile(props) {
                 <label htmlFor="lgv">Local Government</label>
                 <input
                     type="text"
-                    name="localGovt"
+                    name="loc_govt"
                     className="form-control"
                     required
-                    defaultValue={data[0].localGovt}
+                    defaultValue={data[0]?.loc_govt}
                 />
             </div>
 
@@ -227,7 +269,7 @@ function ShipperProfile(props) {
                     name="state"
                     className="form-control"
                     required
-                    defaultValue={data[0].state}
+                    defaultValue={data[0]?.state}
                 />
             </div>
 
@@ -238,15 +280,15 @@ function ShipperProfile(props) {
                     name="country"
                     className="form-control"
                     required
-                    defaultValue={data[0].country}
+                    defaultValue={data[0]?.country}
                 />
             </div>
 
             <div className="form-group">
                 <img
-                    src={`${data[0].image.src}`}
+                    src={`${data[0]?.document}`}
                     id="shipperDocument"
-                    alt={data[0].name}
+                    alt={data[0]?.name}
                     className="rounded img-fluid d-block mx-auto"
                 />
 
@@ -257,21 +299,21 @@ function ShipperProfile(props) {
                     name="shipper_document"
                     className="form-control"
                     required
-                    onChange={showPicture}
-                    defaultValue={data[0].image.src} />
+                    onChange={showDocument}
+                    // defaultValue={data[0]?.document} 
+                    />
                 <p id="shipperDocumentResult" className="bg-success text-white text-center"></p>
             </div>
 
 
             <div className="form-group">
+            {result}{err}
                 <input
                     type="submit"
                     name="submit"
                     value="Update"
                     className="btn btn-primary btn-block"
                 />
-                <p id="shipperProfileResultS" className="text-center text-success text-white"></p>
-                <p id="shipperProfileResultF" className="text-center text-danger text-white"></p>
             </div>
         </form>
     );

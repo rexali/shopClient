@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import AdminAddForm from "./AdminAddForm";
 import AdminProduct from "./AdminProduct.js";
 import AdminProfile from "./AdminProfile";
 import AdminOrder from "./AdminOrder";
+import AdminMessage from "./AdminMessage";
+import AdminNotification from "./AdminNotification";
 
 export default function AdminTabs(props) {
 
@@ -12,55 +13,58 @@ export default function AdminTabs(props) {
     let openTab = (tabname) => {
         setTabName(tabname);
     }
+    const styles = {
+        navTab: { fontSize: 'small' }
+    }
 
     return (
         <div className="container" >
             <ul className="nav nav-tabs nav-justified">
                 <li className="nav-item">
-                    <Link className="nav-link active" data-toggle="tab" onClick={() => openTab('profile')} to="#profile">Profile</Link>
+                    <Link className="nav-link active" style={styles.navTab} data-toggle="tab" onClick={() => openTab('profile')} to="#profile">Profile</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('add')} to="#add">Add</Link>
+                    <Link className="nav-link" style={styles.navTab} data-toggle="tab" onClick={() => openTab('product')} to="#product">Product</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('view')} to="#view">View</Link>
+                    <Link className="nav-link" style={styles.navTab} data-toggle="tab" onClick={() => openTab('message')} to="#message">Message</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('order')} to="#order">Order</Link>
+                    <Link className="nav-link" style={styles.navTab} data-toggle="tab" onClick={() => openTab('order')} to="#order">Order</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('feedback')} to="#feedback">Feedback</Link>
+                    <Link className="nav-link" style={styles.navTab} data-toggle="tab" onClick={() => openTab('notification')} to="#notification">Notification</Link>
                 </li>
             </ul>
 
             <div className="tab-content">
-                <div className="tab-pane container active" id="profile">
+                <div className="tab-pane active" id="profile">
                     {tabName === 'profile' ? <Profile /> : ''}
-                    {tabName === 'add' ? <Add /> : ''}
-                    {tabName === 'view' ? <View /> : ''}
+                    {tabName === 'product' ? <Product /> : ''}
+                    {tabName === 'message' ? <Message /> : ''}
                     {tabName === 'order' ? <Order /> : ''}
-                    {tabName === 'feedback' ? <Feedback /> : ''}
+                    {tabName === 'notification' ? <Notification /> : ''}
                 </div>
             </div>
         </div>
     );
 }
 
-function Profile(props) {
-    return <div className="container"><AdminProfile /></div>;
+function Profile() {
+    return <AdminProfile />;
 }
 
-function Add(props) {
-    return <div className="container"><AdminAddForm /></div> ;
+function Message() {
+    return <AdminMessage />;
 }
 
-function View(props) {
-    return <div className="container"><AdminProduct /></div>;
+function Product() {
+    return <AdminProduct />;
 }
 
-function Order(props) {
-    return <div className="container"><AdminOrder/></div>;
+function Order() {
+    return <AdminOrder />;
 }
-function Feedback(props) {
-    return <h3>Requested Feedback</h3>;
+function Notification() {
+    return <AdminNotification />;
 }

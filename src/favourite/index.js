@@ -4,6 +4,7 @@ import { Redirect } from "react-router-dom";
 import { appContext } from "../AppProvider";
 import ShowToast from "../common/ShowToast";
 import Spinner from "../common/Spinner";
+import { getPicture } from "../service";
 import FavouriteFooter from "./FavouriteFooter";
 import FavouriteHeader from "./FavouriteHeader";
 
@@ -157,7 +158,7 @@ function Favourite() {
                     return (<div className="col-md-4 card my-3 shadow-none" key={i} >
                         <div>
                             <a href="#share" className="btn btn-sm btn-outline-success m-2 position-absolute" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
-                            <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`/uploads/${product.product_picture ? product.product_picture : 'logo512.png'}`} alt={product.product_name ? product.product_name : ''} />
+                            <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0] : getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : ''} />
                         </div>
                         <div className="card-body">
                             <p>{product.product_category ? product.product_category : ' '}</p>

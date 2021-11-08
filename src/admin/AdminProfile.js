@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { appContext } from "../AppProvider";
-function AdminProfile(props) {
+function AdminProfile() {
     let [data, setData] = useState({});
+    let [result, setResult] = useState('');
+    let [err, setErr] = useState('');
+
     const { state } = React.useContext(appContext);
     const adminId = state.authData?.admin_id;
-    
+
+    const success = <div className="alert alert-success">Success</div>;
+    const status = <div className="alert alert-info">Sending...</div>;
+    const failure = <div className="alert alert-success">Error!</div>;
+
     const handleSubmit = (event) => {
         event.preventDefault();
+        setResult(status)
         let form = document.getElementById("adminProfileForm");
-        let firstName = form.elements['firstName'].value;
-        let lastName = form.elements['lastName'].value;
+        let firstName = form.elements['first_name'].value;
+        let lastName = form.elements['last_name'].value;
         let phone = form.elements['phone'].value;
         let email = form.elements['email'].value;
 
@@ -21,14 +29,14 @@ function AdminProfile(props) {
             console.log(error)
         } finally {
             if (!admin_picture) {
-               admin_picture= document.getElementById("adminPicture").getAttribute("src").split('/')[1];
+                admin_picture = document.getElementById("adminPicture").getAttribute("src").split('/')[1];
             }
         }
 
         let nin = form.elements['nin'].value;
-        let dob = form.elements['dob'].value;
+        let dob = form.elements['date_of_birth'].value;
         let address = form.elements['address'].value;
-        let localGovt = form.elements['localGovt'].value;
+        let localGovt = form.elements['loc_govt'].value;
         let state = form.elements['state'].value;
         let country = form.elements['country'].value;
 
@@ -43,53 +51,68 @@ function AdminProfile(props) {
             }
         }
 
-
         const profileObj = {
-            firstName: firstName,
-            lastName: lastName,
+            first_name: firstName,
+            last_name: lastName,
             phone: phone,
             email: email,
             picture: admin_picture,
             nin: nin,
             dob: dob,
             address: address,
-            localGovt: localGovt,
+            loc_govt: localGovt,
             state: state,
             country: country,
-            document: admin_document
+            document: admin_document,
+            admin_id: adminId
         };
 
         console.log(profileObj);
 
-        axios.post("/users/admin/update", profileObj).then((result) => {
-            let resObj = JSON.stringify(result.data);
-            let rObj = JSON.parse(resObj);
-            console.log(rObj.result);
-            if (rObj.result) {
-                handlePicture();
-                // uploadPicture();
-                alert("success");
+        axios.post("/users/admin/update", profileObj).then((response) => {
+            let result = JSON.parse(JSON.stringify(response.data));
+            if (result.affectedRows === 1 && result.warningCount === 0) {
+                handlePicture()
+                setResult(success)
+                setTimeout(() => { setResult(null) }, 4000)
             }
         }).catch((error) => {
             console.log(error);
+            setErr(failure)
+            setTimeout(() => { setErr(null) }, 4000)
         })
-        
-        uploadPicture();
+
     }
 
     const handlePicture = () => {
         const form = new FormData();
-        form.append(
-            "adminpicture",
-            document.getElementById('admin_picture').files[0],
-            document.getElementById('admin_picture').files[0].name
-        );
-        form.append(
-            "admindocument",
-            document.getElementById('admin_document').files[0],
-            document.getElementById('admin_document').files[0].name
-        );
-        axios.post("/file/twofiles", form);
+        try {
+            let pictureFile = document.getElementById('admin_picture').files[0];
+            let documentFile = document.getElementById('admin_document').files[0];
+
+            let pictureName = pictureFile.name;
+            let documentName = documentFile.name;
+
+            form.append(
+                "adminpicture",
+                pictureFile ? pictureFile : '',
+                pictureName ? pictureName : ''
+            );
+
+            form.append(
+                "admindocument",
+                documentFile ? documentFile : '',
+                documentName ? documentName : ''
+            );
+
+        } catch (error) {
+            console.error(error);
+        }
+        try {
+            axios.post("/file/multiplefiles", form);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     const showPicture = (evt) => {
@@ -106,22 +129,17 @@ function AdminProfile(props) {
     }
 
 
-    const uploadPicture = () => {
-        let admin_picture = document.getElementById('admin_picture')[0].files[0];
-        let picObj;
-        let formData = new FormData();
-        formData.append('admin_picture', admin_picture?admin_picture:'');
-        document.getElementById("#pictureResult").innerHTML = "Checking data...";
-        let xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                picObj = JSON.parse(this.responseText);
-                document.getElementById("pictureResult").html(picObj.result);
-            }
-        };
-        xmlhttp.responseType = '';
-        xmlhttp.open("POST", "/filetoupload", true);
-        xmlhttp.send(formData);
+    const showDocument = (evt) => {
+        let objUrl;
+        try {
+            objUrl = URL.createObjectURL(evt.target.files[0]);
+        } catch (error) { console.log(error) }
+        console.log(objUrl);
+        document.getElementById("adminDocument").setAttribute("src", objUrl);
+        document.getElementById("adminDocument").setAttribute("width", "100px");
+        document.getElementById("adminDocument").setAttribute("height", "100px");
+        document.getElementById("adminDocument").style.display = "block";
+        document.getElementById("adminDocument").style.margin = "auto";
     }
 
 
@@ -242,7 +260,7 @@ function AdminProfile(props) {
                 <label htmlFor="lgv">Local Government</label>
                 <input
                     type="text"
-                    name="localGovt"
+                    name="loc_govt"
                     className="form-control"
                     required
                     defaultValue={data?.loc_govt}
@@ -272,33 +290,33 @@ function AdminProfile(props) {
             </div>
 
             <div className="form-group">
-                            <img
-                                src={`/uploads/${data?.document ? data?.document : 'logo512.png'}`}
-                                id="adminDocument"
-                                alt={data?.name}
-                                className="rounded img-fluid d-block mx-auto"
-                            />
+                <img
+                    src={`/uploads/${data?.document ? data?.document : 'logo512.png'}`}
+                    id="adminDocument"
+                    alt={data?.name}
+                    className="rounded img-fluid d-block mx-auto"
+                />
 
-                            <label htmlFor="doc">Document</label>
-                            <input
-                                type="file"
-                                id="admin_document"
-                                name="admin_document"
-                                className="form-control"
-                                // onChange={showDocument}
-                                defaultValue={data?.document} />
-                            <p id="adminDocumentResult" className="bg-success text-white text-center"></p>
-                        </div>
+                <label htmlFor="doc">Document</label>
+                <input
+                    type="file"
+                    id="admin_document"
+                    name="admin_document"
+                    className="form-control"
+                    onChange={showDocument}
+                    defaultValue={data?.document} />
+                <p id="adminDocumentResult" className="bg-success text-white text-center"></p>
+            </div>
 
             <div className="form-group">
+                {result}{err}
+                <p className="text-center text-danger text-white">{err}</p>
                 <input
                     type="submit"
                     name="submit"
                     value="Update"
                     className="btn btn-primary btn-block"
                 />
-                <p id="adminProfileResultS" className="text-center text-success text-white"></p>
-                <p id="adminProfileResultF" className="text-center text-danger text-white"></p>
             </div>
         </form>
     );

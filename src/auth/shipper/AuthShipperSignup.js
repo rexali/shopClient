@@ -1,29 +1,28 @@
 import axios from "axios";
 import { useRef, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import {useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../../App";
 
-function AuthVendorSignup() {
+function AuthShipperSignup() {
+
   let history = useHistory();
   let location = useLocation();
   let submitRef = useRef();
-
+  
   let auth = useAuth();
 
   let [username, setUsername] = useState('');
   let [password, setPassword] = useState('');
   let [confirmPassword, setConfirmPassword] = useState('');
-  
+
   let [result, setResult] = useState('');
   let [err, setErr] = useState('');
 
-  
   const success = <div className="alert alert-success">Success</div>;
   const status = <div className="alert alert-info">Sending...</div>;
   const failure = <div className="alert alert-danger">Error!</div>;
 
-
-  let { from } = location.state || { from: { pathname: "/auth/vendor/login" } };
+  let { from } = location.state || { from: { pathname: "/auth/shipper/login" } };
 
   const register = () => {
     auth.signup(() => {
@@ -45,31 +44,35 @@ function AuthVendorSignup() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (password === confirmPassword) {
+      setResult(status)
       submitRef.current.value = 'Submitting...';
-      setResult(status);
-      setErr(null);
       const registerObj = { email: username, password: password }
-      axios.post("/auth/vendor/register", registerObj).then((res) => {
+      axios.post("/auth/shipper/register", registerObj).then((res) => {
         console.log(res.data);
         let result = JSON.parse(JSON.stringify(res.data));
         if (result.affectedRows===1 && result.warningCount===0) {
-          setResult(success)
+          setResult(success);
           setUsername('');
           setPassword('');
-          submitRef.current.value = 'Sign up';
-          setTimeout(()=> register(),2000)
+          submitRef.current.value = "Sign up";
+          register();
+          setTimeout(()=>{setResult(null)}, 3000)
         }
       }).catch((err) => {
         console.log(err);
         setErr(failure);
-        submitRef.current.value = 'Sign up';
-        setTimeout(()=>{setErr(null)},4000)
+        submitRef.current.value = "Sign up";
+      setTimeout(()=>{setErr(null)}, 3000)
+
       })
+
     } else {
       setResult("Password did not match");
+      setTimeout(() => {
+      setResult("")
+      }, 10000);
     }
   }
-
 
   return (
     <div>
@@ -130,4 +133,4 @@ function AuthVendorSignup() {
     </div>
   );
 }
-export default AuthVendorSignup;
+export default AuthShipperSignup;

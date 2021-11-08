@@ -5,15 +5,20 @@ import { appContext } from "../AppProvider";
 
 function VendorProfile(props) {
     let [data, setData] = useState({});
-    let [result, setResult] = useState('');
-    let [err, setErr] = useState('');
-
+    let [result, setResult] = useState();
+    let [err, setErr] = useState();
 
     const { state } = React.useContext(appContext);
     const vendorId = state.authData?.vendor_id;
 
+    const success = <div className="alert alert-success">Success</div>;
+    const status = <div className="alert alert-info">Sending...</div>;
+    const failure = <div className="alert alert-danger">Error!</div>;
+
+
     const handleSubmit = (event) => {
         event.preventDefault();
+        setResult(status)
         let form = document.getElementById("vendorProfileForm");
         let firstName = form.elements['first_name'].value;
         let lastName = form.elements['last_name'].value;
@@ -49,7 +54,6 @@ function VendorProfile(props) {
             }
         }
 
-
         const profileObj = {
             first_name: firstName,
             last_name: lastName,
@@ -63,22 +67,22 @@ function VendorProfile(props) {
             state: state,
             country: country,
             document: vendor_document,
-            vendorId: window.sessionStorage.getItem("userId")
+            vendorId: vendorId
         };
 
         console.log(profileObj);
 
-        axios.post("/users/vendor/update", profileObj).then((result) => {
-            let rObj = JSON.parse(JSON.stringify(result.data));
-            console.log(rObj.result);
-            if (rObj.result) {
-                handlePicture();
-                // alert("success");
-                setResult("success")
+        axios.post("/users/vendor/update", profileObj).then((response) => {
+            let result = JSON.parse(JSON.stringify(response.data));
+            if (result.affectedRows === 1 && result.warningCount === 0) {
+                handlePicture()
+                setResult(success)
+                setTimeout(() => { setResult(null) }, 4000)
             }
         }).catch((error) => {
             console.log(error);
-            setErr("Error!")
+            setErr(failure)
+            setTimeout(() => { setErr(null) }, 5000)
         })
     }
 
@@ -111,17 +115,33 @@ function VendorProfile(props) {
 
     const handlePicture = () => {
         const form = new FormData();
-        form.append(
-            "vendorpicture",
-            document.getElementById('vendor_picture').files[0],
-            document.getElementById('vendor_picture').files[0].name
-        );
-        form.append(
-            "vendordocument",
-            document.getElementById('vendor_document').files[0],
-            document.getElementById('vendor_document').files[0].name
-        );
-        axios.post("/file/multiplefiles", form);
+        try {
+            let pictureFile = document.getElementById('vendor_picture').files[0];
+            let documentFile = document.getElementById('vendor_document').files[0];
+
+            let pictureName = pictureFile.name;
+            let documentName = documentFile.name;
+
+            form.append(
+                "vendorpicture",
+                pictureFile ? pictureFile : '',
+                pictureName ? pictureName : ''
+            );
+
+            form.append(
+                "vendordocument",
+                documentFile ? documentFile : '',
+                documentName ? documentName : ''
+            );
+        } catch (error) {
+            console.error(error);
+        }
+        
+        try {
+            axios.post("/file/multiplefiles", form);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     const getProfileData = (id) => {
@@ -133,7 +153,7 @@ function VendorProfile(props) {
                 }).catch(function (error) {
                     console.log(error);
                 });
-            });  
+            });
         }
     }
 
@@ -146,7 +166,6 @@ function VendorProfile(props) {
             <form name="vendorProfileForm" id="vendorProfileForm" onSubmit={handleSubmit}>
                 <div className="row">
                     <div className="col-md-6">
-                        {"welcome  " + vendorId}
                         <div className="form-group">
                             <label htmlFor="fnm">First Name</label>
                             <input
@@ -293,15 +312,15 @@ function VendorProfile(props) {
                                 name="vendor_document"
                                 className="form-control"
                                 onChange={showDocument}
-                                defaultValue={data?.document} />
+                                defaultValue={data?.document} 
+                                />
                             <p id="vendorDocumentResult" className="bg-success text-white text-center"></p>
                         </div>
                     </div>
 
                     <div className="col-md-12">
                         <div className="form-group">
-                            <p id="vendornProfileResultS" className="text-center text-success text-white">{result}</p>
-                            <p id="vendorProfileResultF" className="text-center text-danger text-white">{err}</p>
+                            {result}{err}
                             <input
                                 type="submit"
                                 name="submit"

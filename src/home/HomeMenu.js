@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { appContext } from "../AppProvider";
 
 function HomeMenu({ sendBackData }) {
-    let [data, setData] = useState([]);
+    let {state} =React.useContext(appContext);
+    let data = state.data; 
 
     const styles = {
         divScrollmenu: {
@@ -43,21 +45,6 @@ function HomeMenu({ sendBackData }) {
         return Array.from(new Set([...category()]))
     }
     
-    useEffect(() => { 
-        const fetchMeData = () => {
-            import("axios").then((axios) => {
-                axios.get('/products/product/read').then(function (response) {
-                    let loadData = JSON.stringify(response.data);
-                    let result = JSON.parse(loadData);
-                    setData([...result]);
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            });
-        }
-
-        fetchMeData(); 
-    },[])
 
     return (
         <div style={styles.divScrollmenu} className="container text-center" id="menu-horizon" >

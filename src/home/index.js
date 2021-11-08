@@ -13,8 +13,11 @@ import HomeSearch from "./HomeSearch";
 import HomeMenu from "./HomeMenu";
 import { AuthButton } from "../App";
 import { appContext } from "../AppProvider";
+import axios from "axios";
 
 class Home extends Component {
+
+   static contextType = appContext;
 
    constructor(props) {
       super(props)
@@ -29,8 +32,6 @@ class Home extends Component {
       this.receivedData = this.receivedData.bind(this);
       this.handlePageChange = this.handlePageChange.bind(this);
    }
-
-   static contextType=appContext;
 
    filterPrev = (index) => {
       let newData = this.state.initData.filter((_, i) => {
@@ -55,38 +56,34 @@ class Home extends Component {
       this.setState({ data: x })
    }
 
-   fetchData = async() => {
+   fetchData = async () => {
+      // get jwt and csrf tokens
+      this.context.getJwt();
+      this.context.getCsrfToken();
 
-      const url = '/products/product/read';
-      fetch(
-         url,
-         {
-            mode: 'cors',
-            method: 'get'
-         }
-      ).then((result) => result.json())
-         .then((result) => {
-            this.setState({
-               data: result,
-               initData: result,
-               totalItemCounts: result.length
-            });
-         })
-         .catch((error) => { console.log(error); })
-         .finally(() => {
-            this.setState({ isLoading: false, })
-         })
+      try {
+         let { data } = await axios.get("/products/product/read");
+         this.context.setData(data);
+         this.setState({
+            data: data,
+            initData: data,
+            totalItemCounts: data.length
+         });
+      } catch (error) {
+         console.warn(error);
+      } finally {
+         this.setState({ isLoading: false, })
+      }
    }
 
-   componentDidMount() {
+   async componentDidMount() {
       this.fetchData();
-      console.log(this.props.location)
    }
 
    render() {
       const styles = { mainHeight: { minHeight: "550px" } };
 
-      const { isLoading } = this.state
+      const { isLoading, data, activePage, totalItemCounts } = this.state
 
       if (isLoading) {
          return <Spinner />
@@ -112,8 +109,8 @@ class Home extends Component {
                   <Col md={3} className="d-none d-lg-block"><HomeSidebar receivedData={this.receivedData} /></Col>
                   <Col>
                      <Row>
-                        {this.state.data.length ?
-                           <HomeProducts products={this.state.data} updateCart={this.updateCart} /> : <Spinner />
+                        {data?.length ?
+                           <HomeProducts products={data} updateCart={this.updateCart} /> : <Spinner />
                         }
                      </Row>
                   </Col>
@@ -121,9 +118,9 @@ class Home extends Component {
             </main>
             <div className="d-flex justify-content-center">
                <Pagination
-                  activePage={this.state.activePage}
+                  activePage={activePage}
                   itemsCountPerPage={6}
-                  totalItemsCount={this.state.totalItemCounts}
+                  totalItemsCount={totalItemCounts}
                   pageRangeDisplayed={4}
                   itemClass="page-item"
                   linkClass="page-link"

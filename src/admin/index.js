@@ -4,7 +4,7 @@ import Footer from "../common/Footer";
 import AdminTabs from "./AdminTabs";
 function Admin(props) {
     const styles = {
-        mainHeight: { height: "800px" }
+        mainHeight: { minHeight: "550px" }
     }
     return (
         <div>

@@ -15,8 +15,15 @@ function AuthAdminSignup() {
   let [password, setPassword] = useState('');
   let [confirmPassword, setConfirmPassword] = useState('');
 
-  let [result, setResult] = useState('');
-  let [err, setErr] = useState('');
+  let [result, setResult] = useState(null);
+  let [err, setErr] = useState(null);
+
+  
+  const success = <div className="alert alert-success">Success</div>;
+  const status = <div className="alert alert-info">Sending...</div>;
+  const failure = <div className="alert alert-danger">Error!</div>;
+  const mismatch = <div className="alert alert-danger">Error! password mismatch</div>;
+
 
   let { from } = location.state || { from: { pathname: "/auth/admin/login" } };
 
@@ -40,14 +47,15 @@ function AuthAdminSignup() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (password === confirmPassword) {
-      setResult("")
+      setResult(status)
+      setErr(null)
       submitRef.current.value = 'Submitting...';
       const registerObj = { email: username, password: password }
       axios.post("/auth/admin/register", registerObj).then((res) => {
         console.log(res.data);
         let result = JSON.parse(JSON.stringify(res.data));
         if (result.affectedRows===1 && result.warningCount===0) {
-          setResult("Registration success")
+          setResult(success)
           setUsername('');
           setPassword('');
           submitRef.current.value = "Sign up";
@@ -55,15 +63,16 @@ function AuthAdminSignup() {
         }
       }).catch((err) => {
         console.log(err);
-        setErr("Error!");
+        setErr(failure);
         submitRef.current.value = "Sign up";
+        setTimeout(()=>{setErr(null);},5000)
       })
 
     } else {
-      setResult("Password did not match");
+      setErr(mismatch);
       setTimeout(() => {
-      setResult("")
-      }, 10000);
+      setResult(null)
+      }, 5000);
     }
   }
 
@@ -111,8 +120,7 @@ function AuthAdminSignup() {
               onChange={handleChange} />
           </div>
           <div className="form-group text-center">
-            <span className="bg-success text-white d-block mb-1 rounded">{result}</span>
-            <span className="bg-danger text-white d-block mb-1 rounded">{err}</span>
+            {result}{err}
             <input
               type="submit"
               value="Sign up"

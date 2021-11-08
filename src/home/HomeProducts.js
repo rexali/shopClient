@@ -7,6 +7,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import {appContext} from '../AppProvider';
 import ShowToast from '../common/ShowToast';
+import { getPicture } from '../service';
 
 export default function HomeProducts({ products }) {
     let [toastState, setToastState] = useState(false)
@@ -170,12 +171,6 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
         }
     }
 
-    const getPictures = (pictures) => {
-        let productPictures = [];
-        productPictures = pictures?.split(';');
-        return productPictures.filter((item) => { return item !== "" });
-    }
-
     if (showLogin) {
         return <Redirect to="/auth/user/login" />
     }
@@ -193,7 +188,7 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
                             pathname: `/detail/${product.product_id}`,
                             state: product
                         }
-                    }><img onMouseEnter={mouseover} onMouseLeave={mouseout} variant="top" style={styles.imageProps} className="img-fluid d-block mx-auto" src={`/uploads/${getPictures(product.product_picture).length === 1 ? getPictures(product.product_picture)[0]: getPictures(product.product_picture)[0]}`} alt={product.product_name ? product.product_name : ''} /></Link>
+                    }><img onMouseEnter={mouseover} onMouseLeave={mouseout} variant="top" style={styles.imageProps} className="img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0]: getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : ''} /></Link>
                 </div>
                 
                 <div className="card-body">

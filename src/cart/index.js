@@ -7,6 +7,7 @@ import { appContext } from "../AppProvider";
 import Spinner from "../common/Spinner";
 import ShowToast from "../common/ShowToast";
 import ShowModal from "../common/ShowModal"
+import { getPicture } from "../service";
 
 function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, collectProductQuantities, getTotal, clearCart, setTransxMessage,setTransxStatus }) {
 
@@ -660,12 +661,6 @@ function Cart() {
         return quantities;
     }
 
-    const getPictures = (pictures) => {
-        let productPictures = [];
-        productPictures = pictures?.split(';');
-        return productPictures.filter((item) => { return item !== "" });
-    }
-
     useEffect(() => {
         fetchCartData(userId);
     }, [userId]);
@@ -687,7 +682,7 @@ function Cart() {
                         <ul className="list-group card mb-2 mt-2" key={i}>
                             <li className="list-group-ite d-flex justify-content-around">
                                 <Link to={{ pathname: '/detail/' + item.product_id }}>
-                                    <img src={`/uploads/${getPictures(item.product_picture)[0] ? getPictures(item.product_picture)[0] : 'logo512.png'}`} alt={item.product_name ? item.product_name : ''} style={styles.imageSize} className="img-fluid img-thumbnail" />
+                                    <img src={`/uploads/${getPicture(item.product_picture)[0] ? getPicture(item.product_picture)[0] : 'logo512.png'}`} alt={item.product_name ? item.product_name : ''} style={styles.imageSize} className="img-fluid img-thumbnail" />
                                 </Link>
                                 <span className="align-self-center text-break" style={styles.productNameSize}>{item.product_name}</span>
                                 <span>

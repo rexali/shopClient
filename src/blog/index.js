@@ -10,7 +10,13 @@ export default class Blog extends Component {
             <div>
                 <Header title={"Blog"} />
                 <main  className="container" style={styles.mainHeight}>
-                <iframe title="blog" src="https://mujaware.com" allowFullScreen={true} height="550px" width= "100%" scrolling="yes"></iframe>
+                <iframe 
+                title="blog" 
+                src="https://mujaware.com" 
+                allowFullScreen={true} 
+                height="550px"
+                 width= "100%" 
+                 scrolling="yes"></iframe>
                 </main>
                 <Footer />
             </div>

@@ -1,69 +1,56 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ShipperEditForm from "./ShipperEditForm";
+import { appContext } from "../AppProvider";
 
 function ShipperProduct(props) {
     let [data, setData] = useState([]);
     let [show, setShow] = useState(true);
+    let {state}= React.useContext(appContext);
+    let shipperId = state.authData?.shipper_id;
     const styles = { mainHeight: { minHeight: "550px" } };
 
-    // const viewProduct=(id)=>{
-    //  window.location.href="/detail"+id 
-    // }
-    
-    const removeProduct = (id)=>{
-        import("axios").then((axios) => {
-            axios.get('/mydata',{
-                body:{product_id: id}
-            }).then(function (response) {
-                setData(JSON.parse(JSON.stringify(response.data)).filter((e) => {
-                    return Number(e.id) === id;
-                }));
-            }).catch(function (error) {
-                console.log(error);
-            });
-        });
+    const removeProduct = async (id) => {
+        try {
+            let { data } = await axios.get('/products/product/delete/shipping', { shipper_id: id });
+            setData(data);
+        } catch (error) { console.log(error); };
     }
-    const editProduct = ()=>{
+
+    const editProduct = () => {
         setShow(false);
     }
 
-    const updateAfterPost = ()=>{
+    const updateAfterPost = () => {
         setShow(true);
     }
 
-    const shareProduct = async (id)=>{
-            const dataToShare = {
-                title: 'kanimall.com',
-                text: 'Check out this product you may like it.',
-                url: window.location.origin + '/detail/'+id
-            }
-            if (navigator.share) {
-                try {
-                    await navigator.share(dataToShare);
-                } catch (error) {
-                    console.log(error);
-                }
+    const shareProduct = async (id) => {
+        const dataToShare = {
+            title: 'kanimall.com',
+            text: 'Check out this product you may like it.',
+            url: window.location.origin + '/detail/' + id
+        }
+        if (navigator.share) {
+            try {
+                await navigator.share(dataToShare);
+            } catch (error) {
+                console.log(error);
             }
         }
+    }
 
+    const getShippingData = async (pid) => {
+        try {
+            let { data } = await axios.get('/products/product/read/shipping', { shipper_id: pid });
+            setData(data);
+        } catch (error) { console.log(error); };
+    }
 
     useEffect(() => {
-        const fetchMeData = (pid) => {
-            import("axios").then((axios) => {
-                axios.get('/mydata').then(function (response) {
-                    let loadData = JSON.stringify(response.data);
-                    setData(JSON.parse(loadData).filter((e) => {
-                        return Number(e.id) === pid;
-                    }));
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            });
-        }
-
-        fetchMeData(Number(2));
-    },[]);
+        getShippingData(shipperId);
+    }, [shipperId]);
 
     return (
         <div>
@@ -72,14 +59,14 @@ function ShipperProduct(props) {
                     return (
                         <div className="card my-3 shadow-none" key={i} >
                             <p className="d-flex justify-content-around">
-                                <Link 
-                                className="btn btn-outline-success" 
-                                to={{
-                                    pathname:`/detail/${product.id}`,
-                                    state: product
-                                }}
+                                <Link
+                                    className="btn btn-outline-success"
+                                    to={{
+                                        pathname: `/detail/${product.id}`,
+                                        state: product
+                                    }}
                                 ><span className="fa fa-eye"></span></Link>
-                                <button className="btn btn-outline-info" onClick={()=>shareProduct(product.id)}><span className="fa fa-share"></span></button>
+                                <button className="btn btn-outline-info" onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></button>
                             </p>
                             <div>
                                 <i className="bg-white position-absolute" style={{ zIndex: "2" }} >{product.bestseller ? 'Best Seller' : ''} </i>
@@ -94,14 +81,14 @@ function ShipperProduct(props) {
                                     {product.currency ? product.currency : ''}{product.price ? product.price : ''}
                                 </p>
                                 <p className="d-flex justify-content-around">
-                                    <button className="btn btn-outline-success" onClick={()=>removeProduct(product.id)}><span className="fa fa-trash"></span></button>
-                                    <button className="btn btn-outline-info" onClick={()=>editProduct(product.id)}><span className="fa fa-edit"></span></button>
+                                    <button className="btn btn-outline-success" onClick={() => removeProduct(product.id)}><span className="fa fa-trash"></span></button>
+                                    <button className="btn btn-outline-info" onClick={() => editProduct(product.id)}><span className="fa fa-edit"></span></button>
                                 </p>
                             </div>
                         </div>
                     );
                 })}
-                {!show && <ShipperEditForm data ={data} updateAfterPost={updateAfterPost} />}
+                {!show && <ShipperEditForm data={data} updateAfterPost={updateAfterPost} />}
             </main>
         </div>
     );

@@ -5,22 +5,25 @@ import { useAuth } from "../../App";
 import { appContext } from "../../AppProvider";
 import jwt from "jsonwebtoken";
 
-function AuthSignin() {
-
+function AuthShipperSignin() {
   let history = useHistory();
   let location = useLocation();
-  let auth = useAuth();
-  let submitRef = useRef();
-  let [email, setEmail] = useState('');
-  let [password, setPassword] = useState(null);
-  let [result, setResult] = useState(null);
-  let [err, setErr] = useState(null);
 
-  const { setAuthData, setCartData } = React.useContext(appContext);
-  
+  let submitRef = useRef();
+
+  let auth = useAuth();
+
+  let [email, setEmail] = useState('');
+  let [password, setPassword] = useState('');
+  let [result, setResult] = useState('');
+  let [err, setErr] = useState('');
+
   const success = <div className="alert alert-success">Success</div>;
   const status = <div className="alert alert-info">Sending...</div>;
   const failure = <div className="alert alert-danger">Error!</div>;
+
+
+  const { setAuthData } = React.useContext(appContext);
 
   let { from } = location.state || { from: { pathname: "/" } };
 
@@ -29,17 +32,6 @@ function AuthSignin() {
       history.replace(from);
     });
   };
-
-  const getCartData = (uid) => {
-    import("axios").then((axios) => {
-      axios.post('/cart/read', { user_id: uid }).then(function (response) {
-        let result = JSON.parse(JSON.stringify(response.data));
-        setCartData([...result]);
-      }).catch(function (error) {
-        console.log(error);
-      });
-    });
-  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -52,39 +44,31 @@ function AuthSignin() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    submitRef.current.value = 'Submitting...';
     setResult(status)
-    submitRef.current.value = "Submiting...";
-
     const loginObj = { email: email, password: password }
-    axios.post("/auth/user/login", loginObj).then((res) => {
+    axios.post("/auth/shipper/login", loginObj).then((res) => {
 
       let decoded = jwt.verify(res.data.token, 'aqwsderfgtyhjuiklop');
-      console.log(decoded);
-      if (decoded.result[0].user_id && decoded.result[0].email === email) {
 
-        setResult(success);
-
-        getCartData(decoded.result[0].user_id);
-
-        let authData = {
-          user_id: decoded.result[0].user_id,
-          email: decoded.result[0].email
-        }
-
-        setAuthData(authData);
-
-        console.log("user login successful");
+      if (decoded.result[0].shipper_id && decoded.result[0].email === email) {
+        setResult(success)
+        setAuthData({ shipper_id: decoded.result[0].shipper_id, email: decoded.result[0].email, token: res.data.token })
+        setTimeout(()=>login(), 3000)
+        console.log("admin authenticated login now ");
         setEmail('');
         setPassword('');
         submitRef.current.value = 'Log in';
-        setTimeout(login(), 10000)
+        setTimeout(()=>{setResult(null)}, 3000)
       }
     }).catch((err) => {
       console.log(err);
-      setErr(failure);
+      setErr("Error!")
+      setErr(failure)
       submitRef.current.value = 'Log in';
-    })
+      setTimeout(()=>{setErr(null)}, 3000)
 
+    })
   }
 
   return (
@@ -106,7 +90,7 @@ function AuthSignin() {
 
           <div className="form-group">
             <label className="label-control">Password</label>
-            <span><Link to="/user/forget" className="pull-right mb-1">Forget password</Link></span>
+            <span><Link to="/admin/forget" className="pull-right mb-1 text-muted">Forget password</Link></span>
             <input
               type="password"
               name="password"
@@ -118,8 +102,9 @@ function AuthSignin() {
               onChange={handleChange} />
           </div>
 
-          <div className="form-group">
-            {result}{err}
+          <div className="form-group text-center">
+            <span className="bg-success text-white d-block mb-1 rounded">{result}</span>
+            <span className="bg-danger text-white d-block mb-1 rounded">{err}</span>
             <input
               type="submit"
               value="Log in"
@@ -130,8 +115,9 @@ function AuthSignin() {
             <p>You must log in to view the page at {from.pathname === "/" ? '/home' : from.pathname}</p>
           </div>
         </form>
+
       </main>
     </div>
   );
 }
-export default withRouter(AuthSignin);
+export default withRouter(AuthShipperSignin);

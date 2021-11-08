@@ -6,7 +6,6 @@ import VendorFeedback from "./VendorFeedback";
 import VendorOrder from "./VendorOrder";
 import VendorProduct from "./VendorProduct";
 import VendorProfile from "./VendorProfile";
-import VendorShip from "./VendorShip";
 
 export default function VendorTabs(props) {
 
@@ -15,42 +14,43 @@ export default function VendorTabs(props) {
     let openTab = (tabname) => {
         setTabName(tabname);
     }
+    
+    const styles = {
+        navTabs: { fontSize: 'small' }
+    }
 
     return (
-        <div className="container" >
+        <div className="container-fluid" >
             <ul className="nav nav-tabs nav-justified">
                 <li className="nav-item">
-                    <Link className="nav-link active" data-toggle="tab" onClick={() => openTab('profile')} to="#profile">Profile</Link>
+                    <Link className="nav-link active" data-toggle="tab" onClick={() => openTab('profile')} to="#profile" style={styles.navTabs}>Profile</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('add')} to="#add">Add</Link>
+                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('add')} to="#add" style={styles.navTabs}>Add</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('addplus')} to="#addplus">Add plus</Link>
+                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('addplus')} to="#addplus" style={styles.navTabs}>Add+</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('view')} to="#view">View</Link>
+                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('view')} to="#view" style={styles.navTabs}>View</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('order')} to="#order">Order</Link>
+                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('order')} to="#order" style={styles.navTabs}>Order</Link>
                 </li>
+            
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('ship')} to="#ship">Ship</Link>
-                </li>
-                <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('feedback')} to="#feedback">Feedback</Link>
+                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('feedback')} to="#feedback" style={styles.navTabs}>Feedback</Link>
                 </li>
             </ul>
 
             <div className="tab-content">
-                <div className="tab-pane container active" id="profile">
+                <div className="tab-pane active" id="profile">
                     {tabName === 'profile' ? <Profile routeProps={props.routeProps} /> : ''}
                     {tabName === 'add' ? <Add /> : ''}
                     {tabName === 'addplus' ? <AddPlus /> : ''}
                     {tabName === 'view' ? <View /> : ''}
                     {tabName === 'order' ? <Order /> : ''}
                     {tabName === 'feedback' ? <Feedback /> : ''}
-                    {tabName === 'ship' ? <Ship /> : ''}
                 </div>
             </div>
         </div>
@@ -59,28 +59,24 @@ export default function VendorTabs(props) {
 
 
 function Profile(props) {
-    return <div className="container"><VendorProfile routeProps={props.routeProps} /></div>;
+    return <div className="container-fluid"><VendorProfile /></div>;
 }
 
 function Add() {
-    return <div className="container"><VendorAddForm /></div> ;
+    return <div className="container-fluid"><VendorAddForm /></div>;
 }
 
 function View() {
-    return <div className="container"><VendorProduct /></div>;
+    return <div className="container-fluid"><VendorProduct /></div>;
 }
 function Feedback() {
-    return <div className="container"><VendorFeedback /></div>;
+    return <div className="container-fluid"><VendorFeedback /></div>;
 }
 
 function Order() {
-    return <div className="container"><VendorOrder/></div>;
-}
-
-function Ship() {
-    return <div className="container"><VendorShip/> </div>;
+    return <div className="container-fluid"><VendorOrder /></div>;
 }
 
 function AddPlus() {
-    return <div className="container"><VendorAddPlusForm/> </div>;
+    return <div className="container-fluid"><VendorAddPlusForm /> </div>;
 }

@@ -2,13 +2,14 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { appContext } from "../AppProvider";
+import { getPicture } from "../service";
 
 
 export function ReviewModal({ productId, vendorId }) {
 
     let [show, setShow] = useState(false);
 
-    let [result, setResult]=  useState('');
+    let [result, setResult] = useState('');
 
     const handleClose = () => setShow(false);
 
@@ -51,7 +52,7 @@ export function ReviewModal({ productId, vendorId }) {
             name: name,
             email: email,
             message: message,
-            rating:rating,
+            rating: rating,
             product_id: productId,
             vendor_id: vendorId
         }
@@ -117,11 +118,11 @@ export function ReviewModal({ productId, vendorId }) {
                         <div className="form-group">
                             <label htmlFor="rating">Select from 1 to 5 to rate the item</label>
                             <select name="rating" defaultValue={rating} onChange={handleChange}>
-                               <option value="1">1</option>
-                               <option value="2">2</option>
-                               <option value="3">3</option>
-                               <option value="4">4</option>
-                               <option value="5">5</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
                             </select>
                         </div>
                         <div>
@@ -179,32 +180,32 @@ function UserOrder() {
 
 
     useEffect(() => {
-    fetchMeData(userId);
-        
+        fetchMeData(userId);
+
     }, [userId]);
 
     return (
         <div>
             <main style={styles.mainHeight} className="container">
                 <div className="row">
-                {data.map((product, i) => {
-                    return (<div className="col-md-4 card my-3 shadow-none" key={i} >
-                        <div>
-                            <a href="#share" className="m-2 position-absolute d-md-none" style={styles.aboveL} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
-                            <span className="m-2 position-absolute" style={styles.aboveR} ><ReviewModal productId={product.product_id} vendorId={product.vendor_id} /></span>
-                            <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`http://localhost:3333/uploads/${product.product_picture ? product.product_picture : 'logo512.png'}`} alt={product.product_name ? product.product_name : ''} />
-                        </div>
-                        <div className="card-body">
-                            <p>
-                                <strong>{product.product_name ? product.product_name : ' '}</strong>
-                            </p>
-                            <p>
-                                {product.product_currency ? product.product_currency : 'N '}{product.product_price ? product.product_price : ''}
-                            </p>
-                        </div>
-                    </div>);
-                })}
-                {!data.length && <div className="card shadow-none text-center mt-5">No transaction found</div>}
+                    {data.map((product, i) => {
+                        return (<div className="col-md-4 card my-3 shadow-none" key={i} >
+                            <div>
+                                <a href="#share" className="m-2 position-absolute d-md-none" style={styles.aboveL} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
+                                <span className="m-2 position-absolute" style={styles.aboveR} ><ReviewModal productId={product.product_id} vendorId={product.vendor_id} /></span>
+                                <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`http://localhost:3333/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0]: getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : ''} />
+                            </div>
+                            <div className="card-body">
+                                <p>
+                                    <strong>{product.product_name ? product.product_name : ' '}</strong>
+                                </p>
+                                <p>
+                                    {product.product_currency ? product.product_currency : 'N '}{product.product_price ? product.product_price : ''}
+                                </p>
+                            </div>
+                        </div>);
+                    })}
+                    {!data.length && <div className="card shadow-none text-center mt-5">No transaction found</div>}
                 </div>
             </main>
         </div>

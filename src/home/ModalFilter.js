@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
+import { appContext } from "../AppProvider";
 
 export function Filter({receivedData, handleClose}) {
-
-    let [data, setData] = useState([])
+    let {state} =React.useContext(appContext);
+    let data = state.data;
+    
     let [categories, setCategorie] = useState([])
     let [priceRange, setPriceRange] = useState([])
 
@@ -72,30 +74,11 @@ export function Filter({receivedData, handleClose}) {
             })  
         } else{
             filteredData = data;
-        }
-        
+        } 
         console.log(filteredData)
         receivedData(filteredData);
+        handleClose();
     }
-
-    const fetchData = () => {
-        const url = '/products/product/read';
-        fetch(
-            url,
-            {
-                mode: 'cors',
-                method: 'get'
-            }
-        ).then((result) => result.json())
-            .then((result) => {
-                setData(result);
-            }).catch((error) => { console.log(error); })
-    }
-
-    useEffect(() => {
-        fetchData()
-    },[])
-
 
     return (
         <Form>

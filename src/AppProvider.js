@@ -28,15 +28,6 @@ export default class AppProvider extends React.Component {
         this.setAuthData({ authData: {} })
     }
 
-    getData = async () => {
-        try {
-            let response = await fetch("/products/product/read", { mode: 'cors', method: 'get' });
-            this.setState({ data: [...await response.json()] });
-        } catch (error) {
-            console.warn(error);
-        }
-    }
-
     getJwt = async () => {
         let { data } = await axios.get("/jwt");
         this.setState({ jwt: data.jwtoken });
@@ -47,12 +38,6 @@ export default class AppProvider extends React.Component {
         axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken;
     }
 
-    async componentDidMount() {
-        this.getJwt();
-        this.getCsrfToken();
-        this.getData();
-    }
-
     render() {
         return (
             <appContext.Provider value={
@@ -61,7 +46,9 @@ export default class AppProvider extends React.Component {
                     setData: this.setData,
                     setCartData: this.setCartData,
                     setAuthData: this.setAuthData,
-                    logOut: this.logOut
+                    logOut: this.logOut,
+                    getJwt:this.getJwt,
+                    getCsrfToken: this.getCsrfToken
                 }
             }>
                 {this.props.children}

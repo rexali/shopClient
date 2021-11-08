@@ -3,15 +3,21 @@ import FormData from "form-data";
 import React, { useEffect, useState } from "react";
 import { appContext } from "../AppProvider";
 
-function UserProfile(props) {
+function UserProfile() {
     let [data, setData] = useState({});
-
+    let [result, setResult] = useState(null);
+    let [err, setErr] = useState(null);
     const { state } = React.useContext(appContext);
     const userId = state.authData?.user_id;
 
+    const success = <div className="alert alert-success">Success</div>;
+    const status = <p className="alert alert-info">Sending...</p>;
+    const progress = <p className="alert alert-info">Please wait...</p>;
+    const failure = <p className="alert alert-danger">Error!</p>;
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        setResult(status)
         let form = document.getElementById("userProfileForm");
         let firstName = form.elements['first_name'].value;
         let lastName = form.elements['last_name'].value;
@@ -29,23 +35,11 @@ function UserProfile(props) {
             }
         }
 
-        let nin = form.elements['nin'].value;
         let dob = form.elements['date_of_birth'].value;
         let address = form.elements['address'].value;
         let localGovt = form.elements['loc_govt'].value;
         let state = form.elements['state'].value;
         let country = form.elements['country'].value;
-
-        let user_document;
-        try {
-            user_document = document.getElementById('user_document').files[0].name;
-        } catch (error) {
-            console.log(error)
-        } finally {
-            if (!user_document) {
-                user_document = document.getElementById("userDocument").getAttribute("src");
-            }
-        }
 
 
         const profileObj = {
@@ -54,29 +48,25 @@ function UserProfile(props) {
             phone: phone,
             email: email,
             picture: user_picture,
-            nin: nin,
             dob: dob,
             address: address,
             loc_govt: localGovt,
             state: state,
             country: country,
-            document: user_document,
-            userId: userId
+            user_id: userId
         };
-
-        console.log(profileObj);
-
-        axios.post("/users/user/update", profileObj).then((result) => {
-            let resObj = JSON.stringify(result.data);
-            let rObj = JSON.parse(resObj);
-            console.log(rObj.result);
-            if (rObj.result) {
-                handlePicture();
-                // uploadPicture();
-                alert("success");
+        setResult(progress);
+        axios.post("/users/user/update", profileObj).then((response) => {
+            let result = JSON.parse(JSON.stringify(response.data));
+            if (result.affectedRows === 1 && result.warningCount === 0) {
+                handlePicture()
+                setResult(success)
+                setTimeout(() => { setResult(null) }, 4000)
             }
         }).catch((error) => {
             console.log(error);
+            setErr(failure)
+            setTimeout(() => { setErr(null) }, 4000)
         })
     }
 
@@ -93,40 +83,25 @@ function UserProfile(props) {
         document.getElementById("userPicture").style.margin = "auto";
     }
 
-
-    // const uploadPicture = () => {
-    //     let user_document, user_picture
-    //     try {
-    //         user_picture = document.getElementById('user_picture').files[0];
-    //         user_document = document.getElementById('user_document').files[0];
-    //     } catch (error) { console.log(error); }
-    //     let formData = new FormData();
-    //     formData.append('user_picture', user_picture ? user_picture : '');
-    //     formData.append('user_document', user_document ? user_document : '');
-    //     let xmlhttp = new XMLHttpRequest();
-    //     xmlhttp.onreadystatechange = function () {
-    //         if (this.readyState === 4 && this.status === 200) {
-    //             console.log(this.responseText);
-    //         }
-    //     };
-    //     xmlhttp.responseType = '';
-    //     xmlhttp.open("POST", "/file/multiplefiles", true);
-    //     xmlhttp.send(formData);
-    // }
-
     const handlePicture = () => {
         const form = new FormData();
-        form.append(
-            "vendorpicture",
-            document.getElementById('user_picture').files[0],
-            document.getElementById('user_picture').files[0].name
-        );
-        form.append(
-            "vendordocument",
-            document.getElementById('user_document').files[0],
-            document.getElementById('user_document').files[0].name
-        );
-        axios.post("/file/multiplefiles", form);
+        try {
+            let pictureFile = document.getElementById('user_picture').files[0];
+            let pictureName = pictureFile.name;
+            form.append(
+                "userpicture",
+                pictureFile ? pictureFile : '',
+                pictureName ? pictureName : ''
+            );
+        } catch (error) {
+            console.error(error);
+        }
+
+        try {
+            axios.post("/file/multiplefiles", form);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
 
@@ -136,7 +111,6 @@ function UserProfile(props) {
             import("axios").then((axios) => {
                 axios.post('/users/user', { user_id: id }).then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
-                    console.log(result)
                     setData(result[0]);
                 }).catch(function (error) {
                     console.log(error);
@@ -149,7 +123,6 @@ function UserProfile(props) {
     return (
         <div className="container">
             <form name="userProfileForm" id="userProfileForm" onSubmit={handleSubmit}>
-                {"welcome  " + window.sessionStorage.getItem("userId")}
                 <div className="row">
                     <div className="col-md-6">
 
@@ -210,22 +183,12 @@ function UserProfile(props) {
                                 id="user_picture"
                                 name="user_picture"
                                 className="form-control"
-                                required
                                 onChange={showPicture}
                                 defaultValue={data?.picture}
                             />
                             <p id="vendorPictureResult" className="bg-success text-white text-center"></p>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="vehNIN">National Identity Number.</label>
-                            <input
-                                type="number"
-                                name="nin"
-                                className="form-control"
-                                required
-                                defaultValue={data?.nin} />
-                        </div>
                     </div>
 
                     <div className="col-md-6">
@@ -285,36 +248,17 @@ function UserProfile(props) {
                             />
                         </div>
 
-                        <div className="form-group">
-                            <img
-                                src={`/uploads/${data?.document ? data?.document : 'logo512.png'}`}
-                                id="userDocument"
-                                alt={data?.name}
-                                className="rounded img-fluid d-block mx-auto"
-                            />
-
-                            <label htmlFor="doc">Document</label>
-                            <input
-                                type="file"
-                                id="user_document"
-                                name="user_document"
-                                className="form-control"
-                                onChange={showPicture}
-                                defaultValue={data?.document} />
-                            <p id="vendorDocumentResult" className="bg-success text-white text-center"></p>
-                        </div>
                     </div>
 
                     <div className="col-md-12">
                         <div className="form-group text-center">
+                            {result}{err}
                             <input
                                 type="submit"
                                 name="submit"
                                 value="Update"
                                 className="btn btn-primary btn-block"
                             />
-                            <p id="adminProfileResultS" className="text-center text-success text-white"></p>
-                            <p id="adminProfileResultF" className="text-center text-danger text-white"></p>
                         </div>
                     </div>
                 </div>

@@ -13,24 +13,27 @@ export default function UserTabs() {
     const openTab = (tabname) => {
         setTabName(tabname);
     }
+    const styles = {
+        navTabs: { fontSize: 'small' }
+    }
 
     return (
         <div className="container" >
             <ul className="nav nav-tabs nav-justified">
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('profile')} to="#profile">Profile</Link>
+                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('profile')} to="#profile">Profile</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('wish')} to="#wish">Wish</Link>
+                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('wish')} to="#wish">Wish</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('cart')} to="#cart">Cart</Link>
+                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('cart')} to="#cart">Cart</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('order')} to="#order">Order</Link>
+                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('order')} to="#order">Order</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('notification')} to="#notifiction">Notice</Link>
+                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('notification')} to="#notifiction">Notice</Link>
                 </li>
             </ul>
 

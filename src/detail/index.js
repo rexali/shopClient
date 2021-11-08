@@ -6,6 +6,7 @@ import DetailFooter from "./DetailFooter";
 import DetailHeader from "./DetailHeader";
 import Spinner from "../common/Spinner";
 import ShowToast from "../common/ShowToast";
+import { getPicture } from "../service";
 
 
 function Detail() {
@@ -95,7 +96,12 @@ function Detail() {
             }
         }
     }
-
+/**
+ * Save user favourite product
+ * @param {Event} evt is an event parameter
+ * @param {Number} pid is a product id
+ * @param {Number} vid is a vendor id
+ */
     const saveProduct = async (evt, pid, vid) => {
         if (userId) {
             let resu = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
@@ -119,12 +125,11 @@ function Detail() {
             setShow(false);
         }
     }
-
-    const getPictures = (pictures) => {
-        let productPictures = pictures?.split(';');
-        return productPictures.filter((item, i) => item !== "");
-    }
-
+    
+/**
+ * Read or fetch detail of the product
+ * @param {Number} pid is a product id
+ */
     const fetchProductDetail = async (pid) => {
         try {
             let { data } = await axios.get('/products/product/read/' + pid);
@@ -145,7 +150,7 @@ function Detail() {
     }
 
     if (!show) {
-        return <Redirect to="/auth/user" />
+        return <Redirect to="/auth/user/login" />
     }
 
     if (isLoading) {
@@ -165,7 +170,7 @@ function Detail() {
 
                                     <div className="carousel-indicators">
 
-                                        {getPictures(product.product_picture).map((_, index) => {
+                                        {getPicture(product.product_picture).map((_, index) => {
                                             return index === 0 ?
                                                 <button key={index} type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to={index} className="text-danger active" aria-current="true" aria-label="Slide 0"></button>
                                                 :
@@ -175,7 +180,7 @@ function Detail() {
                                     </div>
 
                                     <div className="carousel-inner">
-                                        {getPictures(product.product_picture)?.map((picturefile, index) => {
+                                        {getPicture(product.product_picture)?.map((picturefile, index) => {
                                             return index === 0 ? (
                                                 <div key={index} className="carousel-item active">
                                                     <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="bg-white position-absolute fa fa-heart m-2" style={styles.beAbove} >{product.product_bestseller ? 'Best Seller' : ''}</i></a>

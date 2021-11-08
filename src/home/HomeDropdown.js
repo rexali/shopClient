@@ -42,7 +42,6 @@ export default function HomeDropdown({ setCartData, cartData }) {
    }
 
    useEffect(() => {
-
       if (userId) {
          setCartCount(cartData?.length);
       }

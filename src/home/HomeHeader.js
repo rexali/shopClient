@@ -5,6 +5,8 @@ import HomeDropdown from "./HomeDropdown";
 import HomeDrawer from './HomeDrawer';
 import { appContext } from '../AppProvider';
 import OverflowMenu from '../common/OverflowMenu';
+import CartResult from '../common/CartResult';
+
 import { Link } from 'react-router-dom';
 // import ShowModal from '../common/ShowModal';
 
@@ -19,7 +21,8 @@ const HomeHeader = ({ sendBackData, cartData }) => {
     <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-light">
       <span className="d-md-none"><HomeDrawer sendBackData={sendBackData} placement="start" scroll={true} backdrop={false} /></span>
       <Link to={"/"} className="navbar-brand text-reset text-uppercase" id="brand">Kanimart</Link>
-      <span className="d-md-none"><HomeDropdown setCartData={setCartData} cartData={cartData} /></span>
+      {/* <span className="d-md-none"><HomeDropdown setCartData={setCartData} cartData={cartData} /></span> */}
+      <span className="d-md-none"><CartResult setCartData={setCartData} cartData={cartData} placement="end" /> </span>
       <span className="d-md-none"><OverflowMenu placement="end" /></span>
 
       <div className="collapse navbar-collapse" id="navbarCollapse">
@@ -32,8 +35,13 @@ const HomeHeader = ({ sendBackData, cartData }) => {
             <Link className="nav-link text-reset" to={"/contact"} >Contact</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link text-reset" to={"/blog"}>Blog</Link>
-            {/* <Link className="nav-link text-reset" to={"https://mujaware.com/blog"} onClick={()=>showBlog(true)}>Blog</Link> */}
+            {/* <Link className="nav-link text-reset" to={"/blog"}>Blog</Link> */}
+            <a
+              className="nav-link text-reset"
+              href="https://mujaware.com/blog"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Blog</a>
           </li>
         </ul>
 

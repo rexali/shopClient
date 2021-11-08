@@ -17,6 +17,11 @@ function AuthVendorSignin() {
 
   const { setAuthData } = React.useContext(appContext);
 
+  
+  const success = <div className="alert alert-success">Success</div>;
+  const status = <div className="alert alert-info">Sending...</div>;
+  const failure = <div className="alert alert-danger">Error!</div>;
+
   let { from } = location.state || { from: { pathname: "/" } };
 
   const login = () => {
@@ -37,22 +42,25 @@ function AuthVendorSignin() {
   const handleSubmit = (event) => {
     event.preventDefault();
     submitRef.current.value = "Submiting...";
+    setErr(null);
+    setResult(status)
     const loginObj = { email: email, password: password }
     axios.post("/auth/vendor/login", loginObj).then((res) => {
       let decoded = jwt.verify(res.data.token, 'aqwsderfgtyhjuiklop');
       if (decoded.result[0].vendor_id && decoded.result[0].email === email) {
-        setResult("Login success");
+        setResult(success);
         setAuthData({ vendor_id: decoded.result[0].vendor_id, email: decoded.result[0].email, token:res.data.token })
-        console.log("vendor authenticated, log in now ");
         setEmail('');
         setPassword('');
         submitRef.current.value = 'Log in';
-        setTimeout(login(), 3000)
+        setTimeout(()=>login(), 2000)
       }
     }).catch((err) => {
       console.log(err);
-      setErr("Error!");
+      setErr(failure);
       submitRef.current.value= 'Log in';
+      setTimeout(()=>setErr(null), 4000)
+
     })
   }
 
@@ -88,8 +96,7 @@ function AuthVendorSignin() {
           </div>
 
           <div className="form-group text-center">
-          <span className="bg-success text-white d-block mb-1 rounded">{result}</span>
-            <span className="bg-danger text-white d-block mb-1 rounded">{err}</span>
+          {result}{err}
             <input
               type="submit"
               value="Log in"
