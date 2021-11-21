@@ -5,7 +5,7 @@ export default function ShowToast({ title, body}) {
   const [show, setShow] = useState(true);
 
   return (
-    <div style={{zIndex:'2'}}>
+    <div style={{zIndex:'999999'}}>
     <ToastContainer position={"middle-center"} >
     <Toast onClose={()=>setShow(false)} show={show} delay={3000} autohide>
       <Toast.Header>

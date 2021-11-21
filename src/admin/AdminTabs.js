@@ -18,7 +18,7 @@ export default function AdminTabs(props) {
     }
 
     return (
-        <div className="container" >
+        <div>
             <ul className="nav nav-tabs nav-justified">
                 <li className="nav-item">
                     <Link className="nav-link active" style={styles.navTab} data-toggle="tab" onClick={() => openTab('profile')} to="#profile">Profile</Link>

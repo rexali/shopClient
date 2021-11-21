@@ -42,7 +42,8 @@ function AuthVendorSignin() {
   const handleSubmit = (event) => {
     event.preventDefault();
     submitRef.current.value = "Submiting...";
-    setErr(null);
+    setErr(null)
+    setResult(null)
     setResult(status)
     const loginObj = { email: email, password: password }
     axios.post("/auth/vendor/login", loginObj).then((res) => {
@@ -57,6 +58,7 @@ function AuthVendorSignin() {
       }
     }).catch((err) => {
       console.log(err);
+      setResult(null)
       setErr(failure);
       submitRef.current.value= 'Log in';
       setTimeout(()=>setErr(null), 4000)

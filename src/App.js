@@ -128,9 +128,9 @@ export default function App() {
               <Shipper authButton={<AuthButton />} />
             </PrivateRoute>
 
-            <Route path="/admin" pathname={'/auth/admin/login'}>
+            <PrivateRoute path="/admin" pathname={'/auth/admin/login'}>
               <Admin authButton={<AuthButton />} />
-            </Route>
+            </PrivateRoute>
 
             <PrivateRoute path="/user" pathname={'/auth/user/login'}>
               <User authButton={<AuthButton />} />
@@ -254,7 +254,7 @@ export function AuthButton() {
         onClick={() => {
           logOut();
           setCartData([]);
-          auth.signout(() => history.push("/"));
+          auth.signout(() => history.push("/home"));
         }}>
         Sign out
       </button>

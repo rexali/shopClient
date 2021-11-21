@@ -8,6 +8,7 @@ export default class AdminNotification extends React.Component {
     async getNotifications() {
         try {
             let { data } = await axios.get("/notification/read");
+            console.log(data);
             this.setState({ data: data });
         } catch (error) {
             console.error(error);
@@ -17,7 +18,8 @@ export default class AdminNotification extends React.Component {
     removeNotifaction = async (id) => {
         try {
             let { data } = await axios.post("/notification/delete", { notification_id: id });
-            if (data.result) this.getNotifications();
+            console.log(data);
+            if (data.affectedRows === 1 && data.warmingCount === 0) this.getNotifications();
         } catch (error) {
             console.error(error);
         }

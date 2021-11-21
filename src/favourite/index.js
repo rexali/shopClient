@@ -9,25 +9,29 @@ import FavouriteFooter from "./FavouriteFooter";
 import FavouriteHeader from "./FavouriteHeader";
 
 function Favourite() {
+    const { setCartData, state } = React.useContext(appContext);
+    const userId = state.authData?.user_id;
+    
     const styles = { mainHeight: { minHeight: "550px" }, beAboveS: { zIndex: "2", right: 0 }, };
-
+    
     let [data, setData] = useState([]);
     let [isLoading, setIsLoading] = useState([]);
     let [isLoggedin, setIsLoggedin] = useState(false);
     let [toastState, setToastState] = useState(false)
+    let [present, setPresent] = useState(null)
 
-    const { setCartData, state } = React.useContext(appContext);
-    const userId = state.authData?.user_id;
-
-    const showToast = ()=>{
-    setToastState(true);
+    const showToast = () => {
+        setToastState(true);
+        setTimeout(() => {
+        setToastState(false) 
+        }, 3000);
     }
 
     const getProductIds = async (config) => {
         try {
             let { data } = await axios(config);
             let pids = data.map(product => product.product_id);
-            return pids;
+            return { pids };
         } catch (error) {
             console.log(error)
         }
@@ -53,7 +57,6 @@ function Favourite() {
             try {
                 let { data } = await axios.post('/cart/read', { user_id: uid });
                 setCartData(data);
-                // setData(data)
             } catch (error) {
                 console.log(error);
             } finally {
@@ -65,28 +68,28 @@ function Favourite() {
     }
 
 
-    const addToCart = async(pid, vid) => {
+    const addToCart = async (pid, vid) => {
         try {
             document.getElementById("dropdown-autoclose-false2").click();
         } catch (error) { console.error(error); }
         if (userId) {
-            let resu = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
-            if (resu.includes(pid)) {
-                alert("Item already in cart")
+            let { pids } = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
+            if (pids.includes(pid)) {
+                setPresent(true);
             } else {
-            axios.post(
-                "/cart/add",
-                {
-                    product_id: pid,
-                    user_id: userId,
-                    vendor_id: vid
-                }
-            ).then((response) => {
-                let result = JSON.parse(JSON.stringify(response.data));
-                if (result.affectedRows === 1 && result.warningCount === 0) {
-                    getCartData(userId);
-                }
-            }).catch((error) => { console.log(error); });
+                axios.post(
+                    "/cart/add",
+                    {
+                        product_id: pid,
+                        user_id: userId,
+                        vendor_id: vid
+                    }
+                ).then((response) => {
+                    let result = JSON.parse(JSON.stringify(response.data));
+                    if (result.affectedRows === 1 && result.warningCount === 0) {
+                        getCartData(userId);
+                    }
+                }).catch((error) => { console.log(error); });
             }
         } else {
             // login please
@@ -100,29 +103,21 @@ function Favourite() {
             axios.post('/wish/delete', { user_id: userId, product_id: pid })
                 .then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
-                    console.log(result.result)
-                    if(result.result){
+                    if (result.affectedRows === 1 && result.warningCount === 0) {
                         readFavouriteProducts(userId);
                         showToast();
-                        setTimeout(() => {
-                            setToastState(false);  
-                        }, 3000);
-                        
                     }
-
                 }).catch(function (error) {
                     console.log(error);
                 });
         } else {
             // Please log in
             setIsLoggedin(true);
-
         }
-
     }
 
     const readFavouriteProducts = (uid) => {
-        if(uid){
+        if (uid) {
             import("axios").then((axios) => {
                 axios.post('/wish/read', { user_id: uid }).then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
@@ -133,7 +128,7 @@ function Favourite() {
                     console.log(error);
                 });
             });
-        }else{
+        } else {
             setIsLoggedin(true);
         }
     }
@@ -154,33 +149,35 @@ function Favourite() {
             <FavouriteHeader />
             <main style={styles.mainHeight} className="container">
                 <div className='row'>
-                {data.length ? data.map((product, i) => {
-                    return (<div className="col-md-4 card my-3 shadow-none" key={i} >
-                        <div>
-                            <a href="#share" className="btn btn-sm btn-outline-success m-2 position-absolute" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
-                            <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0] : getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : ''} />
-                        </div>
-                        <div className="card-body">
-                            <p>{product.product_category ? product.product_category : ' '}</p>
-                            <p>
-                                <strong>{product.product_name ? product.product_name : ' '}</strong>
-                            </p>
-                            <p>
-                                {product.product_currency ? product.product_currency : 'N '}{product.product_price ? product.product_price : ''}
-                            </p>
-                            <p className="d-flex justify-content-between">
-                                <button className="btn btn-dark btn-sm" ><span className="fa fa-thrash" onClick={() => deleteFavouriteProduct(product.product_id)}>Delete</span></button>
-                                <button className="btn btn-dark btn-sm" ><span className="fa fa-shopping-cart-plus" onClick={() => addToCart(product.product_id, product.vendor_id)}>Add to cart</span></button>
-                            </p>
+                    {data.length ? data.map((product, i) => {
+                        return (<div className="col-md-4 card my-3 shadow-none" key={i} >
+                            <div>
+                                <a href="#share" className="btn btn-sm btn-outline-success m-2 position-absolute" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
+                                <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0] : getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : ''} />
+                            </div>
+                            <div className="card-body">
+                                <p>{product.product_category ? product.product_category : ' '}</p>
+                                <p>
+                                    <strong>{product.product_name ? product.product_name : ' '}</strong>
+                                </p>
+                                <p>
+                                    {product.product_currency ? product.product_currency : 'N '}{product.product_price ? product.product_price : ''}
+                                </p>
+                                <p className="d-flex justify-content-between">
+                                    <button className="btn btn-dark btn-sm" ><span className="fa fa-thrash" onClick={() => deleteFavouriteProduct(product.product_id)}>Delete</span></button>
+                                    <button className="btn btn-dark btn-sm" ><span className="fa fa-shopping-cart-plus" onClick={() => addToCart(product.product_id, product.vendor_id)}>Add to cart</span></button>
+                                </p>
 
-                        </div>
-                    </div>);})
-                    :
-                    (<div className="text-center m-5">No saved item(s)</div>)
-                }
+                            </div>
+                        </div>);
+                    })
+                        :
+                        (<div className="text-center m-5">No saved item(s)</div>)
+                    }
                 </div>
             </main>
             {toastState && <ShowToast title={'Favourite'} body={'Item deleted'} />}
+            {present && <ShowToast title={'Favourite'} body={'Item saved already'} />}
             <FavouriteFooter />
         </div>
     );

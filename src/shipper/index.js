@@ -4,12 +4,12 @@ import Footer from "../common/Footer";
 import ShipperTabs from "./ShipperTabs";
 function Shipper(props) {
     const styles = {
-        mainHeight: { height: "800px" }
+        mainHeight: { minHeight: "600px" }
     }
     return (
         <div>
-            <Header />
-            {props.authButton}
+            <Header title="Shipper" />
+            <div className="container">{props.authButton}</div>
             <main style={styles.mainHeight}>
                 <ShipperTabs />
             </main>

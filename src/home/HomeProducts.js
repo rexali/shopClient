@@ -1,53 +1,81 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { 
-    Link, 
-    Redirect 
+import {
+    Link,
+    Redirect
 } from 'react-router-dom';
 import axios from 'axios';
 import React, { useState } from 'react';
-import {appContext} from '../AppProvider';
+import { appContext } from '../AppProvider';
 import ShowToast from '../common/ShowToast';
 import { getPicture } from '../service';
 
 export default function HomeProducts({ products }) {
     let [toastState, setToastState] = useState(false)
     let [favouriteState, setFavouriteState] = useState(false)
+    let [presentCart, setPresentCart] = useState(null);
+    let [presentFavourite, setPresentFavourite] = useState(null);
 
-    const { setCartData} = React.useContext(appContext);
+    const { setCartData } = React.useContext(appContext);
 
     const showToast = () => {
         setToastState(true);
-    }
-
-    const resetToast = () => {
-        setToastState(false);
+        setTimeout(() => {
+            setToastState(false);
+        }, 3000);
     }
 
     const showToastFav = () => {
         setFavouriteState(true);
+        setTimeout(() => {
+            setFavouriteState(false);
+        }, 3000);
     }
 
-    const resetToastFav = () => {
-        setFavouriteState(false);
+    const showCartPresent = () => {
+        setPresentCart(true)
+        setTimeout(() => {
+            setPresentCart(false)
+        }, 3000);
     }
 
-    return <>
+    const showFavouritePresent = () => {
+        setPresentFavourite(true)
+        setTimeout(() => {
+            setPresentFavourite(false)
+        }, 3000);
+    }
+
+    return (<>
         {products.map((product, i) => {
-            return i < 6 ? <Product key={i} product={product} setCartData={setCartData} showToast={showToast} resetToast={resetToast} showToastFav={showToastFav} resetToastFav={resetToastFav} /> : '';
-        })};
+            return i < 6 ?
+                <Product
+                    key={i}
+                    product={product}
+                    setCartData={setCartData}
+                    showToast={showToast}
+                    showToastFav={showToastFav}
+                    showCartPresent={showCartPresent}
+                    showFavouritePresent={showFavouritePresent}
+                /> : '';
+        })}
         {toastState && <ShowToast title={'Cart'} body={'Item added'} />}
         {favouriteState && <ShowToast title={'Favourite'} body={'Item added'} />}
-
-    </>
+        {presentFavourite && <ShowToast title={'Favourite'} body={'Item already added'} />}
+        {presentCart && <ShowToast title={'Cart'} body={'Item already added'} />}
+    </>)
 };
 
-export function Product({ product, setCartData, showToast, resetToast, showToastFav, resetToastFav}) {
+export function Product({
+    product,
+    setCartData,
+    showToast,
+    showToastFav,
+    showCartPresent,
+    showFavouritePresent
+}) {
     let [showLogin, setShowLogin] = useState(false);
-    const {state} = React.useContext(appContext);
-    const userId=state.authData?.user_id;
-
-
-    
+    const { state } = React.useContext(appContext);
+    const userId = state.authData?.user_id;
 
     const getCartData = (uid) => {
         import("axios").then((axios) => {
@@ -72,7 +100,6 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
         hideAddToCart: { display: 'none' }
     }
 
-
     const mouseover = (evt) => {
         let chdn = evt.target.parentNode.parentNode.nextSibling;
         chdn.firstChild.style.display = "block";
@@ -88,9 +115,9 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
             document.getElementById("dropdown-autoclose-false2").click();
         } catch (error) { console.error(error); }
         if (userId) {
-            let resu = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
-            if (resu.includes(pid)) {
-                alert("Item already in cart")
+            let { pids } = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
+            if (pids.includes(pid)) {
+                showCartPresent()
             } else {
                 axios.post(
                     "/cart/add",
@@ -104,14 +131,10 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
                     if (result.affectedRows === 1 && result.warningCount === 0) {
                         getCartData(userId);
                         showToast()
-                        setTimeout(() => {
-                            resetToast();
-                        }, 3000);
                     }
                 }).catch((error) => { console.log(error); });
             }
         } else {
-            alert("Please log in")
             setShowLogin(true)
         }
     }
@@ -120,7 +143,7 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
         try {
             let { data } = await axios(config);
             let pids = data.map(product => product.product_id);
-            return pids;
+            return { pids };
         } catch (error) {
             console.log(error)
         }
@@ -129,9 +152,9 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
     const saveProduct = async (event, pid, vid) => {
         if (userId) {
             console.log(userId);
-            let resu = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
-            if (resu.includes(pid)) {
-                alert("Item already saved")
+            let { pids } = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
+            if (pids.includes(pid)) {
+                showFavouritePresent()
             } else {
                 axios.post(
                     "/wish/add",
@@ -143,14 +166,10 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
                 ).then((res) => {
                     console.log(res.data)
                     showToastFav()
-                    setTimeout(() => {
-                        resetToastFav();
-                    }, 3000);
                     event.target.style.color = "green";
                 }).catch((error) => { console.log(error); });
             }
         } else {
-            // alert("Please log in")
             setShowLogin(true)
 
         }
@@ -188,13 +207,13 @@ export function Product({ product, setCartData, showToast, resetToast, showToast
                             pathname: `/detail/${product.product_id}`,
                             state: product
                         }
-                    }><img onMouseEnter={mouseover} onMouseLeave={mouseout} variant="top" style={styles.imageProps} className="img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0]: getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : ''} /></Link>
+                    }><img onMouseEnter={mouseover} onMouseLeave={mouseout} variant="top" style={styles.imageProps} className="img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0] : getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : ''} /></Link>
                 </div>
-                
+
                 <div className="card-body">
                     <button className="btn btn-dark btn-md-block btn-sm w-100" style={styles.hideAddToCart} onClick={() => addToCart(product.product_id, product.vendor_id)} ><i className="fa fa-cart-plus fa-2x" style={styles.addTocart}> Add to cart</i></button>
                     <span className="text-muted d-block" style={styles.catFont}>{product.product_category ? product.product_category : ''}</span>
-                    <span className="d-block text-truncate" style={{ width: '100px' }}>
+                    <span className="d-block text-truncate" style={{ maxWidth: '100px' }}>
                         <strong>{product.product_name ? product.product_name : ''}</strong>
                     </span>
                     <span className="d-block">

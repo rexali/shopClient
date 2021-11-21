@@ -28,14 +28,17 @@ export default class AppProvider extends React.Component {
         this.setAuthData({ authData: {} })
     }
 
-    getJwt = async () => {
-        let { data } = await axios.get("/jwt");
-        this.setState({ jwt: data.jwtoken });
+    getJwt = () => {
+         axios.get("/jwt").then((response)=>{
+        this.setState({ jwt: response.data.jwtoken });
+        });
     }
 
-    getCsrfToken = async () => {
-        const { data } = await axios.get('/csrf-token');
-        axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken;
+    getCsrfToken = () => {
+        axios.get('/csrf-token').then(response=>{
+            axios.defaults.headers.post['X-CSRF-Token'] = response.data.csrfToken;
+        });
+        
     }
 
     render() {

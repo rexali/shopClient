@@ -52,9 +52,10 @@ function AuthSignin() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setErr(null)
+    setResult(null)
     setResult(status)
     submitRef.current.value = "Submiting...";
-
     const loginObj = { email: email, password: password }
     axios.post("/auth/user/login", loginObj).then((res) => {
 
@@ -72,15 +73,14 @@ function AuthSignin() {
         }
 
         setAuthData(authData);
-
-        console.log("user login successful");
         setEmail('');
         setPassword('');
         submitRef.current.value = 'Log in';
-        setTimeout(login(), 10000)
+        setTimeout(()=>login(), 2000)
       }
     }).catch((err) => {
       console.log(err);
+      setResult(null)
       setErr(failure);
       submitRef.current.value = 'Log in';
     })

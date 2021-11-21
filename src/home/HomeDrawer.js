@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { Offcanvas } from 'react-bootstrap';
 import Spinner from "../common/Spinner";
 import { appContext } from "../AppProvider";
+import { Link } from "react-router-dom";
 
 function DrawerContent({ sendBackData, handleClose }) {
     let {state} =React.useContext(appContext);
@@ -98,6 +99,8 @@ function HomeDrawer({ sendBackData, ...props }) {
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <DrawerContent sendBackData={sendBackData} handleClose={handleClose} />
+               <Link to="/admin">Admin</Link><br/>
+               <Link to="/shipper">Shipper</Link>
                 </Offcanvas.Body>
             </Offcanvas>
         </div>

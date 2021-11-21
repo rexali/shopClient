@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import VendorAddForm from "./VendorAddForm";
 import VendorAddPlusForm from "./VendorAddPlusForm";
 import VendorFeedback from "./VendorFeedback";
+import VendorNotification from "./VendorNotification";
 import VendorOrder from "./VendorOrder";
 import VendorProduct from "./VendorProduct";
 import VendorProfile from "./VendorProfile";
@@ -39,18 +40,24 @@ export default function VendorTabs(props) {
                 </li>
             
                 <li className="nav-item">
-                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('feedback')} to="#feedback" style={styles.navTabs}>Feedback</Link>
+                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('feedback')} to="#feedback" style={styles.navTabs}>Feedback</Link> 
+                </li>
+            
+                <li className="nav-item">
+                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('notification')} to="#notification" style={styles.navTabs}>Notification</Link>
                 </li>
             </ul>
 
             <div className="tab-content">
                 <div className="tab-pane active" id="profile">
-                    {tabName === 'profile' ? <Profile routeProps={props.routeProps} /> : ''}
+                    {tabName === 'profile' ? <Profile /> : ''}
                     {tabName === 'add' ? <Add /> : ''}
                     {tabName === 'addplus' ? <AddPlus /> : ''}
                     {tabName === 'view' ? <View /> : ''}
                     {tabName === 'order' ? <Order /> : ''}
                     {tabName === 'feedback' ? <Feedback /> : ''}
+                    {tabName === 'notification' ? <Notification /> : ''}
+
                 </div>
             </div>
         </div>
@@ -71,6 +78,10 @@ function View() {
 }
 function Feedback() {
     return <div className="container-fluid"><VendorFeedback /></div>;
+}
+
+function Notification() {
+    return <div className="container-fluid"><VendorNotification /></div>;
 }
 
 function Order() {

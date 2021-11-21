@@ -31,7 +31,6 @@ function HomeSorting({ receivedData }) {
             }
             return 0;
         });
-
         receivedData(ascendingName_A_Z);
     }
 
@@ -47,7 +46,6 @@ function HomeSorting({ receivedData }) {
         });
         descendingName_Z_A = descendingName_Z_A.reverse();
         receivedData(descendingName_Z_A)
-        console.log(descendingName_Z_A);
 
     }
 

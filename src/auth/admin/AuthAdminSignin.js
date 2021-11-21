@@ -50,6 +50,7 @@ function AuthAdminSignin() {
   const handleSubmit = (event) => {
     event.preventDefault();
     setErr(null)
+    setResult(null)
     setResult(status)
     submitRef.current.value = 'Submitting...';
     const loginObj = { email: email, password: password }
@@ -67,6 +68,7 @@ function AuthAdminSignin() {
       }
     }).catch((err) => {
       console.log(err);
+      setResult(null)
       setErr(failure)
       submitRef.current.value = 'Log in';
       setTimeout(() => {

@@ -5,7 +5,7 @@ import SendMessage from "./SendMessage";
 export default class AdminMessage extends React.Component {
     state = { data: [] };
 
-    async getMessages() {
+    getMessages = async () => {
         try {
             let { data } = await axios.get("/support/message/read");
             this.setState({ data: data });
@@ -16,8 +16,9 @@ export default class AdminMessage extends React.Component {
 
     removeMessage = async (id) => {
         try {
-            let { data } = await axios.post("/support/message/delete", { message_id: id });
-            if (data.result) this.getMessages();
+            let { data } = await axios.get("/support/message/delete/"+id);
+            console.log(data)
+            if (data.affectedRows === 1 && data.warningCount === 0) this.getMessages();
         } catch (error) {
             console.error(error);
         }
@@ -32,7 +33,7 @@ export default class AdminMessage extends React.Component {
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <div className="col">
+                    <div className="col-md-6">
                         <div className="row">
                             {data.map((message, i) => {
                                 return (
@@ -48,7 +49,7 @@ export default class AdminMessage extends React.Component {
                             {!data.length && <div className="card shadow-none text-center mt-5">No notification found</div>}
                         </div>
                     </div>
-                    <div className="col">
+                    <div className="col-md-6">
                         <SendMessage />
                     </div>
                 </div>

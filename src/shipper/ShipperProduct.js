@@ -13,7 +13,7 @@ function ShipperProduct(props) {
 
     const removeProduct = async (id) => {
         try {
-            let { data } = await axios.get('/products/product/delete/shipping', { shipper_id: id });
+            let { data } = await axios.get('/shipping/delete/shipping', { shipper_id: id });
             setData(data);
         } catch (error) { console.log(error); };
     }
@@ -43,7 +43,7 @@ function ShipperProduct(props) {
 
     const getShippingData = async (pid) => {
         try {
-            let { data } = await axios.get('/products/product/read/shipping', { shipper_id: pid });
+            let { data } = await axios.get('/shipping/read/shipping', { shipper_id: pid });
             setData(data);
         } catch (error) { console.log(error); };
     }

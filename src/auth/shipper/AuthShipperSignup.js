@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useRef, useState } from "react";
-import {useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../../App";
 
 function AuthShipperSignup() {
@@ -8,7 +8,7 @@ function AuthShipperSignup() {
   let history = useHistory();
   let location = useLocation();
   let submitRef = useRef();
-  
+
   let auth = useAuth();
 
   let [username, setUsername] = useState('');
@@ -44,32 +44,35 @@ function AuthShipperSignup() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (password === confirmPassword) {
+      setErr(null)
+      setResult(null)
       setResult(status)
       submitRef.current.value = 'Submitting...';
       const registerObj = { email: username, password: password }
       axios.post("/auth/shipper/register", registerObj).then((res) => {
         console.log(res.data);
         let result = JSON.parse(JSON.stringify(res.data));
-        if (result.affectedRows===1 && result.warningCount===0) {
+        if (result.affectedRows === 1 && result.warningCount === 0) {
           setResult(success);
           setUsername('');
           setPassword('');
           submitRef.current.value = "Sign up";
           register();
-          setTimeout(()=>{setResult(null)}, 3000)
+          setTimeout(() => { setResult(null) }, 3000)
         }
       }).catch((err) => {
         console.log(err);
         setErr(failure);
+        setResult(null)
         submitRef.current.value = "Sign up";
-      setTimeout(()=>{setErr(null)}, 3000)
+        setTimeout(() => { setErr(null) }, 3000)
 
       })
 
     } else {
       setResult("Password did not match");
       setTimeout(() => {
-      setResult("")
+        setResult("")
       }, 10000);
     }
   }
@@ -118,7 +121,7 @@ function AuthShipperSignup() {
               onChange={handleChange} />
           </div>
           <div className="form-group text-center">
-           {result}{err}
+            {result}{err}
             <input
               type="submit"
               value="Sign up"

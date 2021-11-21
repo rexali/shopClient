@@ -44,7 +44,7 @@ class ShippingEditForm extends Component {
 
     postStateFee = async (location, destination, fee) => {
         try {
-            let { data } = await axios.post("/products/product/add/shippingfee", { location: location, destination: destination, fee: fee })
+            let { data } = await axios.post("/shipping/add/shippingfee", { location: location, destination: destination, fee: fee })
             console.log(data);
         } catch (error) {
             console.error(error);
@@ -74,7 +74,7 @@ class ShippingEditForm extends Component {
     handleSubmit = async () => {
         const shippingObj = this.state;
         try {
-            let { data } = await axios.post("/products/product/add/shipping", shippingObj)
+            let { data } = await axios.post("/shipping/add/shipping", shippingObj)
             console.log(data);
             this.handleStateAndFee();
             this.setState(this.initialState)
@@ -87,7 +87,7 @@ class ShippingEditForm extends Component {
         const {shipper_id}= this.state
         if (shipper_id) {
             try {
-                let { data } = await axios.post("/products/product/read/shipping", {shipper_id:shipper_id})
+                let { data } = await axios.post("/shipping/read/shipping", {shipper_id:shipper_id})
            this.setState({data:data})
             } catch (error) {
                console.error(error); 
@@ -101,7 +101,7 @@ class ShippingEditForm extends Component {
         const {shipper_id}= this.state
         if (shipper_id) {
             try {
-                let { data } = await axios.post("/products/product/read/shipping", {shipper_id:shipper_id})
+                let { data } = await axios.post("/shipping/read/shippingfee", {shipper_id:shipper_id})
            this.setState({rData:data})
             } catch (error) {
                console.error(error); 

@@ -9,7 +9,7 @@ function Admin(props) {
     return (
         <div>
             <Header title="Admin" />
-            {props.authButton}
+            <div className="container">{props.authButton}</div>
             <main style={styles.mainHeight}>
                 <AdminTabs/>
             </main>

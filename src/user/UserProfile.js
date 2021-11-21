@@ -104,20 +104,22 @@ function UserProfile() {
         }
     }
 
+    const getProfileData = (id) => {
+        import("axios").then((axios) => {
+            axios.post('/users/user', { user_id: id }).then(function (response) {
+                let result = JSON.parse(JSON.stringify(response.data));
+                setData(result[0]);
+            }).catch(function (error) {
+                console.log(error);
+            });
+        });
+    }
+
 
     useEffect(() => {
-        console.log(userId)
-        const getProfileData = (id) => {
-            import("axios").then((axios) => {
-                axios.post('/users/user', { user_id: id }).then(function (response) {
-                    let result = JSON.parse(JSON.stringify(response.data));
-                    setData(result[0]);
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            });
-        }
-        getProfileData(userId);
+        if(userId){
+            getProfileData(userId);
+        }  
     }, [userId]);
 
     return (
@@ -232,6 +234,7 @@ function UserProfile() {
                                 type="text"
                                 name="state"
                                 className="form-control"
+                                placeholder="state"
                                 required
                                 defaultValue={data?.state}
                             />
@@ -243,6 +246,7 @@ function UserProfile() {
                                 type="text"
                                 name="country"
                                 className="form-control"
+                                placeholder="country"
                                 required
                                 defaultValue={data?.country}
                             />

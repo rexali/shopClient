@@ -6,22 +6,15 @@ import HomeDrawer from './HomeDrawer';
 import { appContext } from '../AppProvider';
 import OverflowMenu from '../common/OverflowMenu';
 import CartResult from '../common/CartResult';
-
 import { Link } from 'react-router-dom';
-// import ShowModal from '../common/ShowModal';
 
 const HomeHeader = ({ sendBackData, cartData }) => {
   const { setCartData } = React.useContext(appContext);
-  // const [blog,setBlog]= useState(false)
-  // const showBlog = (x)=>{
-  //   setBlog(x)
-  // }
 
   return (
     <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-light">
       <span className="d-md-none"><HomeDrawer sendBackData={sendBackData} placement="start" scroll={true} backdrop={false} /></span>
       <Link to={"/"} className="navbar-brand text-reset text-uppercase" id="brand">Kanimart</Link>
-      {/* <span className="d-md-none"><HomeDropdown setCartData={setCartData} cartData={cartData} /></span> */}
       <span className="d-md-none"><CartResult setCartData={setCartData} cartData={cartData} placement="end" /> </span>
       <span className="d-md-none"><OverflowMenu placement="end" /></span>
 
@@ -60,8 +53,6 @@ const HomeHeader = ({ sendBackData, cartData }) => {
           </li>
         </ul>
       </div>
-      {/* {blog&&<ShowModal title='Blog' body='I am the blog. When the blog link is ready let me know' setAbout={setBlog} />} */}
-
     </nav>
   );
 }

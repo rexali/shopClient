@@ -45,6 +45,8 @@ function AuthShipperSignin() {
   const handleSubmit = (event) => {
     event.preventDefault();
     submitRef.current.value = 'Submitting...';
+    setErr(null)
+    setResult(null)
     setResult(status)
     const loginObj = { email: email, password: password }
     axios.post("/auth/shipper/login", loginObj).then((res) => {
@@ -55,7 +57,7 @@ function AuthShipperSignin() {
         setResult(success)
         setAuthData({ shipper_id: decoded.result[0].shipper_id, email: decoded.result[0].email, token: res.data.token })
         setTimeout(()=>login(), 3000)
-        console.log("admin authenticated login now ");
+        console.log("shipper authenticated login now ");
         setEmail('');
         setPassword('');
         submitRef.current.value = 'Log in';
@@ -63,7 +65,7 @@ function AuthShipperSignin() {
       }
     }).catch((err) => {
       console.log(err);
-      setErr("Error!")
+      setResult(null)
       setErr(failure)
       submitRef.current.value = 'Log in';
       setTimeout(()=>{setErr(null)}, 3000)

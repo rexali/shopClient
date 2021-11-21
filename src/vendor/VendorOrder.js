@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import {Link} from 'react-router-dom'
 import { appContext } from "../AppProvider";
 
 function TableBody() {
@@ -35,6 +36,7 @@ function TableBody() {
                 <th>Address</th>
                 <th>Product</th>
                 <th>Price</th>
+                <th>Action</th>
             </tr>
             {data.map((item, i) => {
                 return (
@@ -45,6 +47,7 @@ function TableBody() {
                         <td>{item.address} {','}{item.loc_govt} {','}{item.state}</td>
                         <td>{item.product_name}</td>
                         <td>{item.product_price}</td>
+                        <td><Link to={'/detail/'+item.product_id}><i className="fa fa-eye" aria-hidden="true"></i></Link></td>
                     </tr>
                 )
             })}

@@ -141,21 +141,20 @@ function AdminProfile() {
         document.getElementById("adminDocument").style.display = "block";
         document.getElementById("adminDocument").style.margin = "auto";
     }
-
+    const getProfileData = (aid) => {
+        import("axios").then((axios) => {
+            axios.post('/users/admin', { admin_id: aid }).then(function (response) {
+                let result = JSON.parse(JSON.stringify(response.data));
+                console.log(result)
+                setData(result[0]);
+            }).catch(function (error) {
+                console.log(error);
+            });
+        });
+    }
 
     useEffect(() => {
-        const getProfileData = (aid) => {
-            import("axios").then((axios) => {
-                axios.post('/users/admin', { admin_id: aid }).then(function (response) {
-                    let result = JSON.parse(JSON.stringify(response.data));
-                    console.log(result)
-                    setData(result[0]);
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            });
-        }
-        getProfileData(adminId);
+        if(adminId) getProfileData(adminId);  
     }, [adminId]);
 
     return (

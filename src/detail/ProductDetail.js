@@ -1,10 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import DetailFooter from "./DetailFooter";
 import DetailHeader from "./DetailHeader";
 import { getPicture } from "../service";
+import Spinner from "../common/Spinner";
 
 
 export function DetailProductNav({ phone }) {
@@ -122,6 +123,7 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
                 setResult('Error');
             }
         } else {
+            setResult(null);
             alert("You can not post review now until you buy this product and do the review later");
         }
     }
@@ -139,7 +141,7 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
                             <label htmlFor="inputName">Name</label>
                             <input
                                 type="text"
-                                class="form-control"
+                                className="form-control"
                                 id="inputName"
                                 name="name"
                                 onChange={handleChange}
@@ -149,7 +151,7 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
                             <label htmlFor="inputEmail">Email</label>
                             <input
                                 type="email"
-                                class="form-control"
+                                className="form-control"
                                 id="inputEmail"
                                 name="email"
                                 onChange={handleChange}
@@ -158,7 +160,7 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
                         <div class="form-group">
                             <label htmlFor="inputMessage">Message</label>
                             <textarea
-                                class="form-control"
+                                className="form-control"
                                 id="inputMessage"
                                 name="message"
                                 rows="4"
@@ -167,7 +169,7 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
                         </div>
                         <div className="form-group">
                             <label htmlFor="rating">Select from 1 to 5 to rate the item</label>
-                            <select name="rating" defaultValue={rating} onChange={handleChange}>
+                            <select name="rating" defaultValue={rating} onChange={handleChange} required>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -307,7 +309,7 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
         var handler = PaystackPop.setup({
             key: 'pk_test_2ae6f4d367d1966aef717a01edf9623d51143db2', //"pk_live_9522ac67d8f164271cafe16df7fc01b4613af4f7",  //'pk_test_2ae6f4d367d1966aef717a01edf9623d51143db2',
             email: checkoutObj.email,
-            amount: Number(total) * 1000,
+            amount: Number(total) * 100,
             currency: "NGN",
             ref: '' + Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
             metadata: {
@@ -320,9 +322,7 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
                 ]
             },
             callback: function (response) {
-
                 console.log('success. transaction ref is ' + response.reference);
-                window.sessionStorage.setItem('cartItemCount', 0);
                 postOrder(pid, vid, price, qty, total, checkoutObj, 'paid');
             },
 
@@ -366,7 +366,7 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
             customizations: {
                 title: "SINIOCART",
                 description: "Payment for items in your cart",
-                logo: "https://siniotech.com/images/logo.png",
+                logo: "https://mujaware.com/ali.jpg",
             },
         });
     }
@@ -516,10 +516,14 @@ function ProductDetail() {
 
     const { id } = useParams();
 
+    const location = useLocation();
+
+    const product = location.state;
+
     let [data, setData] = useState([]);
     let [reviewData, setReviewData] = useState([]);
-
-
+    let [isLoading, setIsLoading] = useState(true);
+    
     const styles = {
         beAbove: { zIndex: "1" },
         beAboveS: { zIndex: "1", right: 0 },
@@ -549,15 +553,23 @@ function ProductDetail() {
         return productReviews?.filter((item, i) => item !== "");
     }
 
-    const fetchMeData = (pid) => {
-        import("axios").then((axios) => {
-            axios.get('/products/product/read/' + pid).then(function (response) {
-                let result = JSON.parse(JSON.stringify(response.data));
-                setData([...result]);
-            }).catch(function (error) {
-                console.log(error);
+    const fetchMeData = (pid, product) => {
+        if (product) {
+            setData([product]); 
+            setIsLoading(false)
+        } else {
+            import("axios").then((axios) => {
+                axios.get('/products/product/read/' + pid).then(function (response) {
+                    let result = JSON.parse(JSON.stringify(response.data));
+                    setData([...result]);
+                }).catch(function (error) {
+                    console.log(error);
+                }).finally(()=>{
+                  setIsLoading(false)
+                });
             });
-        });
+        }
+       
     }
 
     const readProductReviewData = (pid) => {
@@ -573,9 +585,13 @@ function ProductDetail() {
 
     useEffect(() => {
 
-        fetchMeData(Number(id));
+        fetchMeData(Number(id), product);
         readProductReviewData(Number(id));
-    }, [id]);
+    }, [id, product]);
+
+    if (isLoading) {
+        return <Spinner/>
+    }
 
     return (
         <div>
@@ -602,12 +618,12 @@ function ProductDetail() {
                                             {getPicture(product.product_picture)?.map((picturefile, i) => {
                                                 return i === 0 ? (
                                                     <div key={i} className="carousel-item active">
-                                                        <a href="#share" className="mt-1 mr-4 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
+                                                        <a href="#share" className="mt-1 mr-4 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.product.id)}><span className="fa fa-share"></span></a>
                                                         <img style={{ maxWidth: "100px", height: "100px" }} className="img-fluid d-block mx-auto" src={`/uploads/${picturefile ? picturefile : ''}`} alt={picturefile ? picturefile : ''} />
                                                     </div>
                                                 ) : (
                                                     <div key={i} className="carousel-item">
-                                                        <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
+                                                        <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.product.id)}><span className="fa fa-share"></span></a>
                                                         <img style={{ maxWidth: "100px", height: "100px" }} className="img-fluid d-block mx-auto" src={`/uploads/${picturefile ? picturefile : ''}`} alt={picturefile ? picturefile : ''} />
                                                     </div>
                                                 )
@@ -704,9 +720,9 @@ function ProductDetail() {
                                     {getReviews(product.product_review)?.map((filename, i) => {
                                         return <p key={i}><img src={`/uploads/${filename ? filename : ''}`} alt={product.product_name ? product.product_name : ''} className="img-fluid" /></p>
                                     })}
-                                    {reviewData.map((review, index) => {
+                                    {reviewData.length?reviewData.map((review, index) => {
                                         return <div key={index}>{review.message}</div>;
-                                    })
+                                    }):<div className="mt-5">There is no review(s) for this product for now</div>
                                     }
 
                                 </div>

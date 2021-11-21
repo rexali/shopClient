@@ -6,6 +6,8 @@ import { getPicture } from "../service";
 
 
 export function ReviewModal({ productId, vendorId }) {
+    const { state } = React.useContext(appContext)
+    const userId = state.authData?.user_id; 
 
     let [show, setShow] = useState(false);
 
@@ -54,7 +56,8 @@ export function ReviewModal({ productId, vendorId }) {
             message: message,
             rating: rating,
             product_id: productId,
-            vendor_id: vendorId
+            vendor_id: vendorId,
+            user_id: userId
         }
         console.log(revObj)
         postReview(revObj);
@@ -70,14 +73,14 @@ export function ReviewModal({ productId, vendorId }) {
             }
         } catch (error) {
             console.error(error);
-            setResult('Error');
+            setResult('Error,Try again');
         }
     }
 
     return (
-        <div className="d-lg-none mt-2">
+        <div className="d-lg-non">
             <Button variant="default" onClick={handleShow}>
-                <span className="fa fa-reply-all text-primary"></span>
+                <span className="fa fa-envelope-o text-primary"></span>
             </Button>
             <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
@@ -117,7 +120,7 @@ export function ReviewModal({ productId, vendorId }) {
                         </div>
                         <div className="form-group">
                             <label htmlFor="rating">Select from 1 to 5 to rate the item</label>
-                            <select name="rating" defaultValue={rating} onChange={handleChange}>
+                            <select name="rating" defaultValue={rating} onChange={handleChange} required>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -129,7 +132,7 @@ export function ReviewModal({ productId, vendorId }) {
                             <span className="bg-success text-white">{result}</span>
                             <input
                                 type="submit"
-                                className="btn btn-outline-primary pull-right"
+                                className="btn btn-outline-primary  btn-sm pull-right"
                                 value="Post" />
                         </div>
                     </form>
@@ -191,9 +194,9 @@ function UserOrder() {
                     {data.map((product, i) => {
                         return (<div className="col-md-4 card my-3 shadow-none" key={i} >
                             <div>
-                                <a href="#share" className="m-2 position-absolute d-md-none" style={styles.aboveL} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
+                                <a href="#share" className="mt-3 ml-2 position-absolute d-md-none" style={styles.aboveL} onClick={() => shareProduct(product.product_id)}><span className="fa fa-share-alt"></span></a>
                                 <span className="m-2 position-absolute" style={styles.aboveR} ><ReviewModal productId={product.product_id} vendorId={product.vendor_id} /></span>
-                                <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`http://localhost:3333/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0]: getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : ''} />
+                                <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0]: getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : ''} />
                             </div>
                             <div className="card-body">
                                 <p>

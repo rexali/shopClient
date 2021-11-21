@@ -4,6 +4,9 @@ import ShipperAddForm from "./ShipperAddForm";
 import ShipperProduct from "./ShipperProduct.js";
 import ShipperProfile from "./ShipperProfile";
 import ShipperOrder from "./ShipperOrder";
+import ShipperFeedback from "./ShipperFeedback";
+import ShipperNotification from "./ShipperNotification";
+
 
 export default function ShipperTabs(props) {
 
@@ -35,6 +38,9 @@ export default function ShipperTabs(props) {
                 <li className="nav-item">
                     <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('feedback')} to="#feedback">Feedback</Link>
                 </li>
+                <li className="nav-item">
+                    <Link className="nav-link" data-toggle="tab" onClick={() => openTab('notification')} to="#notification" style={styles.navTabs}>Notification</Link>
+                </li>
             </ul>
 
             <div className="tab-content">
@@ -44,6 +50,7 @@ export default function ShipperTabs(props) {
                     {tabName === 'view' ? <View /> : ''}
                     {tabName === 'order' ? <Order /> : ''}
                     {tabName === 'feedback' ? <Feedback /> : ''}
+                    {tabName === 'notification' ? <Notification /> : ''}
                 </div>
             </div>
         </div>
@@ -67,5 +74,9 @@ function Order(props) {
     return <div className="container"><ShipperOrder/></div>;
 }
 function Feedback(props) {
-    return <h3>Requested Feedback</h3>;
+    return <div className="container-fluid"><ShipperFeedback /></div>;
+}
+
+function Notification() {
+    return <div className="container-fluid"><ShipperNotification /></div>;
 }

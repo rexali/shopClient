@@ -1,10 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { appContext } from "../AppProvider";
 function ShipperProfile() {
     let [data, setData] = useState([]);
     let [result, setResult] = useState();
     let [err, setErr] = useState();
-
+    const { state } = React.useContext(appContext);
+    const shipperId = state.authData?.shipper_id;
     
     const success=<div className="alert alert-success">Success</div>;
     const status=<div className="alert alert-info">Sending...</div>;
@@ -136,22 +138,19 @@ function ShipperProfile() {
             console.error(error);
         }
     }
-
+    const getProfileData = (id) => {
+        import("axios").then((axios) => {
+            axios.post('/users/shipper', { shipper_id: id }).then(function (response) {
+                setData(JSON.parse(JSON.stringify(response.data)));
+            }).catch(function (error) {
+                console.log(error);
+            });
+        });
+    }
 
     useEffect(() => {
-        const getProfileData = (id) => {
-            import("axios").then((axios) => {
-                axios.get('/users/shipper', {
-                    body: { product_id: id }
-                }).then(function (response) {
-                    setData(JSON.parse(JSON.stringify(response.data)));
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            });
-        }
-        getProfileData(2)
-    }, []);
+       if (shipperId) getProfileData(shipperId)
+    }, [shipperId]);
 
     return (
         <form name="shipperProfileForm" id="shipperProfileForm" onSubmit={handleSubmit}>

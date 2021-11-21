@@ -9,7 +9,7 @@ function DetailHeader() {
         <ul className="nav nav-tabs justify-content-between">
 
             <li className="nav-item d-md-none">
-                <a className="nav-link text-black" href="#back" onClick={()=>history.goBack()}><span className="fa fa-arrow-left"></span></a>
+                <Link className="nav-link text-black" to={"#back"} onClick={()=>history.goBack()}><span className="fa fa-arrow-left"></span></Link>
             </li>
 
             <li className="nav-item">

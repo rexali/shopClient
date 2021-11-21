@@ -1,15 +1,12 @@
 import axios from "axios";
 import React from "react";
-import { Link } from "react-router-dom";
-import { appContext } from "../AppProvider";
 
-export default class VendorFeedback extends React.Component {
-    static contextType=appContext;
+export default class ShipperFeedback extends React.Component {
     state = { data: [] };
 
-    async getFeedbacks() {
+    async getNotifications() {
         try {
-            let response = await axios.post("/review/read",{vendor_id: this.context.state.authData?.vendor_id});
+            let response = await axios.get("/review/read");
             let result = JSON.parse(JSON.stringify(await response.data));
             console.log(result);
             this.setState({data:result});
@@ -20,7 +17,7 @@ export default class VendorFeedback extends React.Component {
 
     componentDidMount() {
 
-        this.getFeedbacks();
+        this.getNotifications();
     }
 
     render() {
@@ -30,11 +27,9 @@ export default class VendorFeedback extends React.Component {
             <div className="row">
                 {data.map((message, i) => {
                     return (
-                        <div key={i} className="col-md-4 card shadow-sm">
-                            <Link to={'/detail/'+message.product_id} className="text-decoration-none"><i className="fa fa-eye" aria-hidden="true"></i></Link>
-                            <p className="text-center">{message.name}</p>
+                        <div key={i} className="col-md-4 card shadow-none">
+                            <p className="text-center">{message.subject}</p>
                             <p className="text-center">{message.message}</p>
-                            <p className="text-center"><a href={'mailto:'+message.email} className="text-decoration-none">Reply</a></p>
                         </div>
                     )
                 })

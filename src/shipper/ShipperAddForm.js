@@ -7,14 +7,14 @@ class ShippingAddForm extends Component {
     static contextType = appContext;
 
     initialState = {
-        shipping_name:'',
+        shipping_name: '',
         shipping_mean: '',
         shipping_picture: '',
         shipping_description: ''
     }
 
     state = {
-        shipping_name:'',
+        shipping_name: '',
         shipping_mean: '',
         shipping_picture: '',
         shipping_description: '',
@@ -43,7 +43,7 @@ class ShippingAddForm extends Component {
 
     postStateFee = async (location, destination, fee) => {
         try {
-            let { data } = await axios.post("/products/product/add/shippingfee", { location: location, destination: destination, fee:fee })
+            let { data } = await axios.post("/shipping/add/shippingfee", { location: location, destination: destination, fee: fee })
             console.log(data);
         } catch (error) {
             console.error(error);
@@ -73,7 +73,7 @@ class ShippingAddForm extends Component {
     handleSubmit = async () => {
         const shippingObj = this.state;
         try {
-            let { data } = await axios.post("/products/product/add/shipping", shippingObj)
+            let { data } = await axios.post("/shipping/add/shipping", shippingObj)
             console.log(data);
             this.handleStateAndFee();
             this.setState(this.initialState)
@@ -148,7 +148,7 @@ class ShippingAddForm extends Component {
                         </div>
                     </div>
 
-                    <div className="col-md-12">
+                    <div className="col-md-6">
                         <div className="form-group">
                             <textarea
                                 name="shipping_description"
@@ -166,10 +166,15 @@ class ShippingAddForm extends Component {
 
                     <div className="col-md-12" >
                         <div>
-                            <div className="text-right"><input type="button" value="Add" onClick={this.addStateFees} /></div>
-                            <div className="text-center"><input type="text" name="state" placeholder="Enter state" className="col-5 mr-1" /><input type="text" name="fee" placeholder="Enter fee" className="col-5 mr-1" /><input type="button" value="X" className="btn btn-sm btn-outline-success" /></div>
+                            <div className="text-right"><input type="button" className="btn btn-outline-secondary btn-sm" value="Add" onClick={this.addStateFees} /></div>
+                            <div className="text-center mb-2">
+                                <input type="text" name="location" placeholder="Enter service location" className="col-3 mr-1" />
+                                <input type="text" name="destination" placeholder="Enter service destination" className="col-3 mr-1" />
+                                <input type="text" name="fee" placeholder="Enter service charge" className="col-3 mr-1" />
+                                <input type="button" value="X" className="btn btn-sm btn-outline-success" />
+                            </div>
                             {data.map((_, i) => {
-                                return (<div key={i} className="text-center">
+                                return (<div key={i} className="text-center mb-2">
                                     <input type="text" name="location" placeholder="Enter service location" className="col-3 mr-1" />
                                     <input type="text" name="destination" placeholder="Enter service destination" className="col-3 mr-1" />
                                     <input type="text" name="fee" placeholder="Enter service charge" className="col-3 mr-1" />

@@ -38,16 +38,16 @@ export default function OverflowMenu({ ...props }) {
                         <li className="list-group-item list-group-item-action"><Link to={'/favourite'}><i className="fa fa-heart" aria-hidden="true"> Wish</i></Link></li>
                         <li className="list-group-item list-group-item-action"><Link to={'/about'}> <i className="fa fa-info-circle" aria-hidden="true"> About</i></Link></li>
                         <li className="list-group-item list-group-item-action"><Link to={'/contact'}> <i className="fa fa-address-card" aria-hidden="true"> Contact</i></Link></li>
+                        <li className="list-group-item list-group-item-action"><Link to={'#share'} onClick={() => shareAppLink}><i className="fa fa-share-alt" aria-hidden="true"> Share</i></Link></li>  
                         {/* <li className="list-group-item list-group-item-action"><Link to="/blog"> <i className="fa fa-newspaper-o" aria-hidden="true"> Blog</i></Link></li> */}
                         <li className="list-group-item list-group-item-action">
                             <a
-                                className="nav-link text-reset text-decoration-none"
+                                className="nav-link text-decoration-none"
                                 href="https://mujaware.com/blog"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                            ><i className="fa fa-newspaper-o" aria-hidden="true"> Blog</i> Blog</a>
+                            ><i className="fa fa-newspaper-o" aria-hidden="true"></i> Blog</a>
                         </li>
-                        <li className="list-group-item list-group-item-action"><Link to={'#share'} onClick={() => shareAppLink}><i className="fa fa-share-alt" aria-hidden="true"> Share</i></Link></li>
                     </ul>
                 </Offcanvas.Body>
             </Offcanvas>

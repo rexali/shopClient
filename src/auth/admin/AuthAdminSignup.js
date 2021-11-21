@@ -47,8 +47,9 @@ function AuthAdminSignup() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (password === confirmPassword) {
-      setResult(status)
+      setResult(null)
       setErr(null)
+      setResult(status)
       submitRef.current.value = 'Submitting...';
       const registerObj = { email: username, password: password }
       axios.post("/auth/admin/register", registerObj).then((res) => {
@@ -59,10 +60,11 @@ function AuthAdminSignup() {
           setUsername('');
           setPassword('');
           submitRef.current.value = "Sign up";
-          register();
+          setTimeout(()=>register(),2000)
         }
       }).catch((err) => {
         console.log(err);
+        setResult(null)
         setErr(failure);
         submitRef.current.value = "Sign up";
         setTimeout(()=>{setErr(null);},5000)
@@ -80,7 +82,6 @@ function AuthAdminSignup() {
     <div>
       <main className="container d-flex justify-content-center align-items-center" >
         <form onSubmit={handleSubmit}>
-          <h4 className="text-center text-success">{result}</h4>
           <div className="form-group">
             <label className="label-control">Username</label>
             <input

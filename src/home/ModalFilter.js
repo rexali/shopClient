@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { appContext } from "../AppProvider";
 
-export function Filter({receivedData, handleClose}) {
+export function Filter({receivedData, setFilterData, handleClose}) {
     let {state} =React.useContext(appContext);
     let data = state.data;
     
-    let [categories, setCategorie] = useState([])
+    let [categories, setCategories] = useState([])
     let [priceRange, setPriceRange] = useState([])
+    let [lowerRange, setLowerRange] =useState(0)
+    let [higherRange, setHigherRange] =useState(0)
+
 
     const resetForm = () => {
         let cat = document.getElementsByName("category");
@@ -19,9 +22,10 @@ export function Filter({receivedData, handleClose}) {
         pr.forEach((e) => {
             e.checked = false;
         });
-        setCategorie([])
+        setCategories([])
         setPriceRange([])
         receivedData(data);
+        // setFilterData(data);
         handleClose();
     }
 
@@ -37,12 +41,14 @@ export function Filter({receivedData, handleClose}) {
         let ran = Array.from(new Set(priceRange))
         let rangeString = event.target.value;
         let rangeNumber = rangeString.split("-").map(n => parseInt(n));
+        setLowerRange(rangeNumber[0])
+        setHigherRange(rangeNumber[1])
         setPriceRange([...ran,...range(rangeNumber[0], rangeNumber[1])]);
     }
 
     const getCategories = ev => {
         let cat = Array.from(new Set(categories))
-        setCategorie([...cat, ev.target.value]);
+        setCategories([...cat, ev.target.value]);
     }
 
     const category = () => {
@@ -59,24 +65,24 @@ export function Filter({receivedData, handleClose}) {
     const handleSubmit = (evt) => {
         evt.preventDefault();
         let filteredData
-        if(categories.length>0 && priceRange>0){
+        if(categories.length>0 && priceRange.length>0){
             filteredData = data.filter((product, i) => {
-                return categories.includes(product.product_category.toLowerCase()) && priceRange.includes(Math.round(product.product_price));
+                return categories.includes(product.product_category.toLowerCase()) && (product.product_price>=lowerRange && product.product_price<=higherRange);
             })
         } else if(categories.length>0 && priceRange.length===0){
             filteredData = data.filter((product, i) => {
                 return categories.includes(product.product_category.toLowerCase());
             })
-
         } else if (categories.length===0 && priceRange.length>0) {
             filteredData = data.filter((product, i) => {
-                return priceRange.includes(Math.round(product.product_price));
+                return product.product_price>=lowerRange && product.product_price<=higherRange;
             })  
         } else{
             filteredData = data;
         } 
         console.log(filteredData)
         receivedData(filteredData);
+        setFilterData(filteredData);
         handleClose();
     }
 
@@ -99,7 +105,7 @@ export function Filter({receivedData, handleClose}) {
             <hr />
             <Form.Label>Filter by price range</Form.Label>
             <Form.Check
-                label="Lower than $20"
+                label="Lower than N20"
                 name="pricerange"
                 type="radio"
                 value="0-20"
@@ -109,7 +115,7 @@ export function Filter({receivedData, handleClose}) {
             />
 
             <Form.Check
-                label="$20-$100"
+                label="N20-N100"
                 name="pricerange"
                 type="radio"
                 value="20-100"
@@ -119,7 +125,7 @@ export function Filter({receivedData, handleClose}) {
             />
 
             <Form.Check
-                label="$100-$200"
+                label="N100-N200"
                 name="pricerange"
                 type="radio"
                 value="100-200"
@@ -129,7 +135,7 @@ export function Filter({receivedData, handleClose}) {
             />
 
             <Form.Check
-                label="More than $200"
+                label="More than N200"
                 name="pricerange"
                 type="radio"
                 value="200-1000000"
@@ -149,7 +155,7 @@ export function Filter({receivedData, handleClose}) {
     );
 }
 
-function ModalFilter({receivedData}) {
+function ModalFilter({receivedData, setFilterData}) {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -178,7 +184,7 @@ function ModalFilter({receivedData}) {
                     <Modal.Title>Filter</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Filter receivedData={receivedData} handleClose={handleClose}/>
+                    <Filter receivedData={receivedData} setFilterData={setFilterData} handleClose={handleClose}/>
                 </Modal.Body>
             </Modal>
         </div>

@@ -1,5 +1,28 @@
 // "homepage": "https://rexali.github.io/home",
 //   "proxy":"http://localhost:3333",
+
+
+// function init(initialCount) {
+//    return { count: initialCount };
+// }
+
+// function reducer(state, action) {
+//    switch (action.type) {
+//        case 'increment':
+//            return { count: state.count + 1 };
+//        case 'decrement':
+//            return { count: state.count - 1 };
+//        case 'reset':
+//            return init(action.payload);
+//        default:
+//            throw new Error();
+//    }
+// }
+
+// const [state, dispatch] = useReducer(reducer, 0, init);
+// {state.count} <a href="#k" onClick={()=>dispatch({type:'increment',payload:0})}  >Increase</a>
+
+
 /* eslint-disable no-lone-blocks */
 {/* <Form onSubmit={this.getFormData}>
 

@@ -145,7 +145,6 @@ function VendorProfile(props) {
     }
 
     const getProfileData = (id) => {
-        if (id) {
             import("axios").then((axios) => {
                 axios.post('/users/vendor', { vendor_id: id }).then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
@@ -155,14 +154,13 @@ function VendorProfile(props) {
                 });
             });
         }
-    }
 
     useEffect(() => {
-        getProfileData(vendorId);
+       if(vendorId) getProfileData(vendorId);
     }, [vendorId]);
 
     return (
-        <div className="container">
+        <div>
             <form name="vendorProfileForm" id="vendorProfileForm" onSubmit={handleSubmit}>
                 <div className="row">
                     <div className="col-md-6">
@@ -217,6 +215,7 @@ function VendorProfile(props) {
                                 id="vendorPicture"
                                 alt=""
                                 className="rounded img-fluid d-block mx-auto"
+                                style={{width:'100px', height:'100px'}}
                             />
                             <input
                                 type="file"
@@ -303,6 +302,7 @@ function VendorProfile(props) {
                                 id="vendorDocument"
                                 alt={data?.name}
                                 className="rounded img-fluid d-block mx-auto"
+                                style={{width:'100px', height:'100px'}}
                             />
 
                             <label htmlFor="doc">Document</label>

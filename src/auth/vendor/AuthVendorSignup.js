@@ -13,11 +13,11 @@ function AuthVendorSignup() {
   let [username, setUsername] = useState('');
   let [password, setPassword] = useState('');
   let [confirmPassword, setConfirmPassword] = useState('');
-  
+
   let [result, setResult] = useState('');
   let [err, setErr] = useState('');
 
-  
+
   const success = <div className="alert alert-success">Success</div>;
   const status = <div className="alert alert-info">Sending...</div>;
   const failure = <div className="alert alert-danger">Error!</div>;
@@ -46,24 +46,26 @@ function AuthVendorSignup() {
     event.preventDefault();
     if (password === confirmPassword) {
       submitRef.current.value = 'Submitting...';
-      setResult(status);
-      setErr(null);
+      setErr(null)
+      setResult(null)
+      setResult(status)
       const registerObj = { email: username, password: password }
       axios.post("/auth/vendor/register", registerObj).then((res) => {
         console.log(res.data);
         let result = JSON.parse(JSON.stringify(res.data));
-        if (result.affectedRows===1 && result.warningCount===0) {
+        if (result.affectedRows === 1 && result.warningCount === 0) {
           setResult(success)
           setUsername('');
           setPassword('');
           submitRef.current.value = 'Sign up';
-          setTimeout(()=> register(),2000)
+          setTimeout(() => register(), 2000)
         }
       }).catch((err) => {
         console.log(err);
+        setResult(null)
         setErr(failure);
         submitRef.current.value = 'Sign up';
-        setTimeout(()=>{setErr(null)},4000)
+        setTimeout(() => { setErr(null) }, 4000)
       })
     } else {
       setResult("Password did not match");
@@ -115,7 +117,7 @@ function AuthVendorSignup() {
               onChange={handleChange} />
           </div>
           <div className="form-group text-center">
-           {result}{err}
+            {result}{err}
             <input
               type="submit"
               value="Sign up"

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams, Redirect } from "react-router-dom";
+import { useParams, Redirect, useLocation } from "react-router-dom";
 import { appContext } from "../AppProvider";
 import DetailFooter from "./DetailFooter";
 import DetailHeader from "./DetailHeader";
@@ -13,16 +13,22 @@ function Detail() {
 
     const { id } = useParams(); // get product id
 
-    const [data, setData] = useState([]);
+    const location = useLocation();
 
-    const [show, setShow] = useState(true);
+    const product = location.state;
 
-    const [isLoading, setIsLoading] = useState(true);
+    let [data, setData] = useState([]);
 
-    const [showCart, setShowCart] = useState(false);
+    let [show, setShow] = useState(true);
 
-    const [showToast, setShowToast] = useState(false);
+    let [isLoading, setIsLoading] = useState(true);
 
+    let [showCart, setShowCart] = useState(false);
+
+    let [showToast, setShowToast] = useState(false);
+
+    let [presentCart, setPresentCart] = useState(null);
+    let [presentFavourite, setPresentFavourite] = useState(null);
 
     const { setCartData, state } = React.useContext(appContext);
 
@@ -33,7 +39,7 @@ function Detail() {
         beAboveS: { zIndex: "2", right: 0 },
         imageProps: { minWidth: "auto", height: "235px" },
         hideAddToCart: { display: 'none' },
-        mainHeight: { minHeight: "550px", backgroundColor:'white' }
+        mainHeight: { minHeight: "550px", backgroundColor: 'white' }
     }
 
     const getCartData = (uid) => {
@@ -52,31 +58,31 @@ function Detail() {
         try {
             let { data } = await axios(config);
             let pids = data.map(product => product.product_id);
-            return pids;
-        } catch (error) {
-            console.log(error)
+            return { pids };
+        } catch (err) {
+            console.log(err);
         }
     }
 
-    const addToCart = async(pid, vid) => {
+    const addToCart = async (pid, vid) => {
         if (userId) {
-            let resu = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
-            if (resu.includes(pid)) {
-                alert("Item already in cart");
+            let { pids } = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
+            if (pids.includes(pid)) {
+                setPresentCart(true);
             } else {
-            axios.post(
-                "/cart/add",
-                {
-                    product_id: pid,
-                    user_id: userId,
-                    vendor_id: vid
-                }
-            ).then((res) => {
-                console.log(res.data);
-                getCartData(state.authData.user_id);
-                setShowCart(true)
-            }).catch((error) => { console.log(error); });
-        }
+                axios.post(
+                    "/cart/add",
+                    {
+                        product_id: pid,
+                        user_id: userId,
+                        vendor_id: vid
+                    }
+                ).then((res) => {
+                    console.log(res.data);
+                    getCartData(state.authData.user_id);
+                    setShowCart(true)
+                }).catch((error) => { console.log(error); });
+            }
         } else {
             setShow(false);
         }
@@ -96,23 +102,24 @@ function Detail() {
             }
         }
     }
-/**
- * Save user favourite product
- * @param {Event} evt is an event parameter
- * @param {Number} pid is a product id
- * @param {Number} vid is a vendor id
- */
+    /**
+     * Save user favourite product
+     * @param {Event} evt is an event parameter
+     * @param {Number} pid is a product id
+     * @param {Number} vid is a vendor id
+     */
     const saveProduct = async (evt, pid, vid) => {
         if (userId) {
-            let resu = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
-            if (resu.includes(pid)) {
-                alert("Item already saved");
+            let { pids } = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
+            if (pids.includes(pid)) {
+                // alert("Item already saved");
+                setPresentFavourite(true)
             } else {
                 axios.post(
                     "/wish/add",
                     {
                         product_id: pid,
-                        user_id:userId,
+                        user_id: userId,
                         vendor_id: vid
                     }
                 ).then((res) => {
@@ -125,25 +132,30 @@ function Detail() {
             setShow(false);
         }
     }
-    
-/**
- * Read or fetch detail of the product
- * @param {Number} pid is a product id
- */
-    const fetchProductDetail = async (pid) => {
-        try {
-            let { data } = await axios.get('/products/product/read/' + pid);
-            setData([...data]);
-        } catch (error) {
-            console.log(error);
-        } finally {
+
+    /**
+     * Read or fetch detail of the product
+     * @param {Number} pid is a product id
+     */
+    const fetchProductDetail = async (pid, product) => {
+        if (product) {
+            setData([product]);
             setIsLoading(false);
+        } else {
+            try {
+                let { data } = await axios.get('/products/product/read/' + pid);
+                setData([...data]);
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setIsLoading(false);
+            }
         }
     }
 
     useEffect(() => {
-        fetchProductDetail(Number(id));
-    }, [id]);
+        fetchProductDetail(Number(id), product);
+    }, [id,product]);
 
     if (showCart) {
         return <Redirect to="/cart" />
@@ -184,13 +196,13 @@ function Detail() {
                                             return index === 0 ? (
                                                 <div key={index} className="carousel-item active">
                                                     <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="bg-white position-absolute fa fa-heart m-2" style={styles.beAbove} >{product.product_bestseller ? 'Best Seller' : ''}</i></a>
-                                                    <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
+                                                    <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.product.id)}><span className="fa fa-share"></span></a>
                                                     <img className="img-fluid d-block mx-auto" style={{ height: "auto", width: "200px" }} src={`/uploads/${picturefile}`} alt={picturefile ? picturefile : ''} />
                                                 </div>
                                             ) : (
                                                 <div key={index} className="carousel-item">
                                                     <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="bg-white position-absolute fa fa-heart m-2" style={styles.beAbove} >{product.product_bestseller ? 'Best Seller' : ''}</i></a>
-                                                    <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
+                                                    <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.product.id)}><span className="fa fa-share"></span></a>
                                                     <img className="img-fluid d-block mx-auto" style={{ height: "100px", width: "100px" }} src={`/uploads/${picturefile}`} alt={picturefile ? picturefile : ''} />
                                                 </div>
                                             )
@@ -242,6 +254,10 @@ function Detail() {
                 })}
             </main>
             {showToast && <ShowToast title={'Favourite'} body={'Item added'} />}
+            {presentFavourite && <ShowToast title={'Favourite'} body={'Item already added'} />}
+            {presentCart && <ShowToast title={'Cart'} body={'Item already added'} />}
+
+
             <DetailFooter />
         </div>
     );

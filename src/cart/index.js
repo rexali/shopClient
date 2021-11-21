@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CartHeader from "./CartHeader";
 import CartFooter from "./CartFooter";
 import { Link, Redirect } from "react-router-dom";
@@ -9,50 +9,28 @@ import ShowToast from "../common/ShowToast";
 import ShowModal from "../common/ShowModal"
 import { getPicture } from "../service";
 
-function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, collectProductQuantities, getTotal, clearCart, setTransxMessage,setTransxStatus }) {
+function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, collectProductQuantities, getTotal, clearCart, setTransxMessage, setTransxStatus }) {
 
     const { state } = React.useContext(appContext);
 
     let userId = state.authData?.user_id;
 
-    let [firstName, setFirstName] = useState('');
-    let [lastName, setLastName] = useState('');
-    let [phone, setPhone] = useState('');
-    let [email, setEmail] = useState('');
-    let [address, setAddress] = useState('');
-    let [localGovt, setLocalGovt] = useState('');
-    let [statex, setStatex] = useState('');
-    let [method, setMethod] = useState(1);
-    let [data, setData] = useState([])
+    let first_name = useRef();
+    let last_name = useRef();
+    let phone = useRef();
+    let email = useRef();
+    let address = useRef();
+    let loc_govt = useRef();
+    let statex = useRef();
+    let method = useRef();
 
-    const handleChange = (evt) => {
-        const { name, value } = evt.target;
-        if (name === 'firstName') {
-            setFirstName(value);
-        } else if (name === "lastName") {
-            setLastName(value)
-        } else if (name === "phone") {
-            setPhone(value);
-        } else if (name === "email") {
-            setEmail(value)
-        } else if (name === "address") {
-            setAddress(value)
-        } else if (name === "address") {
-            setAddress(value)
-        } else if (name === "localGovt") {
-            setLocalGovt(value)
-        } else if (name === "state") {
-            setStatex(value)
-        } else {
-            setMethod(value)
-        }
-    };
+    let [data, setData] = useState([])
 
     const getUserDetail = async (userId) => {
         let dataOption = { user_id: userId }
         if (userId) {
             try {
-                let {data} = await axios.post("/users/user", dataOption);;
+                let { data } = await axios.post("/users/user", dataOption);;
                 if (data) setData(data);
             } catch (error) {
                 console.log(error);
@@ -63,27 +41,27 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
     const handleSubmit = (event) => {
         event.preventDefault();
         let cartObj = {
-            first_name: firstName,
-            last_name: lastName,
-            phone: phone,
-            email: email,
-            address: address,
-            loc_govt: localGovt,
-            state: statex,
-            method: method,
-            user_id:userId
+            first_name: first_name.current.value,
+            last_name: last_name.current.value,
+            phone: phone.current.value,
+            email: email.current.value,
+            address: address.current.value,
+            loc_govt: loc_govt.current.value,
+            state: statex.current.value,
+            method: method.current.value,
+            user_id: userId
         }
         console.log(cartObj);
 
         checkout(
-            collectProductIds, 
-            collectVendorIds, 
-            collectProductPrices, 
-            collectProductQuantities, 
-            getTotal, 
-            cartObj, 
+            collectProductIds,
+            collectVendorIds,
+            collectProductPrices,
+            collectProductQuantities,
+            getTotal,
+            cartObj,
             clearCart
-            );
+        );
     }
 
     const postOrder = async (pid, vid, price, qty, total, checkoutObj, status) => {
@@ -136,31 +114,38 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
 
     const checkout = (pids, vids, prices, quantities, total, cartObj, clearCart) => {
 
-        switch (Number(method)) {
+        switch (Number(method.current.value)) {
 
             case 1:
-                const POD = `
-                Order successfully submitted. \n\n
-                And pay N ${getTotal} on delivery`;
+                const POD = (
+                    <div className="text-center">
+                        <p>Order successfully submitted.</p>
+                        <p>You will pay a total of N {getTotal} naira on delivery</p><br /><br />
+                        <p>Thank you</p>
+                    </div>
+                );
                 for (let i = 0; i < pids.length; i++) {
                     postOrder(pids[i], vids[i], prices[i], quantities[i], total, cartObj, 'pending');
-
                 }
-            
                 updateUserProfile(cartObj);
                 setTransxMessage(POD)
                 setTransxStatus(true);
                 clearCart();
                 break;
             case 2:
-                const BT = `
-                Pay to the account detail below: \n\n
-                Account name: Siniotech Information and Communication Technology Co. Ltd.\n\n 
-                Account number: 0020345409 \n\n 
-                Bank: Guarranty Trust Bank (GTB)`;
+                const BT = (
+                    <div className="text-center">
+                        <p>You will pay a total of N {getTotal} naira</p>
+                        <p>Pay to this account below</p>
+                        <p>The deatail of the account are:</p>
+                        <p>Account name: Siniotech Information and Communication Technology Co. Ltd.</p>
+                        <p>Account number: 0020345409</p>
+                        <p>Bank: Guarranty Trust Bank (GTB)</p><br /><br />
+                        <p>Thank you</p>
+                    </div>
+                );
                 for (let i = 0; i < pids.length; i++) {
                     postOrder(pids[i], vids[i], prices[i], quantities[i], total, cartObj, 'pending');
-
                 }
                 updateUserProfile(cartObj);
                 setTransxMessage(BT)
@@ -174,7 +159,14 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                 payWithFlutterwave(pids, vids, prices, quantities, total, cartObj, clearCart)
                 break;
             default:
-                setTransxMessage("Wrong payment method selected")
+                const DEF = (
+                    <div className="text-center">
+                        <p>Wrong payment method selected.</p>
+                        <p>Please, try again.</p><br /><br />
+                        <p>Thank you</p>
+                    </div>
+                );
+                setTransxMessage(DEF)
                 setTransxStatus(true);
                 new Error("Wrong payment method selected")
                 break;
@@ -187,7 +179,7 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
         var handler = PaystackPop.setup({
             key: 'pk_test_2ae6f4d367d1966aef717a01edf9623d51143db2', //"pk_live_9522ac67d8f164271cafe16df7fc01b4613af4f7",  //'pk_test_2ae6f4d367d1966aef717a01edf9623d51143db2',
             email: checkoutObj.email, //'customer@email.com',
-            amount: Number(total) * 1000, //10000,
+            amount: Number(total) * 100, //10000,
             currency: "NGN",
             ref: '' + Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
             metadata: {
@@ -210,7 +202,6 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                 updateUserProfile(checkoutObj);
                 // sendEmail(pid, checkoutObj);
                 clearCart();
-
             },
 
             onClose: function () {
@@ -259,7 +250,7 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
             customizations: {
                 title: "SINIOCART",
                 description: "Payment for items in your cart",
-                logo: "https://siniotech.com/images/logo.png",
+                logo: "https://mujaware.com/ali.jpg",
             },
         });
     }
@@ -283,7 +274,8 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                     className="form-control"
                     defaultValue={data[0]?.first_name ?? ''}
                     required
-                    onChange={handleChange} />
+                    ref={first_name}
+                />
             </div>
             <div className="form-group">
                 <label>Last name</label>
@@ -295,7 +287,8 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                     className="form-control"
                     defaultValue={data[0]?.last_name ?? ''}
                     required
-                    onChange={handleChange} />
+                    ref={last_name}
+                />
 
             </div>
             <div className="form-group">
@@ -308,7 +301,8 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                     className="form-control"
                     defaultValue={data[0]?.phone ?? ''}
                     required
-                    onChange={handleChange} />
+                    ref={phone}
+                />
 
             </div>
             <div className="form-group">
@@ -321,8 +315,10 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                     className="form-control"
                     defaultValue={data[0]?.address ?? ''}
                     required
-                    onChange={handleChange} />
+                    ref={address}
+                />
             </div>
+
             <div className="form-group">
                 <label>Email address</label>
                 <input
@@ -333,7 +329,9 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                     className="form-control"
                     defaultValue={data[0]?.email ?? ''}
                     required
-                    onChange={handleChange} />
+                    ref={email}
+
+                />
 
             </div>
 
@@ -347,7 +345,8 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                     className="form-control"
                     defaultValue={data[0]?.loc_govt ?? ''}
                     required
-                    onChange={handleChange} />
+                    ref={loc_govt}
+                />
 
             </div>
 
@@ -361,7 +360,8 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                     className="form-control"
                     defaultValue={data[0]?.state ?? ''}
                     required
-                    onChange={handleChange} />
+                    ref={statex}
+                />
 
             </div>
 
@@ -373,7 +373,8 @@ function CartForm({ collectProductIds, collectVendorIds, collectProductPrices, c
                     className="form-control"
                     defaultValue={method}
                     required
-                    onChange={handleChange}>
+                    ref={method}
+                >
                     <option value={1}>Pay on Delivery (POD)</option>
                     <option value={2}>Bank Transfer</option>
                     <option value={3}>Paystack</option>
@@ -403,32 +404,30 @@ function CartTable({ subTotal, shippingFee, total }) {
     );
 }
 
-function Cart() {
+
+export default function Cart() {
     let [quantity, setQuantity] = useState(1);
     let [data, setData] = useState([]);
     let [isLoading, setIsLoading] = useState([]);
     let [isLoggedin, setIsLoggedin] = useState(false);
-    let [toastState, setToastState] = useState(false)
-    let [favouriteState, setFavouriteState] = useState(false)
+    let [cartToast, setCartToast] = useState(false)
+    let [present, setPresent] = useState(null)
+    let [favouriteToast, setFavouriteToast] = useState(false)
     let [tranxStatus, setTransxStatus] = useState(false)
     let [tranxMesaage, setTransxMessage] = useState(null)
 
-
-
-    const showToast = () => {
-        setToastState(true);
-    }
-
-    const resetToast = () => {
-        setToastState(false);
+    const showCartToast = () => {
+        setCartToast(true);
+        setTimeout(() => {
+            setCartToast(false);
+        }, 3000);
     }
 
     const showToastFav = () => {
-        setFavouriteState(true);
-    }
-
-    const resetToastFav = () => {
-        setFavouriteState(false);
+        setFavouriteToast(true);
+        setTimeout(() => {
+            setFavouriteToast(false);
+        }, 3000);
     }
 
     const { setCartData, state } = React.useContext(appContext);
@@ -460,28 +459,28 @@ function Cart() {
     }
 
 
-    const saveProduct = async(event, pid, vid) => {
+    const saveProduct = async (event, pid, vid) => {
         event.target.style.color = "green";
         if (userId) {
             console.log(userId);
-            let resu = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
-            if (resu.includes(pid)) {
-                alert("Item already in cart")
+            let { pids } = await getProductIds({ url: '/wish/read', method: 'post', data: { user_id: userId } });
+            if (pids.includes(pid)) {
+                setPresent(true);
+                setTimeout(() => {
+                    setPresent(null);
+                }, 3000);
             } else {
-            axios.post(
-                "/wish/add",
-                {
-                    product_id: pid,
-                    user_id: userId,
-                    vendor_id: vid
-                }
-            ).then((res) => { 
-                console.log(res.data)
-                showToastFav()
-                    setTimeout(() => {
-                        resetToastFav();
-                    }, 3000);
-             }).catch((error) => { console.log(error); });
+                axios.post(
+                    "/wish/add",
+                    {
+                        product_id: pid,
+                        user_id: userId,
+                        vendor_id: vid
+                    }
+                ).then((res) => {
+                    console.log(res.data)
+                    showToastFav()
+                }).catch((error) => { console.log(error); });
             }
         } else {
             // Please log in
@@ -490,19 +489,18 @@ function Cart() {
         }
     }
 
-  
+
     const removeProduct = (evt, pid) => {
         evt.target.style.color = "green";
         if (userId) {
             axios.post('/cart/delete', { user_id: userId, product_id: pid })
                 .then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
-                    console.log(result.result)
-                    showToast()
-                    setTimeout(() => {
-                        resetToast();
-                    }, 3000);
-                    getCartData(userId);
+                    if (result.affectedRows === 1 && result.warningCount === 0) {
+                        showCartToast()
+                        getCartData(userId);
+                    }
+
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -518,14 +516,13 @@ function Cart() {
             axios.post('/cart/delete/all', { user_id: userId })
                 .then(function (response) {
                     let result = JSON.parse(JSON.stringify(response.data));
-                    console.log(result.result)
-                    if (result.result) setCartData([]); setData([]);
+                    console.log(result)
+                    if (result.affectedRows >= 1 && result.warningCount === 0) setCartData([]); setData([]);
                     console.log("success");
                 }).catch(function (error) {
                     console.log(error);
                 });
         } else {
-            // alert("Please log in");
             setIsLoggedin(true)
 
         }
@@ -628,12 +625,11 @@ function Cart() {
         try {
             let { data } = await axios(config);
             let pids = data.map(product => product.product_id);
-            return pids;
+            return { pids };
         } catch (error) {
             console.log(error)
         }
     }
-
 
     const fetchCartData = async (uid) => {
         if (uid) {
@@ -677,59 +673,59 @@ function Cart() {
             <main className="container" style={styles.mainHeight} >
                 <div className="row">
                     <div className="col-md-6">
-                {data.map((item, i) => {
-                    return (
-                        <ul className="list-group card mb-2 mt-2" key={i}>
-                            <li className="list-group-ite d-flex justify-content-around">
-                                <Link to={{ pathname: '/detail/' + item.product_id }}>
-                                    <img src={`/uploads/${getPicture(item.product_picture)[0] ? getPicture(item.product_picture)[0] : 'logo512.png'}`} alt={item.product_name ? item.product_name : ''} style={styles.imageSize} className="img-fluid img-thumbnail" />
-                                </Link>
-                                <span className="align-self-center text-break" style={styles.productNameSize}>{item.product_name}</span>
-                                <span>
-                                    <span>{item.product_currency}{" "}</span>
-                                    <span>{item.product_price}</span>
-                                    <span className="text-muted"><br />{`${quantity} x ${item.product_price}`}</span>
-                                    <span className="font-weight-bolder"><br />{quantity * item.product_price}</span>
-                                </span>
-                            </li>
-                            <li className="list-group-item d-flex justify-content-around align-items-center">
-                                <span className="fa fa-trash text-danger" onClick={(e) => removeProduct(e, item.product_id)}></span>
-                                <span className="fa fa-heart" onClick={(e) => saveProduct(e)}></span>
-                                <span className="fa fa-minus" onClick={(e) => decreaseQuantity(e)}></span>
-                                <input type="text" name="quantity" defaultValue="1" className="quantity" style={styles.inputQsize} />
-                                <span className="fa fa-plus" onClick={increaseQuantity}></span>
-                            </li>
-                        </ul>
-                    )
-                })
-                }
+                        {data.map((item, i) => {
+                            return (
+                                <ul className="list-group card mb-2 mt-2" key={i}>
+                                    <li className="list-group-ite d-flex justify-content-around">
+                                        <Link to={{ pathname: '/detail/' + item.product_id }}>
+                                            <img src={`/uploads/${getPicture(item.product_picture)[0] ? getPicture(item.product_picture)[0] :  getPicture(item.product_picture)[1]}`} alt={item.product_name ? item.product_name : ''} style={styles.imageSize} className="img-fluid img-thumbnail" />
+                                        </Link>
+                                        <span className="align-self-center text-break" style={styles.productNameSize}>{item.product_name}</span>
+                                        <span>
+                                            <span>{item.product_currency}{" "}</span>
+                                            <span>{item.product_price}</span>
+                                            <span className="text-muted"><br />{`${quantity} x ${item.product_price}`}</span>
+                                            <span className="font-weight-bolder"><br />{quantity * item.product_price}</span>
+                                        </span>
+                                    </li>
+                                    <li className="list-group-item d-flex justify-content-around align-items-center">
+                                        <span className="fa fa-trash text-danger" onClick={(e) => removeProduct(e, item.product_id)}></span>
+                                        <span className="fa fa-heart" onClick={(e) => saveProduct(e, item.product_id, item.vendor_id)}></span>
+                                        <span className="fa fa-minus" onClick={(e) => decreaseQuantity(e)}></span>
+                                        <input type="text" name="quantity" defaultValue="1" className="quantity" style={styles.inputQsize} />
+                                        <span className="fa fa-plus" onClick={increaseQuantity}></span>
+                                    </li>
+                                </ul>
+                            )
+                        })
+                        }
 
-                {data.length > 0 && <CartTable
-                    subTotal={getSubTotal()}
-                    shippingFee={getShippingCost()}
-                    total={getTotal()} />}
-               </div>
-               <div className="col-md-6">
-                {data.length > 0 && <CartForm
-                    collectProductIds={collectProductIds(data)}
-                    collectVendorIds={collectVendorIds(data)}
-                    collectProductPrices={collectProductPrices(data)}
-                    collectProductQuantities={collectProductQuantities().length ? collectProductQuantities() : [1, 1, 1]}
-                    getTotal={getTotal()}
-                    clearCart={clearCart}
-                    setTransxMessage={setTransxMessage}
-                    setTransxStatus={setTransxStatus}
-                    />}
-                </div>
-                
-                {!data.length && <div className="mt-5 text-center" style={{ marginTop: '300px' }}>No item in the cart</div>}
-                {toastState && <ShowToast title={'Cart'} body={'Item deleted'} />}
-                {favouriteState && <ShowToast title={'Favourite'} body={'Item added'} />}
-                {tranxStatus && <ShowModal title={'Transaction'} body={tranxMesaage} setAbout={setTransxStatus}/>}
+                        {data.length > 0 && <CartTable
+                            subTotal={getSubTotal()}
+                            shippingFee={getShippingCost()}
+                            total={getTotal()} />}
+                    </div>
+                    <div className="col-md-6">
+                        {data.length > 0 && <CartForm
+                            collectProductIds={collectProductIds(data)}
+                            collectVendorIds={collectVendorIds(data)}
+                            collectProductPrices={collectProductPrices(data)}
+                            collectProductQuantities={collectProductQuantities().length ? collectProductQuantities() : [1, 1, 1]}
+                            getTotal={getTotal()}
+                            clearCart={clearCart}
+                            setTransxMessage={setTransxMessage}
+                            setTransxStatus={setTransxStatus}
+                        />}
+                    </div>
+
+                    {!data.length && <div className="mt-5 text-center" style={{ marginTop: '300px' }}>No item in the cart</div>}
+                    {cartToast && <ShowToast title={'Cart'} body={'Item deleted'} />}
+                    {favouriteToast && <ShowToast title={'Favourite'} body={'Item added'} />}
+                    {present && <ShowToast title={'Favourite'} body={'Item already added'} />}
+                    {tranxStatus && <ShowModal title={'Transaction'} body={tranxMesaage} setAbout={setTransxStatus} />}
                 </div>
             </main>
             <CartFooter />
         </div>
     );
 }
-export default Cart;

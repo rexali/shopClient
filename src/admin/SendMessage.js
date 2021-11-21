@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import Footer from "../common/Footer";
-import Header from "../common/Header";
 import axios from "axios";
 
 class SendMessage extends Component {
@@ -27,7 +25,7 @@ class SendMessage extends Component {
         axios.post("/support/send/mail", messageObj).then((response) => {
             let result = JSON.parse(JSON.stringify(response.data));
             console.log(result);
-            if (result) {
+            if (result.affectedRows===1 && result.warningCount===0) {
                 this.setState({ result: 'Sent successfully', name: '', email: '', message: '' })
                 setTimeout(()=>{this.setState({ result: '' })}, 5000)
             } else {
@@ -45,9 +43,8 @@ class SendMessage extends Component {
         const styles = { mainHeight: { minHeight: "550px" }, beAboveS: { zIndex: "2", right: 0 }, };
         return (
             <div>
-                <Header title={"SendMessage us"} />
-                <main className="container" style={styles.mainHeight}>
-                    <h1 className="text-center">SendMessage</h1>
+                <main style={styles.mainHeight}>
+                    <h5 className="text-center mt-5">Send message</h5>
                     <form name="contactForm" id="contactForm" onSubmit={this.handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="inputEmail">Name</label>
@@ -106,7 +103,6 @@ class SendMessage extends Component {
                         </div>
                     </form>
                 </main>
-                <Footer />
             </div>
         )
     }

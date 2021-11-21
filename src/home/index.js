@@ -11,9 +11,10 @@ import Spinner from "../common/Spinner";
 import HomeSidebar from "./HomeSidebar";
 import HomeSearch from "./HomeSearch";
 import HomeMenu from "./HomeMenu";
-import { AuthButton } from "../App";
+// import { AuthButton } from "../App";
 import { appContext } from "../AppProvider";
 import axios from "axios";
+import FilterResult from "../common/FilterResult";
 
 class Home extends Component {
 
@@ -26,12 +27,15 @@ class Home extends Component {
          data: [],
          totalItemCounts: 0,
          activePage: 1,
-         isLoading: true
+         filterData: [],
+         isLoading: true,
+         show: false
       };
 
       this.receivedData = this.receivedData.bind(this);
       this.handlePageChange = this.handlePageChange.bind(this);
    }
+
 
    filterPrev = (index) => {
       let newData = this.state.initData.filter((_, i) => {
@@ -48,19 +52,25 @@ class Home extends Component {
       })
    }
 
-   receivedData(x) {
-      this.setState({ data: x, initData: x })
+   receivedData(data) {
+      this.setState({ filterData: data, initData: data })
    }
 
    sendBackData = (x) => {
       this.setState({ data: x })
    }
 
-   fetchData = async () => {
-      // get jwt and csrf tokens
-      this.context.getJwt();
-      this.context.getCsrfToken();
+   showFilter = (x) => {
+      this.setState({ show: x })
+   }
 
+   setFilterData = (data) => {
+      this.setState({
+         filterData: data, initData: data, show: true
+      })
+   }
+
+   fetchData = async () => {
       try {
          let { data } = await axios.get("/products/product/read");
          this.context.setData(data);
@@ -76,14 +86,18 @@ class Home extends Component {
       }
    }
 
-   async componentDidMount() {
+   componentDidMount() {
+      // get jwt and csrf tokens
+      this.context.getJwt();
+      this.context.getCsrfToken();
+      // get data
       this.fetchData();
    }
 
    render() {
       const styles = { mainHeight: { minHeight: "550px" } };
 
-      const { isLoading, data, activePage, totalItemCounts } = this.state
+      const { isLoading, data, filterData, activePage, totalItemCounts, show } = this.state
 
       if (isLoading) {
          return <Spinner />
@@ -93,8 +107,8 @@ class Home extends Component {
          <div>
             <appContext.Consumer >
                {({ state }) => <HomeHeader sendBackData={this.sendBackData} cartData={state.cartData} />}
-            </appContext.Consumer>
-            <br /><br /><div className="container"><AuthButton /></div>
+            </appContext.Consumer><br /><br /><br />
+            {/*<div className="container"><AuthButton /></div> */}
             <HomeSearch sendBackData={this.sendBackData} />
             <HomeMenu sendBackData={this.sendBackData} />
             <main style={styles.mainHeight} className="container">
@@ -102,11 +116,11 @@ class Home extends Component {
                   <div className="d-flex justify-content-between">
                      <h5 className="m-2 p-2" style={{ fontSize: "12px", opacity: '0.9' }}>Products</h5>
                      <HomeSorting receivedData={this.receivedData} />
-                     <ModalFilter receivedData={this.receivedData} />
+                     <ModalFilter receivedData={this.receivedData} setFilterData={this.setFilterData} />
                   </div>
                </Row>
                <Row>
-                  <Col md={3} className="d-none d-lg-block"><HomeSidebar receivedData={this.receivedData} /></Col>
+                  <Col md={3} className="d-none d-lg-block"><HomeSidebar receivedData={this.receivedData} setFilterData={this.setFilterData} /></Col>
                   <Col>
                      <Row>
                         {data?.length ?
@@ -128,6 +142,7 @@ class Home extends Component {
                />
             </div>
             <HomeFooter />
+            {show && <FilterResult data={filterData} showFilter={this.showFilter} placement="end" />}
          </div>
       );
    }

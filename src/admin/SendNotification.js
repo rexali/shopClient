@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import Footer from "../common/Footer";
-import Header from "../common/Header";
 import axios from "axios";
 
 class SendNotification extends Component {
@@ -45,9 +43,8 @@ class SendNotification extends Component {
         let {result,err}=this.state;
         return (
             <div>
-                <Header title={"SendNotification us"} />
                 <main className="container" style={styles.mainHeight}>
-                    <h1 className="text-center">Send notification</h1>
+                    <h5 className="text-center mt-5">Send notification</h5>
                     <form name="contactForm" id="contactForm" onSubmit={this.handleSubmit}>
                         
                         <div className="form-group">
@@ -96,7 +93,6 @@ class SendNotification extends Component {
                         </div>
                     </form>
                 </main>
-                <Footer />
             </div>
         )
     }

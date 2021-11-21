@@ -13,8 +13,8 @@ export default function CartResult({ setCartData, cartData, ...props }) {
     let [cartCount, setCartCount] = useState([]);
     const { state } = React.useContext(appContext);
     const userId = state.authData?.user_id;
-    const styles={
-        imageSize:{width:'100px', height:'70px'}
+    const styles = {
+        imageSize: { width: '100px', height: '70px' }
     }
 
     const clearCart = () => {
@@ -22,7 +22,7 @@ export default function CartResult({ setCartData, cartData, ...props }) {
             .then(function (response) {
                 let result = JSON.parse(JSON.stringify(response.data));
                 console.log(result.result)
-                if (result.result) {
+                if (result.affectedRows >= 1 && result.warningCount === 0) {
                     setCartData([])
                 }
             }).catch(function (error) {
@@ -33,13 +33,13 @@ export default function CartResult({ setCartData, cartData, ...props }) {
     const removeCartItem = (pid) => {
         axios.post('/cart/delete', { user_id: userId, product_id: pid })
             .then(function (response) {
-                let loadData = JSON.stringify(response.data);
-                let result = JSON.parse(loadData);
-                if (result.result) {
+                let result = JSON.parse(JSON.stringify(response.data));
+                if (result.affectedRows === 1 && result.warningCount === 0) {
                     let newCartData = cartData.filter((product, _) => {
                         return product.product_id !== pid;
                     })
                     setCartData(newCartData)
+                    setCartCount(newCartData.length);
                 }
             }).catch(function (error) {
                 console.log(error);
@@ -54,7 +54,7 @@ export default function CartResult({ setCartData, cartData, ...props }) {
 
     return (
         <div>
-            <button className='btn btn-sm text-reset' onClick={handleShow}><i className="fa fa-shopping-cart" aria-hidden="true"></i></button>
+            <button className='btn btn-sm text-reset' onClick={handleShow}><i className="fa fa-shopping-cart" aria-hidden="true"></i><sup><Badge pill bg="light" id="cartCount" className="text-reset">{cartCount}</Badge></sup></button>
             <Offcanvas show={show} onHide={handleClose} {...props} >
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>

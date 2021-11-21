@@ -36,7 +36,7 @@ function UserWish() {
         try {
             let { data } = await axios(config);
             let pids = data.map(product => product.product_id);
-            return pids;
+            return {pids};
         } catch (error) {
             console.log(error)
         }
@@ -44,8 +44,8 @@ function UserWish() {
 
     const addCartProduct = async(pid, vid) => {
         if (userId) {
-            let resu = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
-            if (resu.includes(pid)) {
+            let {pids} = await getProductIds({ url: '/cart/read', method: 'post', data: { user_id: userId } });
+            if (pids.includes(pid)) {
                 alert("Item already in cart")
             } else {
             axios.post(
@@ -127,7 +127,7 @@ function UserWish() {
                     {data.map((product, i) => {
                         return (<div className="col-md-4 card my-3 shadow-none" key={i} >
                             <div>
-                                <a href="#share" className="btn btn-sm btn-outline-success m-2 position-absolute" style={styles.beAboveS} onClick={() => shareProduct(product.id)}><span className="fa fa-share"></span></a>
+                                <a href="#share" className="btn btn-sm btn-outline-success m-2 position-absolute" style={styles.beAboveS} onClick={() => shareProduct(product.product.id)}><span className="fa fa-share"></span></a>
                                 <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0] : 'logo512.png'}`} alt={product.product_name ? product.product_name : ''} />
                             </div>
                             <div className="card-body">
