@@ -29,21 +29,14 @@ export function Filter({receivedData, setFilterData, handleClose}) {
         handleClose();
     }
 
-    const range = (start, end) => {
-        let rangeArray = [];
-        for (let i = start; i < end; i++) {
-            rangeArray.push(i);
-        }
-        return rangeArray;
-    }
 
     const getPriceRange = event => {
-        let ran = Array.from(new Set(priceRange))
         let rangeString = event.target.value;
         let rangeNumber = rangeString.split("-").map(n => parseInt(n));
         setLowerRange(rangeNumber[0])
         setHigherRange(rangeNumber[1])
-        setPriceRange([...ran,...range(rangeNumber[0], rangeNumber[1])]);
+        setPriceRange([...rangeNumber]);
+
     }
 
     const getCategories = ev => {

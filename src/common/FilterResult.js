@@ -4,13 +4,10 @@ useState
 import { Offcanvas } from "react-bootstrap";
 import Pagination from "react-js-pagination";
 import { Link } from "react-router-dom";
-// import { appContext } from "../AppProvider";
 import { getPicture } from "../service";
 
 
 function Sorting({ receivedData, initData }) {
-    // let {state} =React.useContext(appContext);
-    // let data = state.data; 
 
     const ascendingPrice = (params) => {
         let fromLowest = params.sort((a, b) => {
