@@ -99,8 +99,9 @@ function HomeDrawer({ sendBackData, ...props }) {
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <DrawerContent sendBackData={sendBackData} handleClose={handleClose} />
-               <Link to="/admin">Admin</Link><br/>
-               <Link to="/shipper">Shipper</Link>
+               {/* <Link to="/admin">Admin</Link><br/>
+               <Link to="/vendor">Vendor</Link><br/>
+               <Link to="/shipper">Shipper</Link> */}
                 </Offcanvas.Body>
             </Offcanvas>
         </div>

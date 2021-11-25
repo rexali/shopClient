@@ -36,7 +36,6 @@ class Home extends Component {
       this.handlePageChange = this.handlePageChange.bind(this);
    }
 
-
    filterPrev = (index) => {
       let newData = this.state.initData.filter((_, i) => {
          return i >= ((index * 6) - 6) && i < (index * 6);
@@ -86,12 +85,30 @@ class Home extends Component {
       }
    }
 
+   getJwt = () => {
+      axios.get("/jwt").then((response) => {
+         this.setState({ jwt: response.data.jwtoken });
+         if(response.data.jwtoken){
+            this.fetchData();
+            this.getCsrfToken();
+         }
+      }).catch((error)=>{
+         console.log(error)
+      });
+   }
+
+   getCsrfToken = () => {
+      axios.get('/csrf-token').then(response => {
+         axios.defaults.headers.post['X-CSRF-Token'] = response.data.csrfToken;
+      }).catch((error)=>{
+         console.log(error)
+      });
+
+   }
+
    componentDidMount() {
-      // get jwt and csrf tokens
-      this.context.getJwt();
-      this.context.getCsrfToken();
-      // get data
-      this.fetchData();
+      // get jwt, then data, then csrfToken
+      this.getJwt();
    }
 
    render() {
