@@ -21,21 +21,20 @@ const HomeHeader = ({ sendBackData, cartData }) => {
       <div className="collapse navbar-collapse" id="navbarCollapse">
 
         <ul className="navbar-nav mr-auto">
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <Link className="nav-link text-reset" to={"/about"}>About</Link>
           </li>
           <li className="nav-item">
             <Link className="nav-link text-reset" to={"/contact"} >Contact</Link>
           </li>
           <li className="nav-item">
-            {/* <Link className="nav-link text-reset" to={"/blog"}>Blog</Link> */}
             <a
               className="nav-link text-reset"
               href="https://mujaware.com/blog"
               target="_blank"
               rel="noopener noreferrer"
             >Blog</a>
-          </li>
+          </li> */}
         </ul>
 
         <ul className="navbar-nav">

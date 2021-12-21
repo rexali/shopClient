@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../common/Header";
-import Footer from "../common/Footer";
+import HomeFooter from "../home/HomeFooter";
 import ShipperTabs from "./ShipperTabs";
 function Shipper(props) {
     const styles = {
@@ -13,7 +13,7 @@ function Shipper(props) {
             <main style={styles.mainHeight}>
                 <ShipperTabs />
             </main>
-            <Footer />
+            <HomeFooter />
         </div>
     );
 }

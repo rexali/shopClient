@@ -1,9 +1,8 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,memo } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { appContext } from "../AppProvider";
 import { getPicture } from "../service";
-
 
 export function ReviewModal({ productId, vendorId }) {
     const { state } = React.useContext(appContext)
@@ -67,12 +66,10 @@ export function ReviewModal({ productId, vendorId }) {
         try {
             let response = await axios.post("/review/add", revObj);
             let result = JSON.parse(JSON.stringify(await response.data));
-            console.log(result);
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 setResult('Success');
             }
         } catch (error) {
-            console.error(error);
             setResult('Error,Try again');
         }
     }
@@ -80,7 +77,7 @@ export function ReviewModal({ productId, vendorId }) {
     return (
         <div className="d-lg-non">
             <Button variant="default" onClick={handleShow}>
-                <span className="fa fa-envelope-o text-primary"></span>
+                <span className="fa fa-envelope-o text-primary" title="post review" ></span>
             </Button>
             <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
@@ -137,9 +134,6 @@ export function ReviewModal({ productId, vendorId }) {
                         </div>
                     </form>
                 </Modal.Body>
-                {/* <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>Close</Button>
-                </Modal.Footer> */}
             </Modal>
         </div>
     );
@@ -152,10 +146,9 @@ function UserOrder() {
     const userId = state.authData?.user_id;
     const styles = { mainHeight: { minHeight: "550px" }, aboveR: { zIndex: "1", right: 0 }, aboveL: { zIndex: "1", left: 0 }, };
 
-
     const shareProduct = async (id) => {
         const dataToShare = {
-            title: 'kanimall.com',
+            title: 'kanimart.com',
             text: 'Check out this product you may like it.',
             url: window.location.origin + '/detail/' + id
         }
@@ -173,7 +166,6 @@ function UserOrder() {
             axios.post('/transaction/read', { user_id: uid }).then(function (response) {
                 let loadData = JSON.stringify(response.data);
                 let result = JSON.parse(loadData);
-                console.log(result)
                 setData([...result]);
             }).catch(function (error) {
                 console.log(error);
@@ -181,10 +173,8 @@ function UserOrder() {
         });
     }
 
-
     useEffect(() => {
         fetchMeData(userId);
-
     }, [userId]);
 
     return (
@@ -196,7 +186,7 @@ function UserOrder() {
                             <div>
                                 <a href="#share" className="mt-3 ml-2 position-absolute d-md-none" style={styles.aboveL} onClick={() => shareProduct(product.product_id)}><span className="fa fa-share-alt"></span></a>
                                 <span className="m-2 position-absolute" style={styles.aboveR} ><ReviewModal productId={product.product_id} vendorId={product.vendor_id} /></span>
-                                <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0] ? getPicture(product.product_picture)[0]: getPicture(product.product_picture)[1]}`} alt={product.product_name ? product.product_name : ''} />
+                                <img style={{ minWidth: "auto", height: "235px" }} className="img-fluid d-block mx-auto" src={`/uploads/${getPicture(product.product_picture)[0]}`} alt={product.product_name ? product.product_name : ''} />
                             </div>
                             <div className="card-body">
                                 <p>
@@ -216,4 +206,4 @@ function UserOrder() {
 
 }
 
-export default UserOrder;
+export default memo (UserOrder);

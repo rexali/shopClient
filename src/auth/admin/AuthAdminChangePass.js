@@ -27,6 +27,11 @@ export default class AuthAdminChangePass extends React.Component {
     }
 
     handleSubmit = async () => {
+        const success = <div className="alert alert-success">Successfully changed</div>;
+        const status = <div className="alert alert-info">Sending...</div>;
+        const failure = <div className="alert alert-danger">Error!</div>;
+        const mismatch = <div className="alert alert-danger">Error!: password mismatch </div>;
+
         if (this.state.password === this.state.password2) {
 
             const postObj = {
@@ -34,18 +39,21 @@ export default class AuthAdminChangePass extends React.Component {
                 random_code: this.random_code,
                 password: this.state.password
             }
-
-            let result = await postData('/auth/admin/change/password', postObj);
+            this.setState({ result: status, err: '' })
+            let result;
+            if (await this.context.getCsrfToken()) {
+                result = await postData('/auth/admin/change/password', postObj);
+            }
             if (result.affectedRows === 1 && result.warningCount === 0) {
-                this.setState({ result: 'Success: you can now log in', password1: '', password2: '' })
+                this.setState({ result: success, password1: '', password2: '', err: '' })
                 console.log(result);
             } else {
-                this.setState({ err: 'Error!' })
+                this.setState({ err: failure, result: '' })
                 console.error(result);
             }
 
         } else {
-            this.setState({ err: 'Error: password mismatch' })
+            this.setState({ err: mismatch, result: '' })
         }
 
     }
@@ -61,7 +69,7 @@ export default class AuthAdminChangePass extends React.Component {
                         <input
                             type="password"
                             name="password"
-                            className="form-control"
+                            className="form-control border border-primary rounded-pill rounded-sm"
                             onChange={this.handleChange}
                             defaultValue={password1}
                             placeholder="Enter new password"
@@ -71,19 +79,18 @@ export default class AuthAdminChangePass extends React.Component {
                         <input
                             type="password"
                             name="password2"
-                            className="form-control"
+                            className="form-control border border-primary rounded-pill rounded-sm"
                             defaultValue={password2}
                             onChange={this.handleChange}
                             placeholder="Confirm new password"
                             required />
                     </div>
                     <div className="text-center">
-                        <span className="bg-success text-white">{result}</span>
-                        <span className="bg-danger text-white">{err}</span>
+                        {result}{err}
                         <input
                             type="submit"
                             id="submit-id"
-                            className="btn btn-outline-success"
+                            className="btn btn-outline-success rounded-pill rounded-sm"
                             value="Submit" />
                     </div>
                 </form>

@@ -76,9 +76,8 @@ function AuthSignup() {
 
   return (
     <div>
-      <main className="container d-flex justify-content-center align-items-center" >
+      <main className="container d-flex justify-content-center align-items-centerx" >
         <form onSubmit={handleSubmit}>
-          <h4 className="text-center text-success">{result}</h4>
           <div className="form-group">
             <label className="label-control">Username</label>
             <input
@@ -86,7 +85,7 @@ function AuthSignup() {
               name="username"
               placeholder="email"
               id="username"
-              className="form-control"
+              className="form-control border border-primary rounded-pill rounded-sm"
               value={username}
               required
               onChange={handleChange} />
@@ -99,7 +98,7 @@ function AuthSignup() {
               name="password"
               placeholder="Password"
               id="password"
-              className="form-control"
+              className="form-control border border-primary rounded-pill rounded-sm"
               value={password}
               required
               onChange={handleChange} />
@@ -112,7 +111,7 @@ function AuthSignup() {
               name="confirm_password"
               placeholder="Confirm password"
               id="confirm_password"
-              className="form-control"
+              className="form-control border border-primary rounded-pill rounded-sm"
               value={confirmPassword}
               required
               onChange={handleChange} />
@@ -124,7 +123,7 @@ function AuthSignup() {
               value="Sign up"
               ref={submitRef}
               id="submit"
-              className="btn btn-sm btn-success" />
+              className="btn btn-sm btn-success rounded-pill rounded-sm" />
             {/* <p className="text-muted">Already have an account?{" "}<Link to="/login">Log in</Link></p> */}
             <p>You must register to view the page at {from.pathname}</p>
           </div>

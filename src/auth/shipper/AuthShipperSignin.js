@@ -75,7 +75,7 @@ function AuthShipperSignin() {
 
   return (
     <div>
-      <main className="container d-flex justify-content-center align-items-center">
+      <main className="container d-flex justify-content-center align-items-centerx">
         <form onSubmit={handleSubmit} id="loginForm">
           <div className="form-group">
             <label className="label-control">Username</label>
@@ -84,7 +84,7 @@ function AuthShipperSignin() {
               name="email"
               placeholder="Email"
               id="email"
-              className="form-control"
+              className="form-control border border-primary rounded-pill rounded-sm"
               defaultValue={email}
               required
               onChange={handleChange} />
@@ -92,13 +92,13 @@ function AuthShipperSignin() {
 
           <div className="form-group">
             <label className="label-control">Password</label>
-            <span><Link to="/admin/forget" className="pull-right mb-1 text-muted">Forget password</Link></span>
+            <span><Link to="/admin/forget" className="pull-right mb-1 text-muted"><small>Forget password</small></Link></span>
             <input
               type="password"
               name="password"
               placeholder="Password"
               id="password"
-              className="form-control"
+              className="form-control border border-primary rounded-pill rounded-sm"
               defaultValue={password}
               required
               onChange={handleChange} />
@@ -112,7 +112,7 @@ function AuthShipperSignin() {
               value="Log in"
               id="submit"
               ref={submitRef}
-              className="btn btn-sm btn-outline-success pull-right" /><br />
+              className="btn btn-sm btn-outline-success pull-right rounded-pill rounded-sm" /><br />
             <p className="text-muted">Don't have an account?{" "}Sign up</p>
             <p>You must log in to view the page at {from.pathname === "/" ? '/home' : from.pathname}</p>
           </div>

@@ -5,7 +5,7 @@ import { getPicture } from "../service";
 
 export function EditFormOne({ data, updateAfterPost }) {
 
-    let [result, setResult] = useState({result:null,err:null});
+    let [result, setResult] = useState({ result: null, err: null });
 
     let product_id = useRef();
     let vendor_id = useRef();
@@ -49,17 +49,17 @@ export function EditFormOne({ data, updateAfterPost }) {
     }
 
     let updateVendorProduct = async (prdtObj) => {
-        setResult({ result: 'Sending data...', err:'' });
+        setResult({ result: 'Sending data...', err: '' });
         try {
             let response = await axios.post("/products/product/update/1", prdtObj);
             let result = JSON.parse(JSON.stringify(await response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
-                setResult({ result: 'Success', err:'' });
+                setResult({ result: 'Success', err: '' });
                 setTimeout(() => { updateAfterPost() }, 4000)
             } else {
-                setResult({ result:'',err: 'Oop! Please try again' });
+                setResult({ result: '', err: 'Oop! Please try again' });
             }
-        } catch (error) { console.error(error); setResult({result:'', err: 'Error' }) }
+        } catch (error) { console.error(error); setResult({ result: '', err: 'Error' }) }
     }
 
     return (
@@ -223,7 +223,7 @@ export function EditFormOne({ data, updateAfterPost }) {
 }
 
 export function EditFormTwo({ data, updateAfterPost }) {
-    let [result, setResult] = useState({result:null,err:null});
+    let [result, setResult] = useState({ result: null, err: null });
     let [link, setLink] = useState(true);
 
 
@@ -266,8 +266,8 @@ export function EditFormTwo({ data, updateAfterPost }) {
             product_quantity: product_quantity.current.value,
             product_weight: product_weight.current.value,
             product_description: product_description.current.value,
-            product_video: product_video_link.current.value?product_video_link.current.value:product_file.current.value ? product_file.current.value.split(/[\\/]/).pop() : product_video.current.src.split(/[\\/]/).pop(),
-            
+            product_video: product_video_link.current.value ? product_video_link.current.value : product_file.current.value ? product_file.current.value.split(/[\\/]/).pop() : product_video.current.src.split(/[\\/]/).pop(),
+
         }
 
         console.log(obj);
@@ -280,17 +280,17 @@ export function EditFormTwo({ data, updateAfterPost }) {
     }
 
     let updateVendorProduct = async (prdtObj) => {
-        setResult({ result: 'Sending data...', err:'' });
+        setResult({ result: 'Sending data...', err: '' });
         try {
             let response = await axios.post("/products/product/update/2", prdtObj);
             let result = JSON.parse(JSON.stringify(await response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
-                setResult({ result: 'Success', err:'' });
+                setResult({ result: 'Success', err: '' });
                 setTimeout(() => { updateAfterPost() }, 4000)
             } else {
-                setResult({ result: 'Oop! Please try again',err:'' });
+                setResult({ result: 'Oop! Please try again', err: '' });
             }
-        } catch (error) { console.error(error); setResult({result:'', err: 'Error!' }) }
+        } catch (error) { console.error(error); setResult({ result: '', err: 'Error!' }) }
     }
 
     return (
@@ -319,7 +319,10 @@ export function EditFormTwo({ data, updateAfterPost }) {
                         <div className="col-md-6">
                             <div className="form-group">
                                 <label htmlFor="video">Paste your product's Youtube video link or upload one</label>
-                                <p><button type="button" className="btn btn-sm btn-outline-success mr-2" onClick={() => showVideoLinkInput}>Video Link</button><button type="button" className="btn btn-sm btn-outline-info" onClick={() => showVideoInput}>Upload Video</button></p>
+                                <p>
+                                    <button type="button" className="btn btn-sm btn-outline-success mr-2" onClick={() => showVideoLinkInput()}>Video Link</button>
+                                    <button type="button" className="btn btn-sm btn-outline-info" onClick={() => showVideoInput()}>Upload Video</button>
+                                </p>
 
                                 <div className="embed-responsive embed-responsive-4by4">
                                     <iframe
@@ -351,7 +354,7 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     accept="video/*"
                                     className="form-control rounded"
                                     ref={product_file}
-                                    />
+                                />
                             </div>
                         </div>
 
@@ -366,8 +369,8 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     className="form-control rounded"
                                     required
                                     defaultValue={data[0]?.product_package}
-                                    ref={product_package} 
-                                    />
+                                    ref={product_package}
+                                />
                             </div>
                         </div>
 
@@ -444,8 +447,8 @@ export function EditFormTwo({ data, updateAfterPost }) {
                                     className="form-control rounded"
                                     defaultValue={data[0]?.product_description}
                                     ref={product_description}
-                                    required 
-                                    />
+                                    required
+                                />
                             </div>
                         </div>
 
@@ -471,11 +474,11 @@ export function EditFormTwo({ data, updateAfterPost }) {
 
 export function EditFormThree({ data, updateAfterPost }) {
 
-    let [result, setResult] = useState({result:null,err:null});
+    let [result, setResult] = useState({ result: null, err: null });
 
     let product_id = useRef();
     let vendor_id = useRef();
-    
+
     let product_size = useRef()
     let product_seller = useRef()
     let product_email = useRef()
@@ -516,17 +519,17 @@ export function EditFormThree({ data, updateAfterPost }) {
     }
 
     let updateVendorProduct = async (prdtObj) => {
-        setResult({ result: 'Sending data...', err:'' });
+        setResult({ result: 'Sending data...', err: '' });
         try {
             let response = await axios.post("/products/product/update/3", prdtObj);
             let result = JSON.parse(JSON.stringify(await response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
-                setResult({ result: 'Success',err:'' });
+                setResult({ result: 'Success', err: '' });
                 setTimeout(() => { updateAfterPost() }, 4000)
             } else {
-                setResult({ result: '', err:'Oop! Please try again' });
+                setResult({ result: '', err: 'Oop! Please try again' });
             }
-        } catch (error) { console.error(error); setResult({result:'', err: 'Error' }) }
+        } catch (error) { console.error(error); setResult({ result: '', err: 'Error' }) }
     }
 
     return (
@@ -643,7 +646,7 @@ export function EditFormThree({ data, updateAfterPost }) {
                     <div className="col-md-12">
                         <div className="form-group">
                             <img
-                                src={`/uploads/${getPicture(data[0]?.product_review)===undefined?'logo512.png':getPicture(data[0]?.product_review)[0]}`}
+                                src={`/uploads/${getPicture(data[0]?.product_review) === undefined ? 'logo512.png' : getPicture(data[0]?.product_review)[0]}`}
                                 id="productReview"
                                 alt={data[0]?.product_name}
                                 ref={product_review}

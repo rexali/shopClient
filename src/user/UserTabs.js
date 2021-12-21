@@ -21,19 +21,19 @@ export default function UserTabs() {
         <div className="container" >
             <ul className="nav nav-tabs nav-justified">
                 <li className="nav-item">
-                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('profile')} to="#profile">Profile</Link>
+                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('profile')} to="#profile"><small>Profile</small></Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('wish')} to="#wish">Wish</Link>
+                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('wish')} to="#wish"><small>Wish</small></Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('cart')} to="#cart">Cart</Link>
+                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('cart')} to="#cart"><small>Cart</small></Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('order')} to="#order">Order</Link>
+                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('order')} to="#order"><small>Order</small></Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('notification')} to="#notifiction">Notice</Link>
+                    <Link className="nav-link" style={styles.navTabs} data-toggle="tab" onClick={() => openTab('notification')} to="#notifiction"><small>Notice</small></Link>
                 </li>
             </ul>
 

@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../common/Header";
-import Footer from "../common/Footer";
+import HomeFooter from "../home/HomeFooter";
 import AdminTabs from "./AdminTabs";
 function Admin(props) {
     const styles = {
@@ -13,7 +13,7 @@ function Admin(props) {
             <main style={styles.mainHeight}>
                 <AdminTabs/>
             </main>
-            <Footer />
+            <HomeFooter />
         </div>
     );
 }

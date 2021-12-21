@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom'
 import { appContext } from "../AppProvider";
 
 function TableBody() {
+    
     let [data, setData] = useState([]);
     const { state } = React.useContext(appContext);
     const vendorId = state.authData?.vendor_id;

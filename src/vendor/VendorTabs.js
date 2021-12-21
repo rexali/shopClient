@@ -17,7 +17,7 @@ export default function VendorTabs(props) {
     }
     
     const styles = {
-        navTabs: { fontSize: 'small' }
+        navTabs: { fontSize: 'x-small' }
     }
 
     return (
@@ -26,6 +26,7 @@ export default function VendorTabs(props) {
                 <li className="nav-item">
                     <Link className="nav-link active" data-toggle="tab" onClick={() => openTab('profile')} to="#profile" style={styles.navTabs}>Profile</Link>
                 </li>
+                
                 <li className="nav-item">
                     <Link className="nav-link" data-toggle="tab" onClick={() => openTab('add')} to="#add" style={styles.navTabs}>Add</Link>
                 </li>

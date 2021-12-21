@@ -1,15 +1,17 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, Redirect, useLocation } from "react-router-dom";
 import { appContext } from "../AppProvider";
-import DetailFooter from "./DetailFooter";
+import HomeFooter from "../home/HomeFooter";
 import DetailHeader from "./DetailHeader";
 import Spinner from "../common/Spinner";
 import ShowToast from "../common/ShowToast";
-import { getPicture } from "../service";
+import { getCsrfToken, getJwt, getPicture } from "../service";
 
 
 function Detail() {
+
+    const isMounted = useRef(true);
 
     const { id } = useParams(); // get product id
 
@@ -30,7 +32,7 @@ function Detail() {
     let [presentCart, setPresentCart] = useState(null);
     let [presentFavourite, setPresentFavourite] = useState(null);
 
-    const { setCartData, state } = React.useContext(appContext);
+    const { setCartData, state} = React.useContext(appContext);
 
     let userId = state.authData?.user_id;
 
@@ -39,7 +41,7 @@ function Detail() {
         beAboveS: { zIndex: "2", right: 0 },
         imageProps: { minWidth: "auto", height: "235px" },
         hideAddToCart: { display: 'none' },
-        mainHeight: { minHeight: "550px", backgroundColor: 'white' }
+        mainHeight: { minHeight: "500px", backgroundColor: 'white' }
     }
 
     const getCartData = (uid) => {
@@ -143,8 +145,10 @@ function Detail() {
             setIsLoading(false);
         } else {
             try {
-                let { data } = await axios.get('/products/product/read/' + pid);
-                setData([...data]);
+                if (getJwt() && await getCsrfToken() ) {
+                    let { data } = await axios.get('/products/product/read/' + pid);
+                    setData([...data]);
+                }
             } catch (error) {
                 console.log(error);
             } finally {
@@ -154,8 +158,14 @@ function Detail() {
     }
 
     useEffect(() => {
-        fetchProductDetail(Number(id), product);
-    }, [id,product]);
+        if (isMounted.current) {
+            fetchProductDetail(Number(id), product);
+        }
+        return () => {
+            isMounted.current = false
+        };
+    });
+    
 
     if (showCart) {
         return <Redirect to="/cart" />
@@ -177,77 +187,132 @@ function Detail() {
                     return (
                         <div className="row" key={i}>
                             <div className="col-md-6">
-                                <h6>Product photos</h6>
-                                <div id="carouselExampleCaptions" className="carousel slide" data-bs-ride="carousel">
+                                <h6>Product photo(s)</h6>
+                                <div id="demo" className="carousel slide" data-ride="carousel">
+                                    {/* <!-- Indicators --> */}
+                                    {/* <ul className="carousel-indicators">
+                                        {(() => getPicture(product.product_picture).map((_, i) => {
+                                                return i === 0 ?
+                                                    (
+                                                        <li key={i} data-target="#demo" data-slide-to={i} className="active bg-success"></li>
+                                                    )
+                                                    : (
+                                                        <li key={i} data-target="#demo" data-slide-to={i} className="bg-success"></li>
+                                                    )
+                                            })
+                                        )()
+                                        }
+                                    </ul> */}
 
-                                    <div className="carousel-indicators">
-
-                                        {getPicture(product.product_picture).map((_, index) => {
-                                            return index === 0 ?
-                                                <button key={index} type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to={index} className="text-danger active" aria-current="true" aria-label="Slide 0"></button>
-                                                :
-                                                <button key={index} type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to={index} className="btn" aria-label={`Slide ${index}`}></button>
-                                        })
+                                    {/* <!-- The slideshow --> */}
+                                    <div className="carousel-inner">
+                                        {
+                                            getPicture(product.product_picture).map((picture, i) => {
+                                                return i === 0 ? (
+                                                    <div key={i} className="carousel-item active">
+                                                        <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="bg-white position-absolute fa fa-heart m-2" style={styles.beAbove} >{product.product_bestseller ? 'Best Seller' : ''}</i></a>
+                                                        <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.product_id)}><span className="fa fa-share-alt"></span></a>
+                                                        <img className="img-fluid d-block mx-auto" style={{ height: "auto", width: "200px" }} src={`/uploads/${picture}`} alt={picture ? picture : ''} />
+                                                    </div>
+                                                ) :
+                                                    (
+                                                        <div key={i} className="carousel-item">
+                                                            <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="bg-white position-absolute fa fa-heart m-2" style={styles.beAbove} >{product.product_bestseller ? 'Best Seller' : ''}</i></a>
+                                                            <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.product_id)}><span className="fa fa-share-alt"></span></a>
+                                                            <img className="img-fluid d-block mx-auto" style={{ height: "auto", width: "200px" }} src={`/uploads/${picture}`} alt={picture ? picture : ''} />
+                                                        </div>
+                                                    )
+                                            })
                                         }
                                     </div>
 
-                                    <div className="carousel-inner">
-                                        {getPicture(product.product_picture)?.map((picturefile, index) => {
-                                            return index === 0 ? (
-                                                <div key={index} className="carousel-item active">
-                                                    <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="bg-white position-absolute fa fa-heart m-2" style={styles.beAbove} >{product.product_bestseller ? 'Best Seller' : ''}</i></a>
-                                                    <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.product.id)}><span className="fa fa-share"></span></a>
-                                                    <img className="img-fluid d-block mx-auto" style={{ height: "auto", width: "200px" }} src={`/uploads/${picturefile}`} alt={picturefile ? picturefile : ''} />
-                                                </div>
-                                            ) : (
-                                                <div key={index} className="carousel-item">
-                                                    <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="bg-white position-absolute fa fa-heart m-2" style={styles.beAbove} >{product.product_bestseller ? 'Best Seller' : ''}</i></a>
-                                                    <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.product.id)}><span className="fa fa-share"></span></a>
-                                                    <img className="img-fluid d-block mx-auto" style={{ height: "100px", width: "100px" }} src={`/uploads/${picturefile}`} alt={picturefile ? picturefile : ''} />
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
+                                    {/* <!-- Left and right controls --> */}
 
-                                    <button className="carousel-control-prev text-danger" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                                        <span className="carousel-control-prev-icon text-danger" aria-hidden="true"></span>
-                                        <span className="visually-hidden text-danger">Previous</span>
-                                    </button>
-                                    <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span className="visually-hidden">Next</span>
-                                    </button>
+                                    <a className="carousel-control-prev h-250" href="#demo" data-slide="prev">
+                                        <span className="carousel-control-prev-icon"></span>
+                                    </a>
 
+                                    <a className="carousel-control-next bg-secondary rounded-circle mt-5" href="#demo" style={{ height: 50, }} data-slide="next">
+                                        <span className="carousel-control-next-icon"></span>
+                                    </a>
                                 </div>
+                                <p><strong>{product.product_name ? product.product_name : ' '}</strong></p>
                             </div>
 
                             <div className="col-md-6">
-                                <h6>Product summary</h6>
+                                <h6 className="font-weight-bold">Product summary</h6>
                                 <div className="">
-                                    <p><strong>{product.product_name ? product.product_name : ' '}</strong></p>
                                     <p className="text-muted"> The item code: {product.product_code} </p>
                                     <p className="text-muted">Category: {product.product_category ? product.product_category : ' '}</p>
-                                    <p><strong>{product.product_name ? product.product_name : ' '}</strong></p>
                                     <p><strong>Price: {product.product_currency ? product.product_currency : 'N '}{product.product_price ? product.product_price : ''}</strong></p>
                                     <p>{product?.product_feature ?? product.product_description}</p>
                                 </div>
                             </div>
 
                             <div className="col-md-6">
-                                <h6>Product description</h6>
+                                <h6 className="font-weight-bold">Product description</h6>
                                 <div>
                                     <p>{product.product_description}</p>
                                     <p> There are {product.product_quantity ? product.product_quantity : 'no available item --'} {product.product_quantity ? 'available item' : 'out of stock'} </p>
                                     <p> The item weighs {product.product_weight} kg </p>
-                                    <p> The item dimensions is {product.product_size} </p>
+                                    <p> The item dimensions are {product.product_size} </p>
                                 </div>
                             </div>
 
-                            <div className="col-md-6">
-                                <h6>Get it now</h6>
-                                <p className="d-flex justify-content-center align-item-center" style={{ height: '160px' }}>
-                                    <a href="#addToCart" className="btn btn-secondary btn-block align-self-center" onClick={() => addToCart(product.product_id, product.vendor_id)}><i className="fa fa-cart-plus"> Buy</i></a>
+                            {product.product_video && (
+                                <div className="col-md-6">
+                                    <h6 className="font-weight-bold" id="demo">Product demo</h6>
+                                    <div className="embed-responsive embed-responsive-16by9">
+                                        <iframe className="embed-responsive-item" title="product demonstration" src={product.product_video.endsWith('mp4') ? 'uploads/' + product.product_video : product.product_video} allowFullScreen></iframe>
+                                    </div>
+                                </div>)
+                            }
+
+                            {product.product_model && (
+                                <div className="col-md-6">
+                                    <p className="font-weight-bold">Product model</p>
+                                    <p>{product.product_model ? product.product_model : 'Nothing yet'}</p>
+                                </div>)
+                            }
+
+                            {product.product_shipping && (
+
+                                <div className="col-md-6">
+                                    <p className="font-weight-bold">Product shipping</p>
+                                    <p>N {product.product_shipping ? product.product_shipping : 'Nothing yet'}</p>
+                                </div>)
+                            }
+
+                            {product.product_warranty && (
+                                <div className="col-md-6">
+                                    <p className="font-weight-bold">Product warranty</p>
+                                    <p>{product.product_warranty ? product.product_warranty : 'Nothing yet'}</p>
+                                </div>)
+                            }
+
+                            {product.product_return && (
+                                <div className="col-md-6">
+                                    <p className="font-weight-bold">Product return policy</p>
+                                    <p>{product.product_return ? product.product_return : 'Nothing yet'}</p>
+                                </div>)
+                            }
+
+                            {product.product_seller && (
+                                <div className="col-md-6">
+                                    <p className="font-weight-bold">Product seller</p>
+                                    <p>{product.product_seller ? product.product_seller : 'Nothing yet'}</p>
+                                </div>)
+                            }
+
+                            <div className="col-md-6 d-none d-md-block">
+                                <h6 className="font-weight-bold">Get it now</h6>
+                                <p className="d-flex justify-content-center align-items-center" >
+                                    <a href="#addToCart" className="btn btn-outline-primary btn-block rounded-pill m-5" onClick={() => addToCart(product.product_id, product.vendor_id)}><i className="fa fa-cart-plus"> Buy</i></a>
                                 </p>
+                            </div>
+
+                            <div className="buy">
+                                <a href="#addToCart" className="btn btn-primary btn-block rounded-pill fixed-bottom d-md-none" onClick={() => addToCart(product.product_id, product.vendor_id)}><span className="fa fa-cart-plus">  BUY</span></a>
                             </div>
                         </div>
                     );
@@ -258,7 +323,7 @@ function Detail() {
             {presentCart && <ShowToast title={'Cart'} body={'Item already added'} />}
 
 
-            <DetailFooter />
+            <HomeFooter />
         </div>
     );
 

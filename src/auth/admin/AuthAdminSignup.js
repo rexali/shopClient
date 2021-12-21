@@ -80,7 +80,7 @@ function AuthAdminSignup() {
 
   return (
     <div>
-      <main className="container d-flex justify-content-center align-items-center" >
+      <main className="container d-flex justify-content-center align-items-centerx" >
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="label-control">Username</label>
@@ -89,7 +89,7 @@ function AuthAdminSignup() {
               name="username"
               placeholder="email"
               id="username"
-              className="form-control"
+              className="form-control border border-primary rounded-pill rounded-sm"
               value={username}
               required
               onChange={handleChange} />
@@ -102,7 +102,7 @@ function AuthAdminSignup() {
               name="password"
               placeholder="Password"
               id="password"
-              className="form-control"
+              className="form-control border border-primary rounded-pill rounded-sm"
               value={password}
               required
               onChange={handleChange} />
@@ -115,7 +115,7 @@ function AuthAdminSignup() {
               name="confirm_password"
               placeholder="Confirm password"
               id="confirm_password"
-              className="form-control"
+              className="form-control border border-primary rounded-pill rounded-sm"
               value={confirmPassword}
               required
               onChange={handleChange} />
@@ -127,7 +127,7 @@ function AuthAdminSignup() {
               value="Sign up"
               id="submit"
               ref={submitRef}
-              className="btn btn-sm btn-success" />
+              className="btn btn-sm btn-success rounded-pill rounded-sm" />
             {/* <p className="text-muted">Already have an account?{" "}<Link to="/login">Log in</Link></p> */}
             <p>You must register to view the page at {from.pathname}</p>
           </div>

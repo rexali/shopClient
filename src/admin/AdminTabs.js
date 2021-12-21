@@ -5,6 +5,7 @@ import AdminProfile from "./AdminProfile";
 import AdminOrder from "./AdminOrder";
 import AdminMessage from "./AdminMessage";
 import AdminNotification from "./AdminNotification";
+import AdminPromotion from "./AdminPromotions";
 
 export default function AdminTabs(props) {
 
@@ -27,6 +28,9 @@ export default function AdminTabs(props) {
                     <Link className="nav-link" style={styles.navTab} data-toggle="tab" onClick={() => openTab('product')} to="#product">Product</Link>
                 </li>
                 <li className="nav-item">
+                    <Link className="nav-link" style={styles.navTab} data-toggle="tab" onClick={() => openTab('promotion')} to="#promotion">Promotion</Link>
+                </li>
+                <li className="nav-item">
                     <Link className="nav-link" style={styles.navTab} data-toggle="tab" onClick={() => openTab('message')} to="#message">Message</Link>
                 </li>
                 <li className="nav-item">
@@ -41,6 +45,7 @@ export default function AdminTabs(props) {
                 <div className="tab-pane active" id="profile">
                     {tabName === 'profile' ? <Profile /> : ''}
                     {tabName === 'product' ? <Product /> : ''}
+                    {tabName === 'promotion' ? <AdminPromotion /> : ''}
                     {tabName === 'message' ? <Message /> : ''}
                     {tabName === 'order' ? <Order /> : ''}
                     {tabName === 'notification' ? <Notification /> : ''}

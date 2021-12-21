@@ -1,8 +1,9 @@
-import React, { 
-  createContext, 
-  useContext, 
-  useState 
+import React, {
+  createContext,
+  useContext,
+  useState,
 } from 'react';
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -11,6 +12,7 @@ import {
   useHistory,
   Link,
 } from "react-router-dom";
+
 import Detail from "./detail";
 import Home from './home';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -38,6 +40,7 @@ import { appContext } from './AppProvider';
 import About from './about';
 import Contact from './contact';
 import Blog from './blog';
+import PageNotFound from './common/PageNotFound';
 
 export default function App() {
 
@@ -46,7 +49,7 @@ export default function App() {
       <Router>
         <div >
           <Switch>
-          <Route exact path="/" component={Home} />
+            <Route exact path="/" component={Home} />
 
             <Route path="/home">
               <Redirect to="/" />
@@ -78,6 +81,10 @@ export default function App() {
 
             <Route path="/auth/user/login">
               <AuthUser />
+            </Route>
+
+            <Route path="/log in">
+              <Redirect to="/auth/user/login" />
             </Route>
 
             <Route path="/auth/vendor/login">
@@ -144,6 +151,10 @@ export default function App() {
               <ProductDetail />
             </Route>
 
+            <Route path="*" >
+               <PageNotFound />
+            </Route>
+
           </Switch>
         </div>
       </Router>
@@ -154,7 +165,9 @@ export default function App() {
 const authContext = createContext();
 
 function ProvideAuth({ children }) {
+
   const auth = useProvideAuth();
+
   return (
     <authContext.Provider value={auth}>
       {children}
@@ -167,24 +180,32 @@ export function useAuth() {
 }
 
 const realAuth = {
+
   isAuthenticated: false,
+
   signin(cb) {
     realAuth.isAuthenticated = true;
     setTimeout(cb, 100); // fake async
   },
+
   signout(cb) {
     realAuth.isAuthenticated = false;
     setTimeout(cb, 100);
   },
+
   signup(cb) {
     realAuth.isAuthenticated = false;
     setTimeout(cb, 100);
   }
+
 };
 
 function useProvideAuth() {
 
   const [user, setUser] = useState(null);
+
+  const { logOut, setCartData } = React.useContext(appContext)
+
 
   const signin = cb => {
     return realAuth.signin(() => {
@@ -192,8 +213,6 @@ function useProvideAuth() {
       cb();
     });
   };
-
-  const { logOut, setCartData } = React.useContext(appContext)
 
   const signout = cb => {
     return realAuth.signout(() => {
@@ -219,18 +238,17 @@ function useProvideAuth() {
     signup,
     setUser
   };
+
 }
+
 
 function PrivateRoute({ children, ...rest }) {
   let auth = useAuth();
   return (
     <Route
       {...rest}
-      render={({ location }) =>
-        auth.user ? (
-          children
-        ) : (
-          <Redirect
+      render={({ location }) => auth.user ? ( children) : ( 
+      <Redirect
             to={{
               pathname: rest.pathname, // "/auth/user/login",
               state: { from: location }

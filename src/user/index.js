@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../common/Header";
-import Footer from "../common/Footer";
+import HomeFooter from "../home/HomeFooter";
 import UserTabs from "./UserTabs";
 function User(props) {
     const styles = {
@@ -8,12 +8,12 @@ function User(props) {
     }
     return (
         <div>
-            <Header title={"user"}  />
+            <Header title={"User"}  />
             {props.authButton}
             <main style={styles.mainHeight}>
                 <UserTabs />
             </main>
-            <Footer />
+            <HomeFooter />
         </div>
     );
 }

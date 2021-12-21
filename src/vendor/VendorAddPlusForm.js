@@ -15,7 +15,7 @@ export class FormOne extends Component {
         product_picture: '',
         product_feature: '',
         product_price: '',
-        product_category:'',
+        product_category: '',
         product_sub_category: '',
     };
 
@@ -24,7 +24,7 @@ export class FormOne extends Component {
         product_picture: '',
         product_feature: '',
         product_price: '',
-        product_category:'',
+        product_category: '',
         product_sub_category: '',
         product_code: Math.floor(Math.random() * 10000000),
         vendor_id: this.context.state.authData?.vendor_id, // 9, //window.sessionStorage.getItem("userId"),
@@ -127,10 +127,10 @@ export class FormOne extends Component {
                 this.handleFiles();
                 setTimeout(() => openTab('formtwo'), 3000);
                 activeTab({
-                    active1:false,
-                    active2:true,
-                    active3:false
-                }) 
+                    active1: false,
+                    active2: true,
+                    active3: false
+                })
 
             }
         } catch (error) {
@@ -145,12 +145,12 @@ export class FormOne extends Component {
     }
 
     render() {
-        const { 
-            product_name, 
-            product_feature, 
-            product_price, 
+        const {
+            product_name,
+            product_feature,
+            product_price,
             product_category,
-            product_sub_category 
+            product_sub_category
         } = this.state;
 
         return (
@@ -196,8 +196,8 @@ export class FormOne extends Component {
                                 />
                             </div>
                         </div>
-                          
-                          <div className="col-md-6">
+
+                        <div className="col-md-6">
                             <div className="form-group">
                                 <label htmlFor="picture" className="label-control">Select category</label>
                                 <input
@@ -213,7 +213,7 @@ export class FormOne extends Component {
                             </div>
                         </div>
 
-                          <div className="col-md-6">
+                        <div className="col-md-6">
                             <div className="form-group">
                                 <label htmlFor="picture" className="label-control">Select sub-category</label>
                                 <input
@@ -228,7 +228,7 @@ export class FormOne extends Component {
                                 />
                             </div>
                         </div>
-                        
+
                         <div className="col-md-12">
                             <div className="form-group">
                                 <textarea
@@ -392,10 +392,10 @@ export class FormTwo extends Component {
                 this.setState({ result: 'Success' })
                 setTimeout(() => openTab('formthree'), 3000);
                 activeTab({
-                    active1:false,
-                    active2:false,
-                    active3:true
-                }) 
+                    active1: false,
+                    active2: false,
+                    active3: true
+                })
             }
 
         } catch (error) {
@@ -406,15 +406,15 @@ export class FormTwo extends Component {
     }
 
     render() {
-        const { 
-            product_video, 
-            product_description, 
+        const {
+            product_video,
+            product_description,
             product_video_link,
             product_package,
             product_colour,
             product_weight,
             product_quantity,
-            product_model 
+            product_model
         } = this.state;
 
         return (
@@ -424,7 +424,10 @@ export class FormTwo extends Component {
                         <div className="col-md-6">
                             <div className="form-group">
                                 <label htmlFor="video">Paste your product's Youtube video link or upload one</label>
-                                <p><button type="button" className="btn btn-sm btn-outline-success mr-2" onClick={this.showVideoLinkInput}>Video Link</button><button type="button" className="btn btn-sm btn-outline-info" onClick={this.showVideoInput}>Upload Video</button></p>
+                                <p>
+                                    <button type="button" className="btn btn-sm btn-outline-success mr-2" onClick={this.showVideoLinkInput}>Video Link</button>
+                                    <button type="button" className="btn btn-sm btn-outline-info" onClick={this.showVideoInput}>Upload Video</button>
+                                </p>
 
                                 <div className="embed-responsive embed-responsive-4by4">
                                     <iframe
@@ -686,10 +689,10 @@ export class FormThree extends Component {
                 this.handleFiles();
                 setTimeout(() => openTab('formone'), 3000);
                 activeTab({
-                    active1:true,
-                    active2:false,
-                    active3:false
-                }) 
+                    active1: true,
+                    active2: false,
+                    active3: false
+                })
             }
         } catch (error) {
             this.setState({ result: '' });
@@ -856,7 +859,7 @@ export default class VendorAddPlusForm extends Component {
         })
     }
 
-    activeTab=(x)=>{
+    activeTab = (x) => {
         this.setState(x)
     }
 
@@ -880,7 +883,7 @@ export default class VendorAddPlusForm extends Component {
                 <div className="tab-content">
                     <div className="tab-pane container active">
                         {tabName === 'formone' && <FormOne openTab={this.openTab} activeTab={this.activeTab} />}
-                        {tabName === 'formtwo' && <FormTwo openTab={this.openTab} activeTab={this.activeTab}/>}
+                        {tabName === 'formtwo' && <FormTwo openTab={this.openTab} activeTab={this.activeTab} />}
                         {tabName === 'formthree' && <FormThree openTab={this.openTab} activeTab={this.activeTab} />}
                     </div>
                 </div>

@@ -1,11 +1,12 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
 import { useParams, useLocation } from "react-router-dom";
 import DetailFooter from "./DetailFooter";
 import DetailHeader from "./DetailHeader";
-import { getPicture } from "../service";
+import { getCsrfToken, getJwt, getPicture } from "../service";
 import Spinner from "../common/Spinner";
+
 
 
 export function DetailProductNav({ phone }) {
@@ -38,7 +39,7 @@ export function DetailProductNav({ phone }) {
                 </ul>
 
                 <ul className="navbar-nav">
-                <a className="nav-link text-reset" href="#pricing"><i className="fa fa-phone"> {`Tel: ${phone?phone:'07016807004'}`}</i></a>
+                    <a className="nav-link text-reset" href="#pricing"><i className="fa fa-phone"> {`Tel: ${phone ? phone : '07016807004'}`}</i></a>
                 </ul>
             </div>
         </nav>
@@ -105,16 +106,26 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
         let emails = data.map((item) => {
             return item.email;
         })
+        console.log(data)
         return [pids, emails];
     }
 
     const postReview = async (revObj) => {
-        let [pids, emails] = await getIdEmail({ url: '/review/read/' + revObj.product_id, method: 'get', data: { product_id: revObj.product_id } });
+
+        let [pids, emails] = await getIdEmail({
+            url: '/transaction/read/tranx/' + revObj.product_id + '/email/' + revObj.email,
+            method: 'get',
+            data: { product_id: revObj.product_id, email: revObj.email }
+        });
+
         if (pids.includes(revObj.product_id) && emails.includes(revObj.email)) {
             try {
-                let response = await axios.post("/review/add", revObj);
-                let result = JSON.parse(JSON.stringify(await response.data));
-                console.log(result);
+                let response, result;
+                if (await getCsrfToken()) {
+                    response = await axios.post("/review/add", revObj);
+                    result = JSON.parse(JSON.stringify(await response.data));
+                    console.log(result);
+                }
                 if (result.affectedRows === 1 && result.warningCount === 0) {
                     setResult('Success');
                 }
@@ -124,7 +135,7 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
             }
         } else {
             setResult(null);
-            alert("You can not post review now until you buy this product and do the review later");
+            alert("You can not post review. Buy this product and do the review later");
         }
     }
 
@@ -147,7 +158,7 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
                                 onChange={handleChange}
                                 required />
                         </div>
-                        <div class="form-group">
+                        <div className="form-group">
                             <label htmlFor="inputEmail">Email</label>
                             <input
                                 type="email"
@@ -157,7 +168,7 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
                                 onChange={handleChange}
                                 required />
                         </div>
-                        <div class="form-group">
+                        <div className="form-group">
                             <label htmlFor="inputMessage">Message</label>
                             <textarea
                                 className="form-control"
@@ -192,8 +203,6 @@ export function OffcanvasReview({ productId, vendorId, ...props }) {
 
 function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }) {
 
-    const userId = window.sessionStorage.getItem("userId");
-
     let [firstName, setFirstName] = useState('');
     let [lastName, setLastName] = useState('');
     let [phone, setPhone] = useState('');
@@ -201,6 +210,7 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
     let [address, setAddress] = useState('');
     let [localGovt, setLocalGovt] = useState('');
     let [state, setState] = useState('');
+    let [country, setCountry] = useState('Nigeria');
     let [method, setMethod] = useState(1);
 
     const handleChange = (evt) => {
@@ -221,12 +231,14 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
             setLocalGovt(value)
         } else if (name === "state") {
             setState(value)
+        } else if (name === "country") {
+            setCountry(value)
         } else {
             setMethod(value)
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         let cartObj = {
             firstName: firstName,
@@ -234,27 +246,28 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
             phone: phone,
             email: email,
             address: address,
-            localGovt: localGovt,
+            loc_govt: localGovt,
             state: state,
+            country: country,
             method: method
         }
         console.log(cartObj);
 
-        checkout(getProductId, getVendorId, getPrice, getQuantity, getTotal, cartObj);
+        if (await getCsrfToken()) checkout(getProductId, getVendorId, getPrice, getQuantity, getTotal, cartObj);
     }
 
     const postOrder = async (pid, vid, price, qty, total, checkoutObj, status) => {
         try {
-            let response = await axios.post('/transaction/order',
+            let response = await axios.post('/transaction/add/tranx',
                 {
-                    first_name: checkoutObj.first_name,
-                    last_name: checkoutObj.last_name,
+                    first_name: checkoutObj.firstName,
+                    last_name: checkoutObj.lastName,
                     phone: checkoutObj.phone,
                     email: checkoutObj.email,
                     address: checkoutObj.address,
                     loc_govt: checkoutObj.loc_govt,
                     state: checkoutObj.state,
-                    user_id: userId,
+                    country: checkoutObj.country,
                     product_id: pid,
                     vendor_id: vid,
                     order_no: (Math.floor((Math.random() * 1000000000) + 1)),
@@ -264,7 +277,7 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
                     status: status
                 });
             let result = JSON.parse(JSON.stringify(((await response.data))));
-            if (result.result) {
+            if (result.affectedRows === 1 && result.warningCount === 0) {
                 alert("success");
             } else {
                 alert("Error")
@@ -280,7 +293,7 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
         switch (Number(method)) {
 
             case 1:
-                const POD = "Order successfully submitted and pay N" + getTotal() + " on delivery";
+                const POD = "Order successfully submitted and pay N" + getTotal + " on delivery";
                 postOrder(pids, vids, prices, quantities, total, cartObj, 'pending');
                 alert(POD)
                 break;
@@ -297,11 +310,12 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
                 break;
 
             default:
-                const PO = "Order successfully submitted and pay N" + getTotal() + " on delivery";
+                const PO = "Order successfully submitted and pay N" + getTotal + " on delivery";
                 postOrder(pids, vids, prices, quantities, total, cartObj, PO);
                 break;
         }
     }
+
 
     //  pay with paystack api
     const payWithPaystack = (pid, vid, price, qty, total, checkoutObj) => {
@@ -372,141 +386,164 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
     }
 
 
-    useEffect(() => {
-
-    }, []);
-
     return (
         <form onSubmit={handleSubmit} name="cartForm" className="text-center mx-auto" id="cartForm">
-            <div className="form-group">
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label>First name</label>
+                        <input
+                            type="text"
+                            name="firstName"
+                            id="firstName"
+                            placeholder="enter first name"
+                            className="form-control"
+                            defaultValue={firstName ?? 'Ali'}
+                            required
+                            onChange={handleChange} />
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label>Last name</label>
+                        <input
+                            type="text"
+                            name="lastName"
+                            id="lastName"
+                            placeholder="enter last name"
+                            className="form-control"
+                            defaultValue={lastName ?? ''}
+                            required
+                            onChange={handleChange} />
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label>Phone number</label>
+                        <input
+                            type="text"
+                            name="phone"
+                            id="phoneNumber"
+                            placeholder="enter your phone number"
+                            className="form-control"
+                            defaultValue={phone ?? ''}
+                            required
+                            onChange={handleChange} />
 
-            </div>
-            <div className="form-group">
-                <label>First name</label>
-                <input
-                    type="text"
-                    name="firstName"
-                    id="firstName"
-                    placeholder="enter first name"
-                    className="form-control"
-                    defaultValue={firstName ?? 'Ali'}
-                    required
-                    onChange={handleChange} />
-            </div>
-            <div className="form-group">
-                <label>Last name</label>
-                <input
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    placeholder="enter last name"
-                    className="form-control"
-                    defaultValue={lastName ?? ''}
-                    required
-                    onChange={handleChange} />
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label>Street address</label>
+                        <input
+                            type="text"
+                            name="address"
+                            id="address"
+                            placeholder="enter street address"
+                            className="form-control"
+                            defaultValue={address ?? ''}
+                            required
+                            onChange={handleChange} />
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label>Email address</label>
+                        <input
+                            type="text"
+                            name="email"
+                            id="emailAddress"
+                            placeholder="enter email"
+                            className="form-control"
+                            defaultValue={email ?? ''}
+                            required
+                            onChange={handleChange} />
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label>Local govt</label>
+                        <input
+                            type="text"
+                            name="localGovt"
+                            id="localGovernment"
+                            placeholder="enter LGA"
+                            className="form-control"
+                            defaultValue={localGovt ?? ''}
+                            required
+                            onChange={handleChange} />
 
-            </div>
-            <div className="form-group">
-                <label>Phone number</label>
-                <input
-                    type="text"
-                    name="phone"
-                    id="phoneNumber"
-                    placeholder="enter phone number"
-                    className="form-control"
-                    defaultValue={phone ?? ''}
-                    required
-                    onChange={handleChange} />
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label>State</label>
+                        <input
+                            type="text"
+                            name="state"
+                            id="state"
+                            placeholder="enter state"
+                            className="form-control"
+                            defaultValue={state ?? ''}
+                            required
+                            onChange={handleChange} />
+                    </div>
+                </div>
 
-            </div>
-            <div className="form-group">
-                <label>Street address</label>
-                <input
-                    type="text"
-                    name="address"
-                    id="address"
-                    placeholder="enter street address"
-                    className="form-control"
-                    defaultValue={address ?? ''}
-                    required
-                    onChange={handleChange} />
-            </div>
-            <div className="form-group">
-                <label>Email address</label>
-                <input
-                    type="text"
-                    name="email"
-                    id="emailAddress"
-                    placeholder="enter email"
-                    className="form-control"
-                    defaultValue={email ?? ''}
-                    required
-                    onChange={handleChange} />
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label>Country</label>
+                        <input
+                            type="text"
+                            name="state"
+                            id="state"
+                            placeholder="enter state"
+                            className="form-control"
+                            defaultValue={country ?? ''}
+                            required
+                            onChange={handleChange} />
+                    </div>
+                </div>
 
-            </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label>Select quantity</label>
+                        <select onChange={handleChange} defaultValue={method} className="form-control">
+                            <option value={1}>1</option>
+                            <option value={2}>2</option>
+                            <option value={3}>3</option>
+                            <option value={4} >4</option>
+                            <option value={5}>5</option>
+                            <option value={6}>6</option>
+                            <option value={7} >7</option>
+                            <option value={8} >8</option>
+                            <option value={9} >9</option>
+                            <option value={10} >10</option>
+                            <option value={11} >Bulk</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label>Select payment gateway</label>
+                        <select
+                            name="method"
+                            id="method"
+                            className="form-control"
+                            defaultValue={method}
+                            required
+                            onChange={handleChange}>
+                            <option value={1}>Pay on Delivery (POD)</option>
+                            <option value={2}>Bank Transfer</option>
+                            <option value={3}>Paystack</option>
+                            <option value={4}>Flutterwave</option></select>
+                    </div>
+                </div>
 
-            <div className="form-group">
-                <label>Local govt</label>
-                <input
-                    type="text"
-                    name="localGovt"
-                    id="localGovernment"
-                    placeholder="enter LGA"
-                    className="form-control"
-                    defaultValue={localGovt ?? ''}
-                    required
-                    onChange={handleChange} />
+                <div className="form-group">
+                    <input type="submit" value="Checkout" className="btn btn-outline-success m-2" />
+                </div>
 
-            </div>
-
-            <div className="form-group">
-                <label>State</label>
-                <input
-                    type="text"
-                    name="state"
-                    id="state"
-                    placeholder="enter state"
-                    className="form-control"
-                    defaultValue={state ?? ''}
-                    required
-                    onChange={handleChange} />
-
-            </div>
-
-            <div className="form-group">
-                <label>Select quantity</label>
-                <select onChange={handleChange} defaultValue={method} className="form-control">
-                    <option value={1}>1</option>
-                    <option value={2}>2</option>
-                    <option value={3}>3</option>
-                    <option value={4} >4</option>
-                    <option value={5}>5</option>
-                    <option value={6}>6</option>
-                    <option value={7} >7</option>
-                    <option value={8} >8</option>
-                    <option value={9} >9</option>
-                    <option value={10} >10</option>
-                    <option value={11} >Bulk</option>
-                </select>
-            </div>
-
-            <div className="form-group">
-                <label>Select payment gateway</label>
-                <select
-                    name="method"
-                    id="method"
-                    className="form-control"
-                    defaultValue={method}
-                    required
-                    onChange={handleChange}>
-                    <option value={1}>Pay on Delivery (POD)</option>
-                    <option value={2}>Bank Transfer</option>
-                    <option value={3}>Paystack</option>
-                    <option value={4}>Flutterwave</option></select>
-            </div>
-
-            <div className="form-group">
-                <input type="submit" value="Checkout" className="btn btn-outline-success m-2" />
             </div>
         </form>
     );
@@ -520,10 +557,12 @@ function ProductDetail() {
 
     const product = location.state;
 
+    const isMounted = useRef(true)
+
     let [data, setData] = useState([]);
     let [reviewData, setReviewData] = useState([]);
     let [isLoading, setIsLoading] = useState(true);
-    
+
     const styles = {
         beAbove: { zIndex: "1" },
         beAboveS: { zIndex: "1", right: 0 },
@@ -536,7 +575,7 @@ function ProductDetail() {
         const dataToShare = {
             title: 'kanimall.com',
             text: 'Check out this product you may like it.',
-            url: window.location.origin + '/detail/' + id
+            url: window.location.origin + '/product/' + id
         }
         if (navigator.share) {
             try {
@@ -555,21 +594,24 @@ function ProductDetail() {
 
     const fetchMeData = (pid, product) => {
         if (product) {
-            setData([product]); 
+            setData([product]);
             setIsLoading(false)
         } else {
+            const jwt = getJwt();
             import("axios").then((axios) => {
-                axios.get('/products/product/read/' + pid).then(function (response) {
-                    let result = JSON.parse(JSON.stringify(response.data));
-                    setData([...result]);
-                }).catch(function (error) {
-                    console.log(error);
-                }).finally(()=>{
-                  setIsLoading(false)
-                });
+                if (jwt) {
+                    axios.get('/products/product/read/' + pid).then(function (response) {
+                        let result = JSON.parse(JSON.stringify(response.data));
+                        setData([...result]);
+                    }).catch(function (error) {
+                        console.log(error);
+                    }).finally(() => {
+                        setIsLoading(false)
+                    });
+                }
             });
         }
-       
+
     }
 
     const readProductReviewData = (pid) => {
@@ -584,13 +626,18 @@ function ProductDetail() {
     }
 
     useEffect(() => {
+        if (isMounted.current) {
+            fetchMeData(Number(id), product);
+            readProductReviewData(Number(id));
+        }
 
-        fetchMeData(Number(id), product);
-        readProductReviewData(Number(id));
-    }, [id, product]);
+        return () => {
+            isMounted.current = false;
+        }
+    });
 
     if (isLoading) {
-        return <Spinner/>
+        return <Spinner />
     }
 
     return (
@@ -598,148 +645,178 @@ function ProductDetail() {
             <DetailHeader />
             <DetailProductNav phone={data[0]?.product_phone} />
             <main style={styles.mainHeight} className="container mt-5">
-                    {data.map((product, i) => {
-                        return (
-                            <div className="row" key={i}>
-                                <div className="col-md-6">
-                                    <div id="carouselExampleCaptions" className="carousel slide" data-bs-ride="carousel">
+                {data.map((product, i) => {
+                    return (
+                        <div className="row" key={i}>
+                            <div className="col-md-6">
+                                <div id="demo" className="carousel slide" data-ride="carousel">
+                                    {/* <!-- Indicators --> */}
+                                    <ul className="carousel-indicators">
+                                        {(() => getPicture(product.product_picture).map((_, i) => {
+                                            return i === 0 ?
+                                                (
+                                                    <li key={i} data-target="#demo" data-slide-to={i} className="active bg-success"></li>
+                                                )
+                                                : (
+                                                    <li key={i} data-target="#demo" data-slide-to={i} className="bg-success"></li>
+                                                )
+                                        })
 
-                                        <div className="carousel-indicators">
-                                            {getPicture(product.product_picture).map((_, index) => {
-                                                return index === 0 ?
-                                                    <button key={index} type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to={index} className="active" aria-current="true" aria-label="Slide 0"></button>
-                                                    :
-                                                    <button key={index} type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to={index} className="btn" aria-label={`Slide ${index}`}></button>
-                                            })
-                                            }
-                                        </div>
+                                        )()
+                                        }
+                                    </ul>
 
-                                        <div className="carousel-inner">
-                                            {getPicture(product.product_picture)?.map((picturefile, i) => {
+                                    {/* <!-- The slideshow --> */}
+                                    <div className="carousel-inner">
+                                        {
+                                            getPicture(product.product_picture).map((picture, i) => {
                                                 return i === 0 ? (
                                                     <div key={i} className="carousel-item active">
-                                                        <a href="#share" className="mt-1 mr-4 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.product.id)}><span className="fa fa-share"></span></a>
-                                                        <img style={{ maxWidth: "100px", height: "100px" }} className="img-fluid d-block mx-auto" src={`/uploads/${picturefile ? picturefile : ''}`} alt={picturefile ? picturefile : ''} />
+                                                        <img className="img-fluid d-block mx-auto" style={{ height: "auto", width: "200px" }} src={`/uploads/${picture}`} alt={picture ? picture : ''} />
                                                     </div>
-                                                ) : (
-                                                    <div key={i} className="carousel-item">
-                                                        <a href="#share" className="m-2 position-absolute d-md-none" style={styles.beAboveS} onClick={() => shareProduct(product.product.id)}><span className="fa fa-share"></span></a>
-                                                        <img style={{ maxWidth: "100px", height: "100px" }} className="img-fluid d-block mx-auto" src={`/uploads/${picturefile ? picturefile : ''}`} alt={picturefile ? picturefile : ''} />
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-
+                                                ) :
+                                                    (
+                                                        <div key={i} className="carousel-item">
+                                                            <img className="img-fluid d-block mx-auto" style={{ height: "auto", width: "200px" }} src={`/uploads/${picture}`} alt={picture ? picture : ''} />
+                                                        </div>
+                                                    )
+                                            })
+                                        }
                                     </div>
+
+                                    {/* <!-- Left and right controls --> */}
+
+                                    <a className="carousel-control-prev h-25" href="#demo" data-slide="prev">
+                                        <span className="carousel-control-prev-icon"></span>
+                                    </a>
+
+                                    <a className="carousel-control-next h-25 bg-success" href="#demo" data-slide="next">
+                                        <span className="carousel-control-next-icon"></span>
+                                    </a>
                                 </div>
+                                <p><strong>{product.product_name ? product.product_name : ' '}</strong></p>
+                            </div>
 
-                                <div className="col-md-6">
-
-                                    <p className="text-muted">{product.product_category ? product.product_category : ' '}</p>
-
-                                    <p><strong>{product.product_name ? product.product_name : ' '}</strong></p>
-
-                                    <p id={"pricing"}>{product.product_currency ? product.product_currency : 'N '}{product.product_price ? product.product_price : ''}</p>
-
-
-                                    <p><a href={`https://wa.me/234${product.product_phone}?text=I am interested`} className="btn btn-outline-primary" ><span className="fa fa-whatsapp">  Chat</span></a><a href="#share" className="btn btn btn-outline-primary pull-right d-md-none"><span onClick={() => shareProduct(`${window.location.origin + '/product=' + product.product_id}`)} className="fa fa-share"> Share</span></a></p>
-
-
-                                    <p className="font-weight-bold" id="feature">Product summary</p>
-
-                                    <p>{product.product_feature ? product.product_feature : 'Nothing yet'}</p>
-                                </div>
-
-                                <div className="col-md-6">
-                                    <p className="font-weight-bold" id="description">Product detail</p>
-
-                                    <p>{product.product_description}</p>
-
-                                    <p> There are {product.product_quauntity} available </p>
-
-                                    <p> The item weighs {product.product_weight} kg </p>
-
-                                    <p> The item dimensions is {product.product_size} </p>
-
-                                    <p className="text-muted"> The item code is {product.product_code} </p>
-                                </div>
-
-                                <div className="col-md-6">
-                                    {product.product_video &&
-                                        (<>
-                                            <div className="font-weight-bold" id="demo">Product demo</div>
-                                            <div className="embed-responsive embed-responsive-16by9">
-                                                <iframe className="embed-responsive-item" title="product demo" src={product.product_video} allowfullscreen frameborder="0"></iframe>
-                                            </div>
-                                        </>)
-                                    }
-
-                                    {product.product_model &&
-                                        (<>
-                                            <p className="font-weight-bold">Product model</p>
-
-                                            <p>{product.product_model ? product.product_model : 'Nothing yet'}</p>
-                                        </>)
-                                    }
-
-                                    {product.product_shipping &&
-                                        (<>
-                                            <p className="font-weight-bold">Product shipping</p>
-
-                                            <p>{product.product_shipping ? product.product_shipping : 'Nothing yet'}</p>
-                                        </>)
-                                    }
-
-                                    {product.product_warranty &&
-                                        (<>
-                                            <p className="font-weight-bold">Product warranty</p>
-
-                                            <p>{product.product_warranty ? product.product_warranty : 'Nothing yet'}</p>
-                                        </>)
-                                    }
-
-                                    {product.product_return &&
-                                        (<>
-                                            <p className="font-weight-bold">Product return policy</p>
-
-                                            <p>{product.product_return ? product.product_return : 'Nothing yet'}</p>
-                                        </>)
-                                    }
-
-                                    {product.product_seller &&
-                                        (<>
-                                            <p className="font-weight-bold">Product seller</p>
-
-                                            <p>{product.product_seller ? product.product_seller : 'Nothing yet'}</p>
-                                        </>)
-                                    }
-                                </div>
-
-                                <div className="col-md-6">
-                                    <div><span className="font-weight-bold" id="review">Reviews</span><span className="d-block pull-right"><OffcanvasReview productId={product.product_id} vendorId={product.vendor_id} placement="end" scroll={true} backdrop={false} /></span></div>
-                                    {getReviews(product.product_review)?.map((filename, i) => {
-                                        return <p key={i}><img src={`/uploads/${filename ? filename : ''}`} alt={product.product_name ? product.product_name : ''} className="img-fluid" /></p>
-                                    })}
-                                    {reviewData.length?reviewData.map((review, index) => {
-                                        return <div key={index}>{review.message}</div>;
-                                    }):<div className="mt-5">There is no review(s) for this product for now</div>
-                                    }
-
-                                </div>
-
-                                <div className="col-md-6">
-                                    {<CartForm
-                                        getPoductId={product.product_id}
-                                        getVendorId={product.vendor_id}
-                                        getPrice={product.product_price}
-                                        getShipping={product.product_shipping}
-                                        getQuantity={1}
-                                        getTotal={product.product_price}
-                                    />}
+                            <div className="col-md-6">
+                                <h6 className="font-weight-bold">Product summary</h6>
+                                <div className="">
+                                    <p className="text-muted"> The item code: {product.product_code} </p>
+                                    <p className="text-muted">Category: {product.product_category ? product.product_category : ' '}</p>
+                                    <p id={"pricing"}><strong>Price: {product.product_currency ? product.product_currency : 'N '}{product.product_price ? product.product_price : ''}</strong></p>
+                                    <p>
+                                        <a href={`https://wa.me/234${product.product_phone}?text=I am interested`} className="btn btn-outline-primary" >
+                                            <span className="fa fa-whatsapp">  Chat</span>
+                                        </a>
+                                        <a href="#share" className="btn btn btn-outline-primary pull-right d-md-none">
+                                            <span onClick={() => shareProduct(`${window.location.origin + '/product=' + product.product_id}`)} className="fa fa-share-alt"> Share</span>
+                                        </a>
+                                    </p>
+                                    <p>{product?.product_feature ? product.product_feature : ''}</p>
                                 </div>
                             </div>
-                        );
-                    })}
+
+                            <div className="col-md-6">
+                                <p className="font-weight-bold" id="description">Product description</p>
+
+                                <p>{product.product_description}</p>
+
+                                <p> There are {product.product_quauntity} available </p>
+
+                                <p> The item weighs {product.product_weight} kg </p>
+
+                                <p> The item dimensions is {product.product_size} </p>
+                            </div>
+
+                            {product.product_video && (
+                                <div className="col-md-6">
+                                    <h6 className="font-weight-bold" id="demo">Product demo</h6>
+                                    <div className="embed-responsive embed-responsive-16by9">
+                                        <iframe className="embed-responsive-item" title="product demonstration" src={'/uploads/' + product?.product_video} allowFullScreen></iframe>
+                                    </div>
+                                </div>)
+                            }
+
+                            {product.product_model && (
+                                <div className="col-md-6">
+                                    <p className="font-weight-bold">Product model</p>
+                                    <p>{product.product_model ? product.product_model : 'Nothing yet'}</p>
+                                </div>)
+                            }
+
+                            {product.product_shipping && (
+
+                                <div className="col-md-6">
+                                    <p className="font-weight-bold">Product shipping</p>
+                                    <p>N {product.product_shipping ? product.product_shipping : 'Nothing yet'}</p>
+                                </div>)
+                            }
+
+                            {product.product_warranty && (
+                                <div className="col-md-6">
+                                    <p className="font-weight-bold">Product warranty</p>
+                                    <p>{product.product_warranty ? product.product_warranty : 'Nothing yet'}</p>
+                                </div>)
+                            }
+
+                            {product.product_return && (
+                                <div className="col-md-6">
+                                    <p className="font-weight-bold">Product return policy</p>
+                                    <p>{product.product_return ? product.product_return : 'Nothing yet'}</p>
+                                </div>)
+                            }
+
+                            {product.product_seller && (
+                                <div className="col-md-6">
+                                    <p className="font-weight-bold">Product seller</p>
+                                    <p>{product.product_seller ? product.product_seller : 'Nothing yet'}</p>
+                                </div>)
+                            }
+
+                            <div className="col-md-12">
+                                <div>
+                                    <span className="font-weight-bold" id="review">Reviews</span>
+                                    <span className="d-block pull-right">
+                                        <OffcanvasReview
+                                            productId={product.product_id}
+                                            vendorId={product.vendor_id}
+                                            placement="end"
+                                            scroll={true}
+                                            backdrop={false} />
+                                    </span>
+                                </div>
+
+                                <div className="row">
+                                    {getReviews(product.product_review)?.map((filename, i) => {
+                                        return (<div className="card col-md-6 mb-5" key={i}>
+                                            <img src={`/uploads/${filename ? filename : ''}`} alt={product.product_name ? product.product_name : ''} className="img-fluid d-block mx-auto" />
+                                        </div>)
+                                    })}
+                                </div>
+
+                                <div className="row">
+                                    {reviewData.length ? reviewData.map((review, index) => {
+                                        return (<div className="card col-md-6" key={index}>
+                                            <p className="mb-3 text-info">{review.name}</p>
+                                            <p>{review.message}</p>
+                                        </div>);
+                                    }) : <div className="card mt-5 p-5">There is no review(s) for this product for now</div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div className="col-md-12 mt-5">
+                                {<CartForm
+                                    getProductId={product.product_id}
+                                    getVendorId={product.vendor_id}
+                                    getPrice={product.product_price}
+                                    getShipping={product.product_shipping}
+                                    getQuantity={1}
+                                    getTotal={product.product_price}
+                                />}
+                            </div>
+                        </div>
+                    );
+                })}
             </main>
             <DetailFooter />
         </div>

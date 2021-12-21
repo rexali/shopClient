@@ -10,8 +10,8 @@ export default function OverflowMenu({ ...props }) {
 
     const shareAppLink = async () => {
         const dataToShare = {
-            title: 'kanimart.com',
-            text: 'Check out this web app you may like it.',
+            title: 'Shopping Website',
+            text: 'Check out this shopping web app you may like it.',
             url: window.location.origin
         }
         if (navigator.share) {
@@ -38,18 +38,18 @@ export default function OverflowMenu({ ...props }) {
                         <li className="list-group-item list-group-item-action"><Link to={'/favourite'}><i className="fa fa-heart" aria-hidden="true"> Wish</i></Link></li>
                         <li className="list-group-item list-group-item-action"><Link to={'/about'}> <i className="fa fa-info-circle" aria-hidden="true"> About</i></Link></li>
                         <li className="list-group-item list-group-item-action"><Link to={'/contact'}> <i className="fa fa-address-card" aria-hidden="true"> Contact</i></Link></li>
-                        <li className="list-group-item list-group-item-action"><Link to={'#share'} onClick={() => shareAppLink}><i className="fa fa-share-alt" aria-hidden="true"> Share</i></Link></li>  
-                        {/* <li className="list-group-item list-group-item-action"><Link to="/blog"> <i className="fa fa-newspaper-o" aria-hidden="true"> Blog</i></Link></li> */}
-                        <li className="list-group-item list-group-item-action">
-                            <a
-                                className="nav-link text-decoration-none"
-                                href="https://mujaware.com/blog"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            ><i className="fa fa-newspaper-o" aria-hidden="true"></i> Blog</a>
-                        </li>
+                        <li className="list-group-item list-group-item-action"><Link to={'#share'} onClick={() => shareAppLink()}><i className="fa fa-share-alt" aria-hidden="true"> Share</i></Link></li>
+                        <li className="list-group-itemx list-group-item-action" style={{listStyle:'none'}}>
+                        <a
+                            className="nav-link text-decoration-none"
+                            href="https://mujaware.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        ><i className="fa fa-newspaper-o" aria-hidden="true"></i> Blog</a>
+                    </li>
                     </ul>
                 </Offcanvas.Body>
+                <Link to="/vendor" className="m-2">Become a Seller</Link>
             </Offcanvas>
         </div>
     );

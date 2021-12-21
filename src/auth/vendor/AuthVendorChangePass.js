@@ -23,6 +23,10 @@ export default class AuthVendorChangePass extends React.Component {
     }
 
     handleSubmit = async () => {
+        const success = <div className="alert alert-success">Successfully changed</div>;
+        const status = <div className="alert alert-info">Sending...</div>;
+        const failure = <div className="alert alert-danger">Error!</div>;
+        const mismatch = <div className="alert alert-danger">Error!: password mismatch </div>;
         if (this.state.password === this.state.password2) {
 
             const postObj = {
@@ -30,18 +34,21 @@ export default class AuthVendorChangePass extends React.Component {
                 random_code: this.random_code,
                 password: this.state.password
             }
-
-            let result = await postData('/auth/vendor/change/password', postObj);
+            this.setState({ err: '', result:status });
+            let result
+            if (await this.context.getCsrfToken()) {
+                result = await postData('/auth/vendor/change/password', postObj);
+            }
             if (result.affectedRows === 1 && result.warningCount === 0) {
-                this.setState({ result: 'Success: you can now log in', password1: '', password2: '' })
+                this.setState({ result: success, password1: '', password2: '', err:'' })
                 console.log(result);
             } else {
-                this.setState({ err: 'Error!' })
+                this.setState({ err: failure, result:'' })
                 console.error(result);
             }
 
         } else {
-            this.setState({ err: 'Error: password mismatch' })
+            this.setState({ err: mismatch, result:'' })
         }
 
     }

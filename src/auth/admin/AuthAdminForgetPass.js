@@ -16,14 +16,17 @@ export default class AuthAdminForgetPass extends React.Component {
     }
 
     handleSubmit = async () => {
+        const success = <div className="alert alert-success">Success: check your inbox</div>;
+        const status = <div className="alert alert-info">Sending...</div>;
+        const failure = <div className="alert alert-danger">Error!</div>;
+        this.setState({ result: status, err: '' })
 
         let result = await getData('/auth/admin/request/password', this.state);
-
         if (result.affectedRows === 1 && result.warningCount === 0) {
-            this.setState({ result: 'Success: check your inbox for confirmation email', email: '' })
+            this.setState({ result: success, email: '', err:'' })
             console.log(result)
         } else {
-            this.setState({ err: 'Error!' })
+            this.setState({ err: failure, result:'' })
             console.error(result)
         }
     }
@@ -39,7 +42,7 @@ export default class AuthAdminForgetPass extends React.Component {
                         <input
                             type="email"
                             name="email"
-                            className="form-control"
+                            className="form-control border border-primary rounded-pill rounded-sm"
                             onChange={this.handleChange}
                             placeholder="Enter your email here"
                             required
@@ -47,12 +50,11 @@ export default class AuthAdminForgetPass extends React.Component {
                         />
                     </div>
                     <div className="text-center">
-                        <span className="bg-success text-white">{result}</span>
-                        <span className="bg-danger text-white">{err}</span>
+                       {result}{err}
                         <input
                             type="submit"
                             id="submit-request"
-                            className="btn btn-outline-success"
+                            className="btn btn-outline-success rounded-pill rounded-sm"
                             value="Submit" />
                     </div>
                 </form>

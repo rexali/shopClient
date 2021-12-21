@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import CartHeader from "./CartHeader";
-import CartFooter from "./CartFooter";
+import HomeFooter from "../home/HomeFooter";
 import { Link, Redirect } from "react-router-dom";
 import axios from "axios";
 import { appContext } from "../AppProvider";
@@ -725,7 +725,7 @@ export default function Cart() {
                     {tranxStatus && <ShowModal title={'Transaction'} body={tranxMesaage} setAbout={setTransxStatus} />}
                 </div>
             </main>
-            <CartFooter />
+            <HomeFooter />
         </div>
     );
 }

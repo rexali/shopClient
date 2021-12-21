@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Footer from "../common/Footer";
+import HomeFooter from "../home/HomeFooter";
 import Header from "../common/Header";
 
 export default class Blog extends Component {
@@ -18,7 +18,7 @@ export default class Blog extends Component {
                  width= "100%" 
                  scrolling="yes"></iframe>
                 </main>
-                <Footer />
+                <HomeFooter />
             </div>
         )
     }

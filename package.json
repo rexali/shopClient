@@ -22,7 +22,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "build": "react-scripts build && cp -RT build ../shopServer/public && rm -rf build",
+    "build": "react-scripts build && cp -RT build ../shopServer/public && rm -rf build && rsync -r -av --progress ../shopServer/ ../deploy/ --exclude node_modules --exclude .git --exclude public/uploads/",
     "start": "react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

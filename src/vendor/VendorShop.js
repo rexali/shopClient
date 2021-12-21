@@ -100,7 +100,7 @@ function VendorProduct() {
 
     const shareProduct = async (id) => {
         const dataToShare = {
-            title: 'kanimall.com',
+            title: 'kanimart.com',
             text: 'Check out this product you may like it.',
             url: window.location.origin + '/detail/' + id
         }
@@ -140,7 +140,7 @@ function VendorProduct() {
                         return (
                             <div className="col-md-4 card my-3 shadow-none" key={i} >
                                 <p className="d-flex justify-content-end">
-                                    <button className="btn btn-outline-info" onClick={() => shareProduct(product.product_id)}><span className="fa fa-share"></span></button>
+                                    <button className="btn btn-outline-info" onClick={() => shareProduct(product.product_id)}><span className="fa fa-share-alt"></span></button>
                                 </p>
                                 <div>
                                     <i className="bg-white position-absolute" style={{ zIndex: "2" }} >{product.bestseller ? 'Best Seller' : ''} </i>

@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../common/Header";
-import Footer from "../common/Footer";
+import HomeFooter from "../home/HomeFooter";
 import VendorTabs from "./VendorTabs";
 function Vendor(props) {
     const styles = {
@@ -13,7 +13,7 @@ function Vendor(props) {
             <main style={styles.mainHeight}>
                 <VendorTabs />
             </main>
-            <Footer />
+            <HomeFooter />
         </div>
     );
 }

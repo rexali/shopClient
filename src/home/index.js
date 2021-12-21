@@ -11,10 +11,10 @@ import Spinner from "../common/Spinner";
 import HomeSidebar from "./HomeSidebar";
 import HomeSearch from "./HomeSearch";
 import HomeMenu from "./HomeMenu";
-// import { AuthButton } from "../App";
 import { appContext } from "../AppProvider";
 import axios from "axios";
 import FilterResult from "../common/FilterResult";
+import ConfirmationEmail from "../auth/ConfirmationEmail";
 
 class Home extends Component {
 
@@ -122,10 +122,11 @@ class Home extends Component {
 
       return (
          <div>
-            <appContext.Consumer >
+            <appContext.Consumer>
                {({ state }) => <HomeHeader sendBackData={this.sendBackData} cartData={state.cartData} />}
             </appContext.Consumer><br /><br /><br />
-            {/*<div className="container"><AuthButton /></div> */}
+            {/* Below is the confirmtion email */}
+            <ConfirmationEmail />
             <HomeSearch sendBackData={this.sendBackData} />
             <HomeMenu sendBackData={this.sendBackData} />
             <main style={styles.mainHeight} className="container">

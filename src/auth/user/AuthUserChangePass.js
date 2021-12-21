@@ -1,7 +1,9 @@
 import React from "react";
 import { postData } from '../../service'
+import {appContext} from '../../AppProvider'
 
 export default class AuthUserChangePass extends React.Component {
+    static contextType = appContext;
     constructor(props) {
         super(props);
         this.params = new URLSearchParams(window.location.search);
@@ -24,7 +26,11 @@ export default class AuthUserChangePass extends React.Component {
 
     handleSubmit = async (evt) => {
         evt.preventDefault()
-        this.setState({ err: '', result:'Sending...' })
+        const success = <div className="alert alert-success">Successfully changed</div>;
+        const status = <div className="alert alert-info">Sending...</div>;
+        const failure = <div className="alert alert-danger">Error!</div>;
+        const mismatch = <div className="alert alert-danger">Error!: password mismatch </div>;
+        this.setState({ err: '', result:status })
         if (this.state.password === this.state.password2) {
 
             const postObj = {
@@ -32,19 +38,21 @@ export default class AuthUserChangePass extends React.Component {
                 random_code: this.random_code,
                 password: this.state.password
             }
-            console.log(postObj)
-
-            let result = await postData('/auth/user/change/password', postObj);
+            let result;
+            if (await this.context.getCsrfToken()) {
+            result = await postData('/auth/user/change/password', postObj);
+            }
+            this.setState({ result: status, err: '' })
             if (result.affectedRows === 1 && result.warningCount === 0) {
-                this.setState({ result: 'Success: you can now log in', password1: '', password2: '', err:'' })
+                this.setState({ result: success, password1: '', password2: '', err:'' })
                 console.log(result);
             } else {
-                this.setState({ err: 'Error!', result:'' })
+                this.setState({ err: failure, result:'' })
                 console.error(result);
             }
 
         } else {
-            this.setState({ err: 'Error: password mismatch' })
+            this.setState({ err: mismatch, result:'' })
         }
 
     }

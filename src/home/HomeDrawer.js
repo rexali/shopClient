@@ -95,14 +95,14 @@ function HomeDrawer({ sendBackData, ...props }) {
             <button className='btn btn-sm text-reset' onClick={handleShow}><span className="fa fa-bars"></span></button>
             <Offcanvas show={show} onHide={handleClose} {...props} >
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>Categories</Offcanvas.Title>
+                    <Offcanvas.Title>Search by category</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <DrawerContent sendBackData={sendBackData} handleClose={handleClose} />
-               {/* <Link to="/admin">Admin</Link><br/>
-               <Link to="/vendor">Vendor</Link><br/>
+               {/*<Link to="/vendor">Vendor</Link><br/>
                <Link to="/shipper">Shipper</Link> */}
                 </Offcanvas.Body>
+                <Link to="/vendor" className="m-2">Become a Seller</Link>
             </Offcanvas>
         </div>
     );

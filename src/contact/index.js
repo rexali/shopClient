@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import Footer from "../common/Footer";
+import React, { PureComponent } from "react";
+import HomeFooter from "../home/HomeFooter";
 import Header from "../common/Header";
 import axios from "axios";
 
-class Contact extends Component {
+class Contact extends PureComponent {
 
     state = {
         name: '',
@@ -20,6 +20,7 @@ class Contact extends Component {
             [name]: value
         });
     }
+
     handleSubmit = (event) => {
         event.preventDefault();
         this.setState({ result: 'Sending...' })
@@ -49,8 +50,8 @@ class Contact extends Component {
                 <main className="container" style={styles.mainHeight}>
                     <div className="row">
                         <div className="col-md-6">
-                            <h4>Contact us</h4>
-                            <p>Tel:<a className="text-decoration-none" href={`tel:07016807004`}>07016807004</a></p>
+                            <h1>Contact us</h1>
+                            <p>Tel:<a className="text-decoration-none" href={`tel:07016807004`}> 07016807004</a></p>
                             <p>Email:<a className="text-decoration-none" href={`mailto:admin@mujaware.com`}> admin at mujaware dot com</a></p>
                             <p>Address: Naibawa, Kumbotso LG, Kano state</p>
                         </div>
@@ -116,7 +117,7 @@ class Contact extends Component {
                         </div>
                     </div>
                 </main>
-                <Footer />
+                <HomeFooter />
             </div>
         )
     }

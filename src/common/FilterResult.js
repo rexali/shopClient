@@ -83,7 +83,7 @@ function Sorting({ receivedData, initData }) {
     return (
         <div className="d-flex justify-content-between">
             <select className="d-inline-block" style={{ borderRadius: "3px", borderStyle: "none" }} id="sortProduct" onChange={(evt) => { getSortValue(evt) }}>
-                <option>Sort by price or name</option>
+                <option>Sort By Price or Name </option>
                 <option value="1">Low - High (price)</option>
                 <option value="2">High - Low (price)</option>
                 <option value="3">A - Z (Alphabetically)</option>
@@ -147,7 +147,7 @@ export default function FilterResult({ data, showFilter, ...props }) {
             <Offcanvas show={show} onHide={handleClose} {...props} >
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>
-                        <span className="d-inline-block">Result</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="d-inline-block"><Sorting receivedData={sortData} initData={pageData.data} /></span>
+                        <span className="d-inline-block"><Sorting receivedData={sortData} initData={pageData.data} /></span>
                     </Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>

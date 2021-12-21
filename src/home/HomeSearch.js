@@ -21,7 +21,8 @@ function HomeSearch() {
                 placeholder="Search..."
                 autoComplete="off"
                 value="Search..."
-                onChange={() => handleChange()}
+                readOnly
+                onClick={() => handleChange()}
                 className="searchPro form-control form-control-sm rounded w-100 mb-2  d-md-nonex"
             />
             {displaySearch && <SearchResult placement="end" scroll={true} backdrop={true} setDisplaySearch={handleSearch} />}

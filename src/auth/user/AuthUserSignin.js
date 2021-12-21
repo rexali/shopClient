@@ -10,9 +10,11 @@ function AuthSignin() {
   let history = useHistory();
   let location = useLocation();
   let auth = useAuth();
-  let submitRef = useRef();
-  let [email, setEmail] = useState('');
-  let [password, setPassword] = useState(null);
+
+  const submitRef = useRef();
+  const password= useRef();
+  const email= useRef();
+
   let [result, setResult] = useState(null);
   let [err, setErr] = useState(null);
 
@@ -41,27 +43,23 @@ function AuthSignin() {
     });
   }
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    if (name === 'email') {
-      setEmail(value);
-    } else {
-      setPassword(value);
-    }
-  }
-
   const handleSubmit = (event) => {
     event.preventDefault();
     setErr(null)
     setResult(null)
     setResult(status)
     submitRef.current.value = "Submiting...";
-    const loginObj = { email: email, password: password }
+    
+    const loginObj = { 
+      email: email.current.value, 
+      password: password.current.value 
+    }
+
     axios.post("/auth/user/login", loginObj).then((res) => {
 
       let decoded = jwt.verify(res.data.token, 'aqwsderfgtyhjuiklop');
-      console.log(decoded);
-      if (decoded.result[0].user_id && decoded.result[0].email === email) {
+
+      if (decoded.result[0].user_id && decoded.result[0].email === email.current.value) {
 
         setResult(success);
 
@@ -73,11 +71,12 @@ function AuthSignin() {
         }
 
         setAuthData(authData);
-        setEmail('');
-        setPassword('');
+        password.current.value='';
+        email.current.value='';
         submitRef.current.value = 'Log in';
-        setTimeout(()=>login(), 2000)
+        setTimeout(()=>login(), 3000)
       }
+
     }).catch((err) => {
       console.log(err);
       setResult(null)
@@ -89,33 +88,37 @@ function AuthSignin() {
 
   return (
     <div>
-      <main className="container d-flex justify-content-center align-items-center">
+      <main className="container d-flex justify-content-center align-items-centerx">
         <form onSubmit={handleSubmit} id="loginForm">
           <div className="form-group">
-            <label className="label-control">Username</label>
+            <label className="label-control">Email</label>
             <input
               type="text"
               name="email"
               placeholder="Email"
+              ref={email}
               id="email"
-              className="form-control"
-              defaultValue={email}
+              autoComplete='off'
+              className="form-control border border-primary rounded-pill rounded-sm"
               required
-              onChange={handleChange} />
+              // onChange={handleChange} 
+              />
           </div>
 
           <div className="form-group">
             <label className="label-control">Password</label>
-            <span><Link to="/user/forget" className="pull-right mb-1">Forget password</Link></span>
+            <span><Link to="/user/forget" className="pull-right mb-1 text-muted"><small>Forget password</small></Link></span>
             <input
               type="password"
               name="password"
               placeholder="Password"
+              autoComplete='off'
+              ref={password}
               id="password"
-              className="form-control"
-              defaultValue={password}
+              className="form-control border border-primary rounded-pill rounded-sm"
               required
-              onChange={handleChange} />
+              // onChange={handleChange} 
+              />
           </div>
 
           <div className="form-group">
@@ -125,7 +128,7 @@ function AuthSignin() {
               value="Log in"
               id="submit"
               ref={submitRef}
-              className="btn btn-sm btn-outline-success pull-right" /><br />
+              className="btn btn-sm btn-outline-success pull-right mx-auto rounded-pill rounded-sm" /><br />
             <p className="text-muted">Don't have an account?{" "}Sign up</p>
             <p>You must log in to view the page at {from.pathname === "/" ? '/home' : from.pathname}</p>
           </div>

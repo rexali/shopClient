@@ -12,7 +12,7 @@ function Header(props) {
                 <Link to={`/${props.title?.toLowerCase()}`} className="nav-link text-black">{props.title}</Link>
             </li>
             <li className="nav-item">
-                <Link to="/vendor" className="nav-link" style={{fontSize:"x-small"}}><i className="fa fa-send-o" aria-hidden="true" ></i></Link>
+                <Link to="/admin" className="nav-link" style={{fontSize:"xx-small"}}><i className="fa fa-minus" aria-hidden="true" ></i></Link>
             </li>
         </ul>
     )

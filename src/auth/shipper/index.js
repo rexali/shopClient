@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../../common/Header";
-import Footer from "../../common/Footer";
+import HomeFooter from "../../home/HomeFooter";
 import AuthShipperTabs from "./AuthShipperTabs";
 import HomeProducts from "../../home/HomeProducts";
 import { appContext } from "../../AppProvider";
@@ -18,7 +18,7 @@ function AuthShipper() {
                 {({state})=><Row><HomeProducts products={state.data} /></Row>}
                 </appContext.Consumer>
             </main>
-            <Footer />
+            <HomeFooter />
         </div>
     );
 }
