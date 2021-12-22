@@ -199,8 +199,8 @@ export function Product({
             <div className="card shadow-none my-1 mx-auto">
                 <div>
                     <p className="d-flex justify-content-around">
-                        <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="bg-white fa fa-heart m-3 position-absolute" style={styles.aboveR} >{product.product_bestseller ? '' : ''}</i></a>
-                        <a href="#share"><i onClick={(evt) => shareProduct(product.product_id)} className="bg-white fa fa-share-alt d-md-none m-3 position-absolute" style={styles.aboveL} >{product.product_bestseller ? '' : ''}</i></a>
+                        <a href="#save"><i onClick={(evt) => saveProduct(evt, product.product_id, product.vendor_id)} className="fa fa-heart m-3 position-absolute" style={styles.aboveR} >{product.product_bestseller ? '' : ''}</i></a>
+                        <a href="#share"><i onClick={(evt) => shareProduct(product.product_id)} className="fa fa-share-alt d-md-none m-3 position-absolute" style={styles.aboveL} >{product.product_bestseller ? '' : ''}</i></a>
                     </p>
                     <Link to={
                         {
