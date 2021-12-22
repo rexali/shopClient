@@ -12,9 +12,9 @@ function DrawerContent({ sendBackData, handleClose }) {
         let result = []
         let finalResult = [];
         data.forEach(element => {
-            result.push(element.product_category);
+            result.push(element.product_category.toLowerCase());
         });
-        finalResult = Array.of(...new Set(result));
+        finalResult =Array.from(new Set([...result]));
         return finalResult
     }
 
@@ -22,11 +22,11 @@ function DrawerContent({ sendBackData, handleClose }) {
         let result = [];
         let finalResult = [];
         data.forEach(element => {
-            if (element.product_category === getUniqueCategories()[x]) {
+            if (element.product_category.toLowerCase() === getUniqueCategories()[x]) {
                 result.push(element.product_sub_category);
             }
         });
-        finalResult = Array.of(...new Set(result));
+        finalResult = Array.from(new Set([...result]));
         return finalResult;
     }
 
@@ -55,22 +55,22 @@ function DrawerContent({ sendBackData, handleClose }) {
                             <div className='cards-header' id={`heading${i}`}>
                                 <h5 className='mb-0'>
                                     {i === 0 ?
-                                        <button className='btn btn-link text-decoration-none w-100 text-capitalize' data-toggle='collapse' data-target={`#collapse${i}`} aria-expanded='true' aria-controls={`collapse${i}`} >{e}</button>
+                                        <button className='btn btn-link text-decoration-none w-100 text-capitalize shadow-none' data-toggle='collapse' data-target={`#collapse${i}`} aria-expanded='true' aria-controls={`collapse${i}`} >{e}</button>
                                         :
-                                        <button className='btn btn-link w-100 text-decoration-none  collapsed  text-capitalize' data-toggle='collapse' data-target={`#collapse${i}`} aria-expanded='true' aria-controls={`collapse${i}`} >{e}</button>
+                                        <button className='btn btn-link w-100 text-decoration-none  collapsed  text-capitalize shadow-none' data-toggle='collapse' data-target={`#collapse${i}`} aria-expanded='true' aria-controls={`collapse${i}`} >{e}</button>
                                     }
                                 </h5>
                             </div>
                             {i === 0 ?
                                 <div id={`collapse${i}`} className='collapse' aria-labelledby={`heading${i}`} data-parent='#accordion'>
                                     {getUniqueSubCategories(i).map((e, x) => {
-                                        return <span key={x} className='cards-body w-100' id={`bodyHtml${i}`}><a href="#none" className='btn btn-link text-info' onClick={() => categorySearch(e)}>{e}</a><br /></span>
+                                        return <span key={x} className='card-body' id={`bodyHtml${i}`}><a href="#none" className='btn btn-link text-info text-decoration-none p-2' onClick={() => categorySearch(e)}>{e}</a><br/></span>
                                     })}
                                 </div>
                                 :
                                 <div id={`collapse${i}`} className='collapse' aria-labelledby={`heading${i}`} data-parent='#accordion'>
                                     {getUniqueSubCategories(i).map((e, x) => {
-                                        return <span key={x} className='cards-body w-100' id={`bodyHtml${i}`}><a href="#none" className='btn btn-link text-info' onClick={() => categorySearch(e)}>{e}</a><br /></span>
+                                        return <span key={x} className='card-body' id={`bodyHtml${i}`}><a href="#none" className='btn btn-link text-info text-decoration-none p-2' onClick={() => categorySearch(e)}>{e}</a><br/></span>
                                     })}
                                 </div>
                             }
