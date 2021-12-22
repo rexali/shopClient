@@ -2,14 +2,14 @@ import React from "react";
 import { appContext } from "../AppProvider";
 
 function HomeMenu({ sendBackData }) {
-    let {state} =React.useContext(appContext);
-    let data = state.data; 
+    let { state } = React.useContext(appContext);
+    let data = state.data;
 
     const styles = {
         divScrollmenu: {
             overflowX: "auto",
             whiteSpace: "nowrap",
-            maxWidth:'1024px'
+            maxWidth: '1024px'
         },
         scrollmenuA: {
             display: "inline-block",
@@ -19,13 +19,20 @@ function HomeMenu({ sendBackData }) {
             borderColor: "blue",
             borderStyle: "solid",
             textDecoration: "none",
-            margin:'1px',
-            width:'100px'
+            margin: '1px',
+            width: '100px'
         },
         divScrollmenuAHover: {
             backgroundColor: "green"
         }
     }
+    /** 
+     *Search products in a category. 
+     *
+     * @param {String} category category term
+     * @param {Array} result  array of product under a category
+     *
+     */
 
     const searchByCategory = async (category) => {
         let result = data.filter((item, _) => {
@@ -44,7 +51,7 @@ function HomeMenu({ sendBackData }) {
     const uniqueCategory = () => {
         return Array.from(new Set([...category()]))
     }
-    
+
 
     return (
         <div style={styles.divScrollmenu} className="container text-center" id="menu-horizon" >
