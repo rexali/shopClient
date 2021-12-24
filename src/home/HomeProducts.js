@@ -144,8 +144,9 @@ export function Product({
             let { data } = await axios(config);
             let pids = data.map(product => product.product_id);
             return { pids };
-        } catch (error) {
-            console.log(error)
+        } catch (err) {
+            console.log(err)
+            return {err}
         }
     }
 
