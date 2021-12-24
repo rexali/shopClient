@@ -121,10 +121,22 @@ class VendorAddForm extends Component {
     };
 
     handleSubmit = () => {
+        // let formData = new FormData();
+
+        // let files = this.state.files.map((file, i) => {
+        //     return file.file;
+        // });
+
+        // for (let i = 0; i < files.length; i++) {
+        // formData.append('picture',files[i]?files[i]:'', files[i].name );
+        // }
+        
         this.setState({ result: 'Sending data...' })
         const productObj = this.state;
-        console.log(productObj)
-        axios.post("/products/product/add", productObj).then((response) => {
+        axios.post("/products/product/add", {
+            // ...formData,
+            ...productObj
+        }).then((response) => {
             let result = JSON.parse(JSON.stringify(response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 this.setState({ result: 'Product added' })
