@@ -321,7 +321,7 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
     const payWithPaystack = (pid, vid, price, qty, total, checkoutObj) => {
         // eslint-disable-next-line no-undef
         var handler = PaystackPop.setup({
-            key: 'pk_test_2ae6f4d367d1966aef717a01edf9623d51143db2', //"pk_live_9522ac67d8f164271cafe16df7fc01b4613af4f7",  //'pk_test_2ae6f4d367d1966aef717a01edf9623d51143db2',
+            key: "pk_live_9522ac67d8f164271cafe16df7fc01b4613af4f7", //"pk_live_9522ac67d8f164271cafe16df7fc01b4613af4f7",  //'pk_test_2ae6f4d367d1966aef717a01edf9623d51143db2',
             email: checkoutObj.email,
             amount: Number(total) * 100,
             currency: "NGN",
@@ -351,7 +351,7 @@ function CartForm({ getProductId, getVendorId, getPrice, getQuantity, getTotal }
     const payWithFlutterwave = (pid, vid, price, qty, total, checkoutObj) => {
         // eslint-disable-next-line no-undef
         FlutterwaveCheckout({
-            public_key: "FLWPUBK_TEST-SANDBOXDEMOKEY-X",//"FLWPUBK-d73d8f818c1c767ff0ce79df476a2869-X", // "FLWPUBK_TEST-SANDBOXDEMOKEY-X",
+            public_key: "FLWPUBK-d73d8f818c1c767ff0ce79df476a2869-X", //"FLWPUBK_TEST-SANDBOXDEMOKEY-X",//"FLWPUBK-d73d8f818c1c767ff0ce79df476a2869-X", // "FLWPUBK_TEST-SANDBOXDEMOKEY-X",
             tx_ref: '' + Math.floor((Math.random() * 1000000000) + 1),
             amount: Number(total), //54600,
             currency: "NGN",
