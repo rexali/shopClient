@@ -68,7 +68,7 @@ export default class AuthUserChangePass extends React.Component {
                         <input
                             type="password"
                             name="password"
-                            className="form-control"
+                            className="form-control rounded-pill"
                             onChange={this.handleChange}
                             defaultValue={password1}
                             placeholder="Enter new password"
@@ -81,7 +81,7 @@ export default class AuthUserChangePass extends React.Component {
                             className="form-control"
                             defaultValue={password2}
                             onChange={this.handleChange}
-                            placeholder="Confirm new password"
+                            placeholder="Confirm new password rounded-pill"
                             required />
                     </div>
                     <div className="text-center">
@@ -90,7 +90,7 @@ export default class AuthUserChangePass extends React.Component {
                         <input
                             type="submit"
                             id="submit-id"
-                            className="btn btn-outline-success"
+                            className="btn btn-outline-success rounded rounded-sm"
                             value="Submit" />
                     </div>
                 </form>
