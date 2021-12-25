@@ -120,28 +120,36 @@ class VendorAddForm extends Component {
         });
     };
 
-    handleSubmit = () => {
-        // let formData = new FormData();
+    handleSubmit = (evt) => {
+        evt.preventDefault();
+        let formData = new FormData();
 
-        // let files = this.state.files.map((file, i) => {
-        //     return file.file;
-        // });
+        let files = this.state.files.map((file, i) => {
+            return file.file;
+        });
 
-        // for (let i = 0; i < files.length; i++) {
-        // formData.append('picture',files[i]?files[i]:'', files[i].name );
-        // }
+        for (let i = 0; i < files.length; i++) {
+        formData.append('picture',files[i]?files[i]:'', files[i].name );
+        }
         
         this.setState({ result: 'Sending data...' })
         const productObj = this.state;
         axios.post("/products/product/add", {
-            // ...formData,
+            ...formData,
             ...productObj
-        }).then((response) => {
+        },
+        {
+            headers: {
+                'Content-Type':'multipart/form-data',
+                // 'Authorization':'Bearer ....' 
+            }
+       }
+        ).then((response) => {
             let result = JSON.parse(JSON.stringify(response.data));
             if (result.affectedRows === 1 && result.warningCount === 0) {
                 this.setState({ result: 'Product added' })
                 this.setState(this.initialState);
-                this.handleFiles();
+                // this.handleFiles();
                 this.setState({ result: 'Product and file added' })
             }
         }).catch((error) => {
@@ -170,7 +178,7 @@ class VendorAddForm extends Component {
         } = this.state;
         return (
             <ErrorBoundary>
-                <form name="vendorAddForm" id="vendorAddForm">
+                <form name="vendorAddForm" id="vendorAddForm" onSubmit={(ev)=>this.handleSubmit(ev)} >
                     <div className="row mt-3">
                         <div className="col-md-6">
                             <div className="form-group">
@@ -305,7 +313,7 @@ class VendorAddForm extends Component {
                             <div className="form-group">
                                 <span className="bg-success text-white d-block m-2 rounded">{result}</span>
                                 <span className="bg-danger text-white d-block m-2 rounded">{err}</span>
-                                <input type="button" onClick={this.handleSubmit} value="Submit" className="btn btn-outline-success btn-block" />
+                                <input type="submit" value="Submit" className="btn btn-outline-success btn-block" />
                             </div>
                         </div>
                     </div>
